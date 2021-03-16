@@ -82,6 +82,8 @@ public:
 
   virtual double value (const Point<dim>   &p,
                         const unsigned int  component = 0) const;
+  virtual Tensor<1, dim> gradient (const Point<dim>   &p,
+                                   const unsigned int  component = 0) const;
 };
 
 template <int dim>
@@ -89,6 +91,17 @@ double Solution<dim>::value (const Point<dim>   &p,
                              const unsigned int) const
 {
   return std::sin(2*p(0)*numbers::PI)*std::sin(3*p(1)*numbers::PI);
+}
+
+template <int dim>
+Tensor<1, dim> Solution<dim>::gradient (const Point<dim>   &p,
+                                const unsigned int) const
+{
+  // Rank 1 Tensor = Vector with (dim)-components;
+  Tensor<1, dim> return_gradient;
+  return_gradient[0] = (2*numbers::PI*std::cos(2*p(0)*numbers::PI)*std::sin(3*p(1)*numbers::PI));
+  return_gradient[1] = (3*numbers::PI*std::sin(2*p(0)*numbers::PI)*std::cos(3*p(1)*numbers::PI));	
+  return return_gradient;
 }
 
 
@@ -390,13 +403,28 @@ template <int dim>
 void Laplace<dim>::process_solution(const unsigned int cycle)
 {
   Vector<float> difference_per_cell (triangulation.n_active_cells());
+
+  // Evaluate L2-norm error:
   VectorTools::integrate_difference (dof_handler,
                                      solution,
                                      Solution<dim>(),
                                      difference_per_cell,
                                      error_quad,
                                      VectorTools::L2_norm);
-  const double L2_error = difference_per_cell.l2_norm();
+  const double L2_error = VectorTools::compute_global_error(triangulation, 
+  							    difference_per_cell,
+  							    VectorTools::L2_norm);;
+
+  // Evaluate H1-norm error:
+  VectorTools::integrate_difference (dof_handler,
+                                     solution,
+                                     Solution<dim>(),
+                                     difference_per_cell,
+                                     error_quad,
+                                     VectorTools::H1_norm);
+  const double H1_error = VectorTools::compute_global_error(triangulation, 
+  							    difference_per_cell,
+  							    VectorTools::H1_norm);
 
   const unsigned int n_active_cells=triangulation.n_active_cells();
   const unsigned int n_dofs=dof_handler.n_dofs();
@@ -407,6 +435,7 @@ void Laplace<dim>::process_solution(const unsigned int cycle)
   convergence_table.add_value("CG", cg_iter);
   convergence_table.add_value("memory", (unsigned int)system_matrix.memory_consumption());
   convergence_table.add_value("L2", L2_error);
+  convergence_table.add_value("H1", H1_error);
 }
 
 
@@ -444,12 +473,14 @@ void Laplace<dim>::run ()
   convergence_table.set_tex_caption("cells", "\\# cells");
   convergence_table.set_tex_caption("dofs", "\\# dofs");
   convergence_table.set_tex_caption("L2", "$L^2$-error");
+  convergence_table.set_tex_caption("H1", "$H^1$-error");
   convergence_table.set_tex_format("cells", "r");
   convergence_table.set_tex_format("dofs", "r");
   convergence_table.set_tex_format("CG", "r");
   convergence_table.set_tex_format("memory", "r");
   convergence_table
   .evaluate_convergence_rates("L2", ConvergenceTable::reduction_rate_log2);
+  convergence_table.evaluate_convergence_rates("H1", ConvergenceTable::reduction_rate_log2);  
   std::cout << std::endl;
   convergence_table.write_text(std::cout);
 
