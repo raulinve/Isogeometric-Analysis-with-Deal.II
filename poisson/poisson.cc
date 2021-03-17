@@ -308,12 +308,14 @@ void Laplace<dim>::assemble_system ()
   cell = dof_handler.begin_active(),
   endc = dof_handler.end();
 
+  // Note: “active_cell_iterator” data type change in 2D or 3D.
   for (; cell!=endc; ++cell)
     {
       fe_values.reinit (cell);
       cell_matrix = 0;
       cell_rhs = 0;
 
+      // Now we have to assemble the local matrix and right hand side.  
       for (unsigned int q_point=0; q_point<n_q_points; ++q_point)
         for (unsigned int i=0; i<dofs_per_cell; ++i)
           {
@@ -327,6 +329,7 @@ void Laplace<dim>::assemble_system ()
                             fe_values.JxW (q_point));
           }
 
+      // With the local systems assembled, transfer into the global matrix
       cell->get_dof_indices (local_dof_indices);
       for (unsigned int i=0; i<dofs_per_cell; ++i)
         {
@@ -339,9 +342,11 @@ void Laplace<dim>::assemble_system ()
         }
     }
 
+  // Non-homogeneous boundary values:
   std::map<types::global_dof_index,double> boundary_values;
-
-  typename FunctionMap<dim>::type  dirichlet_boundary;
+  //typename FunctionMap<dim>::type  dirichlet_boundary;
+  using type=std::map<types::boundary_id, const Function<dim>*>;
+  type dirichlet_boundary;
 
   BoundaryValues<dim> boundary_funct;
   dirichlet_boundary[0] = &boundary_funct;
