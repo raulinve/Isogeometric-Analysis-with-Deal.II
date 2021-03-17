@@ -71,6 +71,8 @@
 #include <iostream>
 #include <deal.II/base/logstream.h>
 
+#include <filesystem>
+
 
 using namespace dealii;
 
@@ -177,6 +179,7 @@ private:
   void refine_grid ();
   void output_results (const unsigned int cycle) const;
   void process_solution (const unsigned int cycle);
+  void print_table (const unsigned int cycle);
 
   const std::string fe_name;
   const std::string quadrature_name;
@@ -278,7 +281,6 @@ void Laplace<dim>::setup_system ()
   sparsity_pattern.copy_from(d_sparsity);
 
   system_matrix.reinit (sparsity_pattern);
-
   solution.reinit (dof_handler.n_dofs());
   system_rhs.reinit (dof_handler.n_dofs());
 }
@@ -287,6 +289,7 @@ void Laplace<dim>::setup_system ()
 template <int dim>
 void Laplace<dim>::assemble_system ()
 {
+  std::cout << "   > ASSEMBLING THE SYSTEM (wait) ... " << std::endl;
   const RightHandSide<dim> right_hand_side;
 
   FEValues<dim> fe_values (*fe, matrix_quad,
@@ -363,9 +366,12 @@ void Laplace<dim>::solve ()
   std::cout << "   Memory consumption " << system_matrix.memory_consumption()
             << " bytes" << std::endl;
 
+  std::cout << "   > SOLVING THE SYSTEM (wait) ... " << std::endl;
   solver.solve (system_matrix, solution, system_rhs,
                 PreconditionIdentity());
 
+  // Since we suppress output from the linear solver, 
+  // we print the number of iterations by hand.
   std::cout << "   " << solver_control.last_step()
             << " CG iterations needed to obtain convergence."
             << std::endl;
@@ -383,6 +389,7 @@ void Laplace<dim>::refine_grid()
 template <int dim>
 void Laplace<dim>::output_results (const unsigned int cycle) const
 {
+  std::cout << "   Saving/overwriting the .vtk result files." << std::endl;
   DataOut<dim> data_out;
 
   data_out.attach_dof_handler (dof_handler);
@@ -394,7 +401,9 @@ void Laplace<dim>::output_results (const unsigned int cycle) const
   filename += ('0' + cycle);
   filename += ".vtk";
 
-  std::ofstream output (filename.c_str());
+  //std::ofstream output (filename.c_str());
+  std::string relpath = "RESULTS/" + filename;
+  std::ofstream output (relpath);
   data_out.write_vtk (output);
 }
 
@@ -440,10 +449,79 @@ void Laplace<dim>::process_solution(const unsigned int cycle)
 
 
 template <int dim>
+void Laplace<dim>::print_table(const unsigned int cycle)
+{
+  // Setup the table:
+  convergence_table.set_precision("L2", 3);
+  convergence_table.set_scientific("L2", true);
+  convergence_table.set_precision("H1", 3);
+  convergence_table.set_scientific("H1", true);
+  convergence_table.set_tex_caption("cells", "\\# cells");
+  convergence_table.set_tex_caption("dofs", "\\# dofs");
+  convergence_table.set_tex_caption("L2", "$L^2$-error");
+  convergence_table.set_tex_caption("H1", "$H^1$-error");
+  convergence_table.set_tex_format("cells", "r");
+  convergence_table.set_tex_format("dofs", "r");
+  convergence_table.set_tex_format("CG", "r");
+  convergence_table.set_tex_format("memory", "r");
+  convergence_table.evaluate_convergence_rates("L2", ConvergenceTable::reduction_rate_log2);
+  convergence_table.evaluate_convergence_rates("H1", ConvergenceTable::reduction_rate_log2);
+  std::cout << std::endl;
+
+  // (1) - Print on screen:
+  if (cycle==n_cycles_up)
+    {
+      std::cout << "\nALL CYCLES CONVERGENCE SUMMARY : " << std::endl;
+      std::cout << "------------------------------------------------------------ " << std::endl;
+      convergence_table.write_text(std::cout);
+      std::cout << "------------------------------------------------------------ " << std::endl;
+    }
+    
+  // (2) - Save .txt file:
+  char fname[50];
+  sprintf(fname, "convergence-%s-%s-q%d-r%d-%d.txt",
+          fe_name.c_str(), quadrature_name.c_str(),
+          fe->degree, n_cycles_low, n_cycles_up);
+  std::string filename(fname); 
+  std::string relpath = "RESULTS/" + filename;
+  std::ofstream outfile(relpath);
+  //std::ofstream outfile(fname);
+  convergence_table.write_text(outfile);
+
+  // (3) - Save .tex file (LaTeX-ready table):  [ UNCOMMENT TO ACTIVE ]
+  /*
+  char fnametex[50];
+  sprintf(fnametex, "convergence-%s-%s-q%d-r%d-%d.tex",
+          fe_name.c_str(), quadrature_name.c_str(),
+          fe->degree, n_cycles_low, n_cycles_up);
+  std::string filenametex(fnametex); 
+  std::string relpathtex = "RESULTS/" + filenametex;
+  std::ofstream outfiletex(relpathtex);
+  convergence_table.write_tex(outfiletex);
+  */
+  
+}
+
+
+// This is the function which has the top-level control over everything. 
+template <int dim>
 void Laplace<dim>::run ()
 {
-  std::cout << "Solving problem in " << dim << " space dimensions." << std::endl;
 
+  // Initial rekap (on-screen print)
+  std::cout << " \n                    polyn     quad  deg refinements" << std::endl;
+  std::cout << "SELECTED OPTIONS : " << fe_name << " "
+                                     << quadrature_name << " "
+                                     << degree << " "
+                                     << n_cycles_low << " "
+                                     << n_cycles_up << "\n" << std::endl;
+                                       
+  std::cout << "Checking/creating the output directory \"RESULTS\". " << std::endl;
+  std::string OutputFolderName = "RESULTS";
+  std::filesystem::create_directories(OutputFolderName);
+  std::cout << "Solving problem in " << dim << " space dimensions. \n\n" << std::endl;   
+
+  // Perform the cycles:
   for (unsigned int cycle = n_cycles_low; cycle < n_cycles_up+1; ++cycle)
     {
       std::cout << "Cycle " << cycle << ':' << std::endl;
@@ -466,47 +544,27 @@ void Laplace<dim>::run ()
       solve ();
       output_results (cycle);
       process_solution (cycle);
+      print_table(cycle);
     }
-
-  convergence_table.set_precision("L2", 3);
-  convergence_table.set_scientific("L2", true);
-  convergence_table.set_tex_caption("cells", "\\# cells");
-  convergence_table.set_tex_caption("dofs", "\\# dofs");
-  convergence_table.set_tex_caption("L2", "$L^2$-error");
-  convergence_table.set_tex_caption("H1", "$H^1$-error");
-  convergence_table.set_tex_format("cells", "r");
-  convergence_table.set_tex_format("dofs", "r");
-  convergence_table.set_tex_format("CG", "r");
-  convergence_table.set_tex_format("memory", "r");
-  convergence_table
-  .evaluate_convergence_rates("L2", ConvergenceTable::reduction_rate_log2);
-  convergence_table.evaluate_convergence_rates("H1", ConvergenceTable::reduction_rate_log2);  
-  std::cout << std::endl;
-  convergence_table.write_text(std::cout);
-
-  char fname[50], fnametex[50];
-  sprintf(fname, "convergence-%s-%s-q%d-r%d-%d.txt",
-          fe_name.c_str(), quadrature_name.c_str(),
-          fe->degree, n_cycles_low, n_cycles_up);
-
-  sprintf(fnametex, "convergence-%s-%s-q%d-r%d-%d.tex",
-          fe_name.c_str(), quadrature_name.c_str(),
-          fe->degree, n_cycles_low, n_cycles_up);
-
-  std::ofstream outfile(fname);
-  std::ofstream outfiletex(fnametex);
-  convergence_table.write_text(outfile);
-  convergence_table.write_tex(outfiletex);
 }
 
 
 int main (int argc, char **argv)
 {
-  char fe_name[] = "bernstein";
-  char quad_name[] = "legendre";
-  unsigned int degree = 1;
-  unsigned int n_cycles_down = 0;
-  unsigned int n_cycles_up = 5;
+
+  std::cout << " " << std::endl;
+  std::cout << "============================================================" << std::endl;
+  std::cout << "================= THE CODE IS RUNNING ======================" << std::endl;
+  std::cout << "============================================================" << std::endl;
+
+  // DEFAULT VALUES:
+  //--------------------------------------------------------
+  char fe_name[]             = "bernstein"; // “bernstein”
+  char quad_name[]           = "legendre";  // “legendre”
+  unsigned int degree        = 1;           // “1”
+  unsigned int n_cycles_down = 0;           // “0”
+  unsigned int n_cycles_up   = 5;           // “5”
+  //--------------------------------------------------------
 
   char *tmp[3];
   tmp[0] = argv[0];
@@ -559,5 +617,10 @@ int main (int argc, char **argv)
       return 1;
     }
 
+  std::cout << " \n" << std::endl;
+  std::cout << "============================================================" << std::endl;
+  std::cout << "================= CODE ENDED CORRECTLY =====================" << std::endl;
+  std::cout << "============================================================\n" << std::endl;
+ 
   return 0;
 }
