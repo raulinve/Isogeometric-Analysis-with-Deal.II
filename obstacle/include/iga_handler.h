@@ -240,9 +240,10 @@ public:
 
 
 
-  void project_boundary_values(const typename FunctionMap<spacedim>::type &boundary_function,
+  void project_boundary_values(//const typename FunctionMap<spacedim>::type &boundary_function,                  // <- [ DEPRECATED ]
+                               const std::map<types::boundary_id, const Function<spacedim>*> boundary_function,  // <- [ NEW ]
                                const Quadrature<dim-1> & q,
-                               ConstraintMatrix &constraints);
+                               AffineConstraints<double> &constraints);
 
   void map_dofs_to_support_points(std::vector<Point<dim> > &support_points);
 
@@ -251,7 +252,7 @@ public:
     FullMatrix<double> &cell_matrix,
     typename DoFHandler<dim>::active_cell_iterator &cell,
     SparseMatrix<double> &system_matrix,
-    ConstraintMatrix &constraints);
+    AffineConstraints<double> &constraints);
 
 
   void distribute_local_to_global(
@@ -260,7 +261,7 @@ public:
     typename DoFHandler<dim>::active_cell_iterator &cell,
     SparseMatrix<double> &system_matrix,
     Vector<double> &system_rhs,
-    ConstraintMatrix &constraints);
+    AffineConstraints<double> &constraints);
 
 
   void make_sparsity_pattern (DynamicSparsityPattern &dsp);
@@ -300,7 +301,7 @@ public:
   SparsityPattern square_sparsity;
   SparseMatrix<double> square_C_CT;
 
-  ConstraintMatrix constraints_matrix;
+  AffineConstraints<double> constraints_matrix;
 
   SparseDirectUMFPACK square_global_extractor;
 

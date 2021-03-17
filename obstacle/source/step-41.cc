@@ -109,7 +109,7 @@ namespace Step41
     MappingFEField<dim>       *mappingfe;
     IndexSet             active_set;
 
-    ConstraintMatrix            bspline_constraints;
+    AffineConstraints<double>   bspline_constraints;
 
     SparseMatrix<double> bspline_system_matrix;
     SparseMatrix<double> bspline_complete_system_matrix;
@@ -242,7 +242,8 @@ namespace Step41
                                const unsigned int component) const
   {
     Assert (component == 0, ExcNotImplemented());
-    return 0;
+    int val = p(0) * 0;    // <- [ USELESS ROW - Just to void warnings of unused p()! ]
+    return val*0;
   }
 
 
@@ -333,7 +334,8 @@ namespace Step41
 
     std::map<types::global_dof_index,double> boundary_values;
 
-    typename FunctionMap<dim>::type  dirichlet_boundary;
+    //typename FunctionMap<dim>::type  dirichlet_boundary;                            // <- [ DEPRECATED ]
+    typename std::map<types::boundary_id, const Function<dim>*> dirichlet_boundary;   // <- [ NEW ]
 
     BoundaryValues<dim> boundary_funct;
     dirichlet_boundary[0] = &boundary_funct;
@@ -526,7 +528,8 @@ namespace Step41
     QGauss<dim-1>  boundary_quad(fe.degree+2);
     std::map<types::global_dof_index,double> boundary_values;
 
-    typename FunctionMap<dim>::type  dirichlet_boundary;
+    //typename FunctionMap<dim>::type  dirichlet_boundary;                            // <- [ DEPRECATED ]
+    typename std::map<types::boundary_id, const Function<dim>*> dirichlet_boundary;   // <- [ NEW ]
 
     BoundaryValues<dim> boundary_funct;
     dirichlet_boundary[0] = &boundary_funct;

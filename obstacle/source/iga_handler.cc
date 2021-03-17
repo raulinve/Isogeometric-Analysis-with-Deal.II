@@ -505,13 +505,16 @@ IgaHandler<dim,spacedim>::transform_cell_matrix_into_bspline_space(
 template <int dim, int spacedim>
 void
 IgaHandler<dim,spacedim>::project_boundary_values(
-  const typename FunctionMap<spacedim>::type &boundary_function,
+  // const typename FunctionMap<spacedim>::type &boundary_function,                 // <- [ DEPRECATED ]
+  const std::map<types::boundary_id, const Function<spacedim>*> boundary_function,  // <- [ NEW ]
   const Quadrature<dim-1> & q,
-  ConstraintMatrix &constraints)
+  AffineConstraints<double> &constraints)
 {
   // Fake boundary values set to 1
-  typename FunctionMap<spacedim>::type  fake_boundary;
-  ConstantFunction<spacedim> boundary_funct_fake(1);
+  //typename FunctionMap<spacedim>::type  fake_boundary;                       // <- [ DEPRECATED ]
+  typename std::map<types::boundary_id, const Function<dim>*> fake_boundary;   // <- [ NEW ]
+  //ConstantFunction<spacedim> boundary_funct_fake(1);
+  Functions::ConstantFunction<spacedim> boundary_funct_fake(1);
   fake_boundary[0] = &boundary_funct_fake;
 
   std::map<types::global_dof_index,double> fake_boundary_values;
@@ -643,7 +646,7 @@ IgaHandler<dim,spacedim>::distribute_local_to_global(
   FullMatrix<double> &cell_matrix,
   typename DoFHandler<dim>::active_cell_iterator &cell,
   SparseMatrix<double> &system_matrix,
-  ConstraintMatrix &constraints)
+  AffineConstraints<double> &constraints)
 {
   AssertDimension(fe.dofs_per_cell, cell_matrix.m());
   AssertDimension(fe.dofs_per_cell, cell_matrix.n());
@@ -666,7 +669,7 @@ IgaHandler<dim,spacedim>::distribute_local_to_global(
   typename DoFHandler<dim>::active_cell_iterator &cell,
   SparseMatrix<double> &system_matrix,
   Vector<double> &system_rhs,
-  ConstraintMatrix &constraints)
+  AffineConstraints<double> &constraints)
 {
   AssertDimension(fe.dofs_per_cell, cell_matrix.m());
   AssertDimension(fe.dofs_per_cell, cell_matrix.n());
