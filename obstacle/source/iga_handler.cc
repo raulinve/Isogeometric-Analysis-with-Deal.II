@@ -35,7 +35,7 @@ DEAL_II_NAMESPACE_OPEN
 
 
 /* Return the second elapsed since Epoch (00:00:00 UTC, January 1, 1970)
- */
+
 double seconds()
 {
   struct timeval tmp;
@@ -44,7 +44,7 @@ double seconds()
   sec = tmp.tv_sec + ((double)tmp.tv_usec)/1000000.0;
   return sec;
 }
-
+ */
 
 FullMatrix<double> kronecker_product(const FullMatrix<double> &a,
                                      const FullMatrix<double> &b)
@@ -202,11 +202,14 @@ IgaHandler<dim,spacedim>::IgaHandler (const std::vector<std::vector<double> > &k
   for (unsigned int i=1; i<dpo.size(); ++i)
     dpo[i]=dpo[i-1]*(degree-1);
 
-  std::vector<unsigned int> col_order(Utilities::fixed_power<dim>(degree+1));
-  std::vector<unsigned int> row_order(Utilities::fixed_power<dim>(degree+1));
+  //std::vector<unsigned int> col_order(Utilities::fixed_power<dim>(degree+1));
+  //std::vector<unsigned int> row_order(Utilities::fixed_power<dim>(degree+1));
+  std::vector<size_t> col_order(Utilities::fixed_power<dim>(degree+1));          // <- [ NEW: size_t ]
+  std::vector<size_t> row_order(Utilities::fixed_power<dim>(degree+1));          // <- [ NEW_ size_t ]
+  std::vector<unsigned int> col_orderUNS(col_order.begin(), col_order.end());    // <- [ NEW ]
 
   const FiniteElementData<dim> fe_data(dpo, 1, degree);
-  FETools::hierarchic_to_lexicographic_numbering (fe_data, col_order);
+  FETools::hierarchic_to_lexicographic_numbering (fe_data, col_orderUNS);        // <- [ col_orderUNS ]
 
   for (unsigned int i=0; i<row_order.size(); ++i)
     row_order[i] = i;

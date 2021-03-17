@@ -63,7 +63,7 @@
 
 
 /* Return the second elapsed since Epoch (00:00:00 UTC, January 1, 1970)
- */
+
 double seconds()
 {
   struct timeval tmp;
@@ -71,7 +71,7 @@ double seconds()
   gettimeofday( &tmp, (struct timezone *)0 );
   sec = tmp.tv_sec + ((double)tmp.tv_usec)/1000000.0;
   return sec;
-}
+} */
 
 
 namespace Step41
@@ -791,14 +791,14 @@ int main (int argc, char *argv[])
           mults.push_back(mults[0]);
           knots.push_back(knots[0]);
 
-          double t0 = seconds();
+          //double t0 = std::chrono::seconds();                 // <-- TO FIX
           IgaHandler<2,2> iga_hd2(knots, mults, degree);
-          double t1 = seconds();
+          //double t1 = std::chrono::seconds();                 // <-- TO FIX
 
-          times[cycle] = t1 - t0;
+          //times[cycle] = t1 - t0;
 
-          std::cout << "Time to assemble the IgaHandler: "
-                    << times[cycle] << " sec." << std::endl;
+          //std::cout << "Time to assemble the IgaHandler: "
+          //          << times[cycle] << " sec." << std::endl;
 
           ObstacleProblem<2> obstacle_problem(iga_hd2, convergence_table);
 
