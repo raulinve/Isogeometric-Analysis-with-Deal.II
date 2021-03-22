@@ -51,7 +51,8 @@
 #include <deal.II/lac/sparse_direct.h>
 #include <deal.II/numerics/matrix_tools.h>
 #include <deal.II/lac/precondition.h>
-#include <deal.II/lac/constraint_matrix.h>
+//#include <deal.II/lac/constraint_matrix.h>    // DEPRECATED
+#include <deal.II/lac/affine_constraints.h>     // NEW
 #include <deal.II/base/convergence_table.h>
 
 #include <fstream>
@@ -61,17 +62,8 @@
 #include "grid_generator.h"
 #include "iga_handler.h"
 
-
-/* Return the second elapsed since Epoch (00:00:00 UTC, January 1, 1970)
-
-double seconds()
-{
-  struct timeval tmp;
-  double sec;
-  gettimeofday( &tmp, (struct timezone *)0 );
-  sec = tmp.tv_sec + ((double)tmp.tv_usec)/1000000.0;
-  return sec;
-} */
+#include <string>
+#include "chrono.hpp"       // NEW (timer)
 
 
 namespace Step41
@@ -679,14 +671,17 @@ namespace Step41
   template <int dim>
   void ObstacleProblem<dim>::run (unsigned int cycle)
   {
+    std::cout << " - Make the grid" << std::endl;
     make_grid();
+    std::cout << " - Setup the system" << std::endl;
     setup_system ();
 
     IndexSet active_set_old (active_set);
 
+    std::cout << " - Starting the Newton iterations:" << std::endl;
     for (unsigned int iteration=0; iteration<=bspline_solution.size (); ++iteration)
       {
-        std::cout << "Newton iteration " << iteration << std::endl;
+        std::cout << "   Newton iteration " << iteration << std::endl;
 
         assemble_system ();
 
@@ -711,51 +706,92 @@ namespace Step41
         std::cout << std::endl;
       }
   }
+
+
+  /*
+  template <int dim>
+  void ObstacleProblem<dim>::print_table (unsigned int cycle)
+  {
+		// ...
+
+  }*/
+
+
 }
+
+
 
 
 int main (int argc, char *argv[])
 {
+  std::cout << " " << std::endl;
+  std::cout << "============================================================" << std::endl;
+  std::cout << "================= THE CODE IS RUNNING ======================" << std::endl;
+  std::cout << "============================================================" << std::endl;
+
+  // DEFAULT VALUES:
+  //--------------------------------------------------------
+    unsigned int n_cycle       = 6;       // 6
+    unsigned int degree        = 0;       // 0
+    bool         h_refinement  = true;    // true
+    bool         p_refinement  = false;   // false
+    bool         k_refinement  = false;   // false
+    std::string  continuity    = "C1";    // "C1"
+  //--------------------------------------------------------
+
+
+	// Initial rekap (on-screen print) -------------
+	std::cout << "\n  SELECTED OPTIONS : " << std::endl; 
+    std::cout << "   Dimensions            : " << "2" << std::endl; 
+	std::cout << "   Number of cycles      : " << n_cycle << std::endl; 
+	std::cout << "   Polynomial degree     : " << degree << std::endl; 
+	std::cout << "   h_ref | p_ref | k_ref : " << h_refinement << " | "
+                                              << p_refinement << " | "
+                                              << k_refinement << std::endl; 
+	std::cout << "   Continuity            : " << continuity << std::endl;    
+	std::cout << std::endl; 
+
+	if (!p_refinement && !h_refinement && !k_refinement) {
+		std::cout << "  ERROR: Select one type of refinement! " << std::endl; 
+		return 1;
+	}
+    // ---------------------------------------------
+
+
+
   try
     {
       using namespace dealii;
       using namespace Step41;
 
+      // Initializations before the loops:
       deallog.depth_console (0);
-
-      Utilities::MPI::MPI_InitFinalize mpi_initialization (argc, argv);
-
-      // Let's create the mesh
+	  Utilities::MPI::MPI_InitFinalize mpi_initialization (argc, argv);
       std::vector<unsigned int> subdivisions(1);
-      unsigned int degree = 0;
-      bool p_refinement = false;
-      bool h_refinement = true;
-      bool k_refinement = false;
       ConvergenceTable  convergence_table;
-
-      unsigned int n_cycle = 6;
       Vector<double> times(n_cycle);
 
+
+	  std::cout << "\n > STARTING THE CYCLES: \n" << std::endl;
       for (unsigned int cycle=1; cycle<n_cycle; ++cycle)
         {
-          if (h_refinement)
-            {
+		  std::cout << " CYCLE # " << cycle << " of " << n_cycle << "  =========" << std::endl;
+
+          if (h_refinement)  {
+			  std::cout << " - Setup h-refinement" << std::endl;
               subdivisions[0] = std::pow(2, cycle);
-              degree = 3;
-            }
-
-          if (p_refinement)
-            {
+              degree = 3;  }
+          if (p_refinement)  {
+			  std::cout << " - Setup p-refinement" << std::endl;
               subdivisions[0] = 100;
-              degree = cycle;
-            }
+              degree = cycle;  }
 
-          if (k_refinement)
-            {
+          if (k_refinement)  {
+			  std::cout << " - Setup k-refinement" << std::endl;
               subdivisions[0] = 100;
-              degree = 4;
-            }
+              degree = 4;  }
 
+		  // Initialize the knot matrix:
           std::vector<std::vector<double> >
           knots(1, std::vector<double>(subdivisions[0]+1));
 
@@ -765,23 +801,22 @@ int main (int argc, char *argv[])
           std::vector<std::vector<unsigned int> >
           mults(1, std::vector<unsigned int>(subdivisions[0]+1, 1));
 
-          // C^0 continuity
-          // {
-          //   for (unsigned int i=0; i<subdivisions[0]; ++i)
-          //     mults[0][i] = degree;
-          // }
-
-          // C^1 continuity
-          {
-            for (unsigned int i=0; i<subdivisions[0]; ++i)
-              mults[0][i] = degree-1;
-          }
-
-          // C^2 continuity
-          // {
-          // for (unsigned int i=0; i<subdivisions[0]; ++i)
-          //   mults[0][i] = degree-2;
-          // }
+		  // Setup continuity:
+		  if(continuity == "C0") {
+				std::cout << " - Setup C0 continuity" << std::endl;
+				for (unsigned int i=0; i<subdivisions[0]; ++i)
+				mults[0][i] = degree;
+			}
+		  else if(continuity == "C1") {
+				std::cout << " - Setup C1 continuity" << std::endl;
+				for (unsigned int i=0; i<subdivisions[0]; ++i)
+					mults[0][i] = degree-1;
+			}
+		  else if(continuity == "C2") {
+				std::cout << " - Setup C2 continuity" << std::endl;
+				for (unsigned int i=0; i<subdivisions[0]; ++i)
+					mults[0][i] = degree-2;
+			}
 
           if (k_refinement)
             for (unsigned int i=0; i<subdivisions[0]; ++i)
@@ -794,21 +829,32 @@ int main (int argc, char *argv[])
           mults.push_back(mults[0]);
           knots.push_back(knots[0]);
 
-          //double t0 = std::chrono::seconds();                 // <-- TO FIX
-          IgaHandler<2,2> iga_hd2(knots, mults, degree);
-          //double t1 = std::chrono::seconds();                 // <-- TO FIX
 
-          //times[cycle] = t1 - t0;
+		  // SETUP COMPLETED - STARTING THE MAIN PROCEDURES:
 
-          //std::cout << "Time to assemble the IgaHandler: "
-          //          << times[cycle] << " sec." << std::endl;
+		  // (1) - Initialize the IGA handler 2d:
+		  std::cout << " - Assemble IgaHandler  :(timer start):" << std::endl;
+		  Timings::Chrono Timer;		// NEW (START TIMER)
+          Timer.start();				// NEW
+            IgaHandler<2,2> iga_hd2(knots, mults, degree);
+          Timer.stop();					// NEW (STOP TIMER)
+          std::cout << "   Time to assemble the IgaHandler: \n"
+                    << Timer << std::endl;
 
+		  // (2) - Setup the main problem:
+		  std::cout << " - Initialization of the obstacle problem." << std::endl;
           ObstacleProblem<2> obstacle_problem(iga_hd2, convergence_table);
 
+		  // (3) - Run the problem:
+		  std::cout << " - Problem RUN" << std::endl;
           obstacle_problem.run (cycle);
 
+
+		  std::cout << " - CYCLE # " << cycle << " successfully ended!" << std::endl;
         }
 
+	  // PRINT THE TABLE (START): -----------------------
+	  std::cout << "\n\n - Preparing the output converging table." << std::endl;
       convergence_table.set_precision("L2", 3);
       convergence_table.set_precision("H1", 3);
       convergence_table.set_precision("Linfty", 3);
@@ -858,11 +904,17 @@ int main (int argc, char *argv[])
         error_filename += "_k_ref.txt";
       std::ofstream error_table_file(error_filename.c_str());
       convergence_table.write_text(error_table_file);
+	  // PRINT THE TABLE (END): -----------------------
 
 
+
+	  std::cout << " == CODE ENDED WITOUT EXCEPTION ==" << std::endl;
     }
+
+
   catch (std::exception &exc)
     {
+	  std::cout << " == ERROR #1 ==" << std::endl;
       std::cerr << std::endl << std::endl
                 << "----------------------------------------------------"
                 << std::endl;
@@ -874,8 +926,11 @@ int main (int argc, char *argv[])
 
       return 1;
     }
+
+
   catch (...)
     {
+	  std::cout << " == ERROR #2 ==" << std::endl;
       std::cerr << std::endl << std::endl
                 << "----------------------------------------------------"
                 << std::endl;

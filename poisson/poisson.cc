@@ -566,9 +566,9 @@ int main (int argc, char **argv)
   //--------------------------------------------------------
   char fe_name[]             = "bernstein"; // “bernstein”
   char quad_name[]           = "legendre";  // “legendre”
-  unsigned int degree        = 1;           // “1”
-  unsigned int n_cycles_down = 0;           // “0”
-  unsigned int n_cycles_up   = 5;           // “5”
+  unsigned int degree        = 1;           // 1
+  unsigned int n_cycles_down = 0;           // 0
+  unsigned int n_cycles_up   = 5;           // 5
   //--------------------------------------------------------
 
   char *tmp[3];

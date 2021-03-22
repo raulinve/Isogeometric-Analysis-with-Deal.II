@@ -13,7 +13,8 @@
 #include <deal.II/lac/sparse_matrix.h>
 #include <deal.II/fe/fe_tools.h>
 #include <deal.II/numerics/data_out.h>
-#include <deal.II/lac/sparse_direct.h>
+#include <deal.II/lac/sparse_direct.h>			// [DIRECT SOLVER    - UMFPACK]
+#include <deal.II/lac/solver_gmres.h>			// [ITERATIVE SOLVER - GMRES  ]
 #include <deal.II/numerics/matrix_tools.h>
 #include <deal.II/base/thread_management.h>
 #include <deal.II/base/function.h>
@@ -27,6 +28,8 @@
 
 #include "grid_generator.h"
 #include "iga_handler.h"
+
+#include <iomanip>
 
 
 DEAL_II_NAMESPACE_OPEN
@@ -250,7 +253,32 @@ IgaHandler<dim,spacedim>::IgaHandler (const std::vector<std::vector<double> > &k
 
   assemble_global_extractor();
 
-  square_global_extractor.initialize(square_C_CT);
+  std::cout << "\n\n  *********************************" << std::endl;
+  std::cout << "  DEBUG: \"iga_handler.cc\" > \"IgaHandler<dim,spacedim>::IgaHandler(knot, mults, deg)\"" << std::endl;  
+  std::cout << "  *********************************" << std::endl;  
+  std::cout << "  \"iga_handler.h\" > \"SparseMatrix<double> square_C_CT;\"" << std::endl;  
+  std::cout << "  \"iga_handler.h\" > \"SparseDirectUMFPACK square_global_extractor;\"\n" << std::endl;  
+
+  std::cout << "  \"square_C_CT\" matrix information: " << std::endl;
+  int m = square_C_CT.m();
+  int n = square_C_CT.n();
+  std::cout << "   Dimensions (mxn): " << m << " x " << n << std::endl;
+  std::cout << "   Non-zero elms:    " << square_C_CT.n_nonzero_elements () << std::endl;
+
+  // Print the matrix on screen:
+  /* // <- [REMOVE THE COMMENT TO PRINT THE MATRIX]
+  //std::vector<std::vector<double>> MAT(m, std::vector<double>(n, 0.0));
+  for (size_t i=0; i<square_C_CT.m(); ++i) {
+    for  (size_t j=0; j<square_C_CT.n(); ++j) {
+      //MAT[i][j] = square_C_CT(i,j);		// Used to store the matrix 
+      std::cout << std::setw(5) << square_C_CT(i,j) << ",";  // std::scientific
+    }
+    std::cout << std::endl;
+  } */
+
+  std::cout << "\n\n  ===== INITIALIZE GLOBAL EXTRACTOR : START ===== \n\n";
+  square_global_extractor.initialize(square_C_CT);			// [DIRECT SOLVER - UMFPACK]
+  std::cout << "\n\n  ===== INITIALIZE GLOBAL EXTRACTOR : END   ===== \n";
 }
 
 
@@ -262,7 +290,7 @@ IgaHandler<dim,spacedim>::n_cells(const std::vector<std::vector<double> > &p) co
   for (unsigned int i=0; i<p.size(); ++i)
     n *= (p[i].size()-1);
   return n;
-};
+}
 
 
 template <int dim, int spacedim>
@@ -287,7 +315,7 @@ IgaHandler<dim,spacedim>::n_dofs(const std::vector<std::vector<double> > &p,
   for (unsigned int i=0; i<p.size(); ++i)
     n *= n_dofs[i];
   return n;
-};
+}
 
 // Return the first non zero basis function with support on cell $el
 // on one direction
@@ -460,7 +488,9 @@ IgaHandler<dim,spacedim>::transform_vector_into_bspline_space(
   AssertDimension(dh.n_dofs(), src.size());
 
   GlobalExtractor.Tvmult(dst, src);
-  square_global_extractor.solve(dst);
+  std::cout << "\n\n ===== SOLVE GLOBAL EXTRACTOR : START ===== \n\n";
+  square_global_extractor.solve(dst);			// [DIRECT SOLVER - UMFPACK]
+  std::cout << "\n\n ===== SOLVE GLOBAL EXTRACTOR : END   ===== \n\n";
 }
 
 

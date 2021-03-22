@@ -15,15 +15,16 @@
 #include <deal.II/lac/precondition.h>
 #include <deal.II/lac/solver_cg.h>
 #include <deal.II/lac/sparse_matrix.h>
-//#include <deal.II/lac/compressed_sparsity_pattern.h>
-#include <deal.II/lac/constraint_matrix.h>
+//#include <deal.II/lac/compressed_sparsity_pattern.h>   // DEPRECATED
+//#include <deal.II/lac/constraint_matrix.h>             // DEPRECATED
+#include <deal.II/lac/affine_constraints.h>              // NEW
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_reordering.h>
 #include <deal.II/grid/grid_tools.h>
 #include <deal.II/grid/tria.h>
 #include <deal.II/grid/tria_accessor.h>
 #include <deal.II/grid/tria_iterator.h>
-#include <deal.II/grid/tria_boundary_lib.h>
+//#include <deal.II/grid/tria_boundary_lib.h>            // DEPRECATED
 #include <deal.II/dofs/dof_handler.h>
 #include <deal.II/dofs/dof_accessor.h>
 #include <deal.II/dofs/dof_tools.h>
