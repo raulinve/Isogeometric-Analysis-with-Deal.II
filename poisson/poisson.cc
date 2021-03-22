@@ -584,11 +584,11 @@ int main (int argc, char **argv)
     {
       AssertThrow(argc == 6,
                   ExcMessage("Wrong number of arguments: 0 or 5"));
-      AssertThrow(sscanf(argv[3], "%d", &degree) == 1,
+      AssertThrow(sscanf(argv[3], "%ud", &degree) == 1,
                   ExcMessage("Unrecognized argument 3"));
-      AssertThrow(sscanf(argv[4], "%d", &n_cycles_down) == 1,
+      AssertThrow(sscanf(argv[4], "%ud", &n_cycles_down) == 1,
                   ExcMessage("Unrecognized argument 4"));
-      AssertThrow(sscanf(argv[5], "%d", &n_cycles_up) == 1,
+      AssertThrow(sscanf(argv[5], "%ud", &n_cycles_up) == 1,
                   ExcMessage("Unrecognized argument 5"));
     }
 
