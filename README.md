@@ -24,6 +24,29 @@ Date: **MAR-2021**
 <br/>  
 
 ---
+### 📄 Documentation:
+
+Documentation files can be generated using [Doxygen](https://www.doxygen.nl/).  
+
+To install Doxygen on Linux, please type: `sudo apt-get install doxygen`.  
+If you prefere a Graphical User Interface (GUI): `sudo apt-get install doxygen-gui`.  [← suggested]  
+
+If you have doxygen installed on your system, you can generate the documentation files using these commands:  
+
+1. Open the Doxygen GUI interface by using this terminal command: `doxywizard`  
+2. A window should open, **click on** "**File**" **>** "**Open**" and **select the file named** "*Doxyfile*" (in the "*doc*" folder).  
+3. At this point some fileds in the GUI should have been automatically filled, **go to the** "**Run**" **tab**, and **press on** "**Run doxygen**"  
+4. When the program completes, **click on** "**Show HTML output**" to consult the documentation.  
+5. At this point you can close the Doxygen GUI.  
+
+Note: To open the documentation at any time, just search for the folder "*html*" into the "*doc*" folder and open the file named "**index.html**".  
+
+Note: For any other question, please refer to the Doxygen official website at this link: https://www.doxygen.nl/index.html.  
+
+
+<br/>  
+
+---
 ### ℹ️ Usage:
 
 <br/>  

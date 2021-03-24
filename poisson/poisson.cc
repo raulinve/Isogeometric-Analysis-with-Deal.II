@@ -1,45 +1,115 @@
-/* ---------------------------------------------------------------------
- * Copyright (C) 1999 - 2015 by the deal.II authors
- * Copyright (C) 2015 by Marco Tezzele, Nicola Cavallini, Luca Heltai
- *
- * This file has been modified from the example program step-4 of the
- * deal.II library.
- *
- * The deal.II library is free software; you can use it, redistribute
- * it, and/or modify it under the terms of the GNU Lesser General
- * Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * The full text of the license can be found in the file LICENSE at
- * the top level of the deal.II distribution.
- *
- * ---------------------------------------------------------------------
+/**
+* @file         poisson.cc
+* @brief        poisson code
+* @detail       Isogeometric Analysis for the solution of a poissoon equation using the deal.II library.
+* @author       Marco Tezzele, Nicola Cavallini, Luca Heltai, Raul Invernizzi.
+*/
+// @include      string.h
 
- *
- * Authors: Marco Tezzele, Nicola Cavallini, Luca Heltai 2014-2015
- */
+/*! \mainpage MAIN PAGE
+*
+* Isogeometric Analysis classes for the deal.II library.
+* 
+* <hr>
+* This code is used to introduce the Isogeometric Analysis (IGA) framework 
+* into the standard deal.II Finite Element (FE) library.
+* 
+* In this specific example named "poisson" a bezier polynomia approximation of 
+* the poisson function is computed and compared to the closed form solution.  <br> 
+* It is developed as a modification of step-4 tutorial of the deal.II library.
+* 
+*
+* Please refere to the most recent version available on GitHub at the following link:  
+* <a href="https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II">
+* Isogeometric-Analysis-with-Deal.II</a>. \n\n
+*
+* <hr>
+* <b>Usage:</b>  
+*
+* The executable takes 0 or 5 arguments to run, respectively: <br> 
+* <pre>
+* <tt><b>    ./poisson  </b></tt>
+*     or
+* <tt><b>    ./poisson  FE_TYPE  QUADRATURE  DEG  CYCLE_START  CYCLE_STOP </b></tt>
+* </pre>
+* 
+* The accepted arguments of the program are: <br> 
+* <pre>
+*    FE_TYPE:
+*        bernstein [default]
+*        lagrange
+*        lobatto
+*    QUADRATURE:
+*        legendre [default]
+*        lobatto
+*    DEG:         (es: 1) degree of the finite element space
+*    CYCLE_START: (es: 0) initial refinement of the grid
+*    CYCLE_STOP:  (es: 5) final refinement of the grid
+* </pre>
+* 
+* For example, the default command is: <tt><b>./poisson bernstein legendre 1 0 5 </b></tt>. \n
+* 
+* <hr>
+* <b>Classes & Methods:</b>  
+*
+* int <b>main</b> (int argc, char **argv)<br> 
+* 
+* class <b>"Solution"</b>:<br> 
+* Function: @f$ sin(2\pi\cdot p(0)) \cdot sin(3\pi\cdot p(1)) @f$ <br> 
+* class Solution : public Function<dim>  
+* double Solution<dim>::value (...)  
+* Tensor<1, dim> Solution<dim>::gradient  
+* 
+* class <b>"BoundaryValues"</b>:<br> 
+* Function: @f$ sin(2\pi\cdot p(0)) \cdot sin(3\pi\cdot p(1)) @f$ <br> 
+* class BoundaryValues : public Function<dim>  
+* double BoundaryValues<dim>::value  
+* BoundaryValues::value (solution at the boundary) :  
+* 
+* class <b>"RightHandSide"</b>:<br> 
+* Function: @f$ 13\pi^2 \cdot sin(2\pi\cdot p(0)) \cdot sin(3\pi\cdot p(1)) @f$ <br> 
+* class RightHandSide : public Function<dim>  
+* double RightHandSide<dim>::value  
+* 
+* class <b>"Laplace"</b>:<br> 
+* class Laplace  
+* Laplace<dim>::Laplace  
+* Laplace<dim>::~Laplace ()  
+* void Laplace<dim>::make_grid ()  
+* void Laplace<dim>::setup_system ()  
+* void Laplace<dim>::assemble_system ()  
+* void Laplace<dim>::solve ()  
+* void Laplace<dim>::refine_grid()  
+* void Laplace<dim>::output_results  
+* void Laplace<dim>::process_solution  
+* void Laplace<dim>::print_table  
+* void Laplace<dim>::run ()  
+* 
+* <hr>
 
-/*  This code is a modification of step-4 of the deal.II library,
- *  which was used to produce the results of the article
- *
- *  "Algorithms, data structures and applications for Isogeometric
- *  Analysis with the deal.II library",
- *  Marco Tezzele, Nicola Cavallini, Luca Heltai
- *
- * Usage: ./poisson finite_element_name quadrature_name degree first_cycle last_cycle
- * for example ./poisson bernstein legendre 2 1 3
- *
- * The accepted arguments of the program are
- *
- * finite_element_name  : bernstein, lagrange, lobatto
- * quadrature_name  : legendre, lobatto
- * degree   : degree of the finite element space
- * first_cycle    : initial refinement of the grid
- * last_cycle   : final refinement of the grid
- *
- * Only the differences between this program and step-4 of the deal.II
- * library have been documented. Please see there for a full
- * explanation of the undocumented parts.
- */
+*/
+
+/*! ---------------------------------------------------------------------
+* Copyright (C) 1999 - 2015 by the deal.II authors
+* Copyright (C) 2015 by Marco Tezzele, Nicola Cavallini, Luca Heltai
+*
+* This file has been modified from the example program step-4 of the
+* deal.II library.
+*
+* The deal.II library is free software; you can use it, redistribute
+* it, and/or modify it under the terms of the GNU Lesser General
+* Public License as published by the Free Software Foundation; either
+* version 2.1 of the License, or (at your option) any later version.
+* The full text of the license can be found in the file LICENSE at
+* the top level of the deal.II distribution.
+*
+* ---------------------------------------------------------------------
+*
+* Authors: Marco Tezzele, Nicola Cavallini, Luca Heltai 2014-2015
+*/
+
+
+
 
 #include <deal.II/grid/tria.h>
 #include <deal.II/dofs/dof_handler.h>
@@ -76,6 +146,15 @@
 
 using namespace dealii;
 
+//====================================================
+/**
+* @class   Solution
+* @brief   Class used to define the exact solution.
+*
+* This class implement the closed form solution of the analyzed problem.
+* It contains a value method which implement the expression of the exact solution 
+* and a gradient method used to implement the closed form gradient expression of the exact solution.
+*/
 template <int dim>
 class Solution : public Function<dim>
 {
@@ -84,10 +163,13 @@ public:
 
   virtual double value (const Point<dim>   &p,
                         const unsigned int  component = 0) const;
+
   virtual Tensor<1, dim> gradient (const Point<dim>   &p,
                                    const unsigned int  component = 0) const;
 };
 
+
+/// This method implement the closed form solution of the analyzed problem.
 template <int dim>
 double Solution<dim>::value (const Point<dim>   &p,
                              const unsigned int) const
@@ -95,6 +177,9 @@ double Solution<dim>::value (const Point<dim>   &p,
   return std::sin(2*p(0)*numbers::PI)*std::sin(3*p(1)*numbers::PI);
 }
 
+
+/// This method implement the gradient of the closed form solution of the analyzed problem. <br>
+/// @note This method is used only to compute the H1 norm.
 template <int dim>
 Tensor<1, dim> Solution<dim>::gradient (const Point<dim>   &p,
                                 const unsigned int) const
@@ -107,6 +192,13 @@ Tensor<1, dim> Solution<dim>::gradient (const Point<dim>   &p,
 }
 
 
+//====================================================
+/**
+* @class   BoundaryValues
+* @brief   Class used to define the solution at the boundaries.
+*
+* This class implement the function that the solution must have at the boundaries.
+*/
 template <int dim>
 class BoundaryValues : public Function<dim>
 {
@@ -118,6 +210,7 @@ public:
 };
 
 
+/// This method implement the function that the solution must have at the boundaries.
 template <int dim>
 double BoundaryValues<dim>::value (const Point<dim> &p,
                                    const unsigned int /*component*/) const
@@ -126,6 +219,13 @@ double BoundaryValues<dim>::value (const Point<dim> &p,
 }
 
 
+//====================================================
+/**
+* @class   RightHandSide
+* @brief   Class used to define the force vector.
+* 
+* This class implement the function that acts as forcing term.
+*/
 template <int dim>
 class RightHandSide : public Function<dim>
 {
@@ -137,6 +237,7 @@ public:
 };
 
 
+/// This method implement the function that acts as forcing term.
 template <int dim>
 double RightHandSide<dim>::value (const Point<dim> &p,
                                   const unsigned int /*component*/) const
@@ -145,35 +246,43 @@ double RightHandSide<dim>::value (const Point<dim> &p,
 }
 
 
+//====================================================
+/**
+* @class   Laplace
+* @brief   Main problem class
+* 
+* This class implement and collect every aspect of the poisson problem.
+*
+* @note The constructor differ from the step-4 example of the deal.II
+* library, in that this program admits some parameters from the
+* command line, and they are passed to the constructor of the
+* problem as additional arguments.
+*
+* The accepted arguments of the program are:
+* fe_name          : bernstein, lagrange, lobatto
+* quadrature_name  : legendre, lobatto
+* degree           : degree of the finite element space
+* n_cycles_up  : initial refinement of the grid
+* n_cycles_down  : final refinement of the grid
+* 
+*/
 template <int dim>
 class Laplace
 {
 public:
-  // The constructor differ from the step-4 example of the deal.II
-  // library, in that this program admits some parameters from the
-  // command line, and they are passed to the constructor of the
-  // problem as additional arguments.
-  //
-  //
-  // The accepted arguments of the program are
-  //
-  // fe_name    : bernstein, lagrange, lobatto
-  // quadrature_name  : legendre, lobatto
-  // degree   : degree of the finite element space
-  // n_cycles_up  : initial refinement of the grid
-  // n_cycles_down  : final refinement of the grid
-  //
   Laplace (const std::string fe_name,
            const std::string quadrature_name,
            const unsigned int degree,
            const unsigned int n_cycles_low,
            const unsigned int n_cycles_up);
   ~Laplace();
+
   void run ();
 
 private:
+
   void make_grid ();
-  void setup_system();
+  void setup_system ();
   void assemble_system ();
   void solve ();
   void refine_grid ();
@@ -210,7 +319,7 @@ private:
   Quadrature<dim-1>  boundary_quad;
 };
 
-
+/// Main problem class: Constructor
 template <int dim>
 Laplace<dim>::Laplace (const std::string fe_name,
                        const std::string quadrature_name,
@@ -251,6 +360,7 @@ Laplace<dim>::Laplace (const std::string fe_name,
     AssertThrow(false, ExcMessage("FE not supported"));
 }
 
+/// Main problem class: Destructor
 template <int dim>
 Laplace<dim>::~Laplace ()
 {
@@ -259,7 +369,7 @@ Laplace<dim>::~Laplace ()
     delete fe;
 }
 
-
+/// Main problem class: Method used to generate the triangulation and to refine it.
 template <int dim>
 void Laplace<dim>::make_grid ()
 {
@@ -267,6 +377,7 @@ void Laplace<dim>::make_grid ()
   triangulation.refine_global (n_cycles_low+1);
 }
 
+/// Main problem class: Method used to setup the matrix system.
 template <int dim>
 void Laplace<dim>::setup_system ()
 {
@@ -285,7 +396,7 @@ void Laplace<dim>::setup_system ()
   system_rhs.reinit (dof_handler.n_dofs());
 }
 
-
+/// Main problem class: Method used to assemble the main system.
 template <int dim>
 void Laplace<dim>::assemble_system ()
 {
@@ -361,7 +472,7 @@ void Laplace<dim>::assemble_system ()
                                       system_rhs);
 }
 
-
+/// Main problem class: This method is called in order to solve the system using the CG solver.
 template <int dim>
 void Laplace<dim>::solve ()
 {
@@ -383,14 +494,16 @@ void Laplace<dim>::solve ()
   cg_iter = solver_control.last_step();
 }
 
-
+/// Main problem class: Method used to refine the grid on each step.
 template <int dim>
 void Laplace<dim>::refine_grid()
 {
   triangulation.refine_global (1);
 }
 
-
+/// Main problem class: This method construct and save the image output files. <br>
+/*! In particular it prints on .vtk files the 3D plot of the function at every cycle step.
+*/
 template <int dim>
 void Laplace<dim>::output_results (const unsigned int cycle) const
 {
@@ -413,6 +526,9 @@ void Laplace<dim>::output_results (const unsigned int cycle) const
 }
 
 
+/// Main problem class: This method process the solution in order to compute the L2 and the H1 norm.  <br>
+/*! In addition it prepares the convergence table.
+*/
 template <int dim>
 void Laplace<dim>::process_solution(const unsigned int cycle)
 {
@@ -452,7 +568,7 @@ void Laplace<dim>::process_solution(const unsigned int cycle)
   convergence_table.add_value("H1", H1_error);
 }
 
-
+/// Main problem class: This method sets up the convergence table and print it on screen, on a .txt file and on a .tex file (if needed).
 template <int dim>
 void Laplace<dim>::print_table(const unsigned int cycle)
 {
@@ -508,7 +624,7 @@ void Laplace<dim>::print_table(const unsigned int cycle)
 }
 
 
-// This is the function which has the top-level control over everything. 
+/// Main problem class: This is the function which has the top-level control over everything. 
 template <int dim>
 void Laplace<dim>::run ()
 {
@@ -554,6 +670,11 @@ void Laplace<dim>::run ()
 }
 
 
+//====================================================
+/**
+* MAIN FUNCTION
+* Entry point of the entire code.
+*/
 int main (int argc, char **argv)
 {
 
