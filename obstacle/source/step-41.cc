@@ -1,3 +1,96 @@
+/**
+* @file         step-41.cc
+* @brief        step-41 tutorial solved using isogeometric analysis.
+* @detail       Isogeometric Analysis for the solution of an obstacle problem taken from the step-41 tutorial of the deal.II library.
+* @author       Marco Tezzele, Nicola Cavallini, Luca Heltai, Raul Invernizzi.
+*/
+// @include      grid_generator.h iga_handler.h
+
+/*! \mainpage MAIN PAGE
+*
+* Isogeometric Analysis classes for the deal.II library.
+* 
+* <hr>
+* This code is used to introduce the Isogeometric Analysis (IGA) framework 
+* into the standard deal.II Finite Element (FE) library.
+* 
+* This specific example named "step-41" is based on the Laplace equation 
+* in 2d and deals with the question "what happens if a membrane is deflected 
+* by some external force but is also constrained by an obstacle?" <br>
+* 
+* In other words, think of a elastic membrane clamped at the boundary 
+* to a rectangular frame, its shape will be modified due to gravity acting on it.  <br>
+* What happens now if there is an obstacle under the membrane that prevents 
+* it from reaching its equilibrium position if gravity was the only existing force?  <br>
+* 
+* Please refere to the most recent version available on GitHub at the following link:  
+* <a href="https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II">
+* Isogeometric-Analysis-with-Deal.II</a>. \n\n
+*
+* <hr>
+* <b>Usage:</b>  
+*
+* The executable takes no arguments, to run it is sufficient to use the following command: <br> 
+* <pre>
+* <tt><b>    ./exe  </b></tt>
+* </pre>
+* 
+* The default parameters are:: <br> 
+* <pre>
+* <tt>    Number of cycles       = 6      </tt>
+* <tt>    Polynomial degree      = 0      </tt>
+* <tt>    Type of refinement     = h-ref  </tt>
+* <tt>    Polynomial continuity  = C1     </tt>
+* </pre>
+* 
+* <hr>
+* <b>Classes & Methods:</b>  
+*
+* int <b>main</b> (int argc, char **argv)<br> 
+* 
+* class <b>"Solution"</b>:<br>
+* Function: @f$ val = {p(0)}^2 + {p(1)}^2 - 0.49  [if >0 ={val}^2]  [if <=0 =0] @f$ <br> 
+* class Solution : public Function<dim>  
+* double Solution<dim>::value (...)  
+* Tensor<1, dim> Solution<dim>::gradient  
+* 
+* class <b>"BoundaryValues"</b>:<br> 
+* Function: @f$ ( {p(0)}^2) + {p(1)}^2 - 0.49)^2 @f$ <br> 
+* class BoundaryValues : public Function<dim>  
+* double BoundaryValues<dim>::value  
+* BoundaryValues::value (solution at the boundary) :  
+* 
+* class <b>"RightHandSide"</b>:<br> 
+* Given: @f$ p.distance(Point) @f$  <br>
+* @f$ if >  0.5 : -8\cdot (2\cdot {p(0)}^2 + 2\cdot {p(1)}^2 - 0.49) @f$  <br>
+* @f$ if <= 0.5 : -8\cdot 0.49\cdot (1-{p(0)}^2 - {p(1)}^2 + 0.49)   @f$  <br>
+* class RightHandSide : public Function<dim>  
+* double RightHandSide<dim>::value  
+* 
+* class <b>"Obstacle"</b>:<br> 
+* obstacle: @f$ =0 @f$  <br>
+* class RightHandSide : public Function<dim>  
+* double Obstacle<dim>::value
+* 
+* class <b>"Laplace"</b>:<br> 
+* class Laplace  
+* Laplace<dim>::Laplace  
+* Laplace<dim>::~Laplace ()  
+* void Laplace<dim>::make_grid ()  
+* void Laplace<dim>::setup_system ()  
+* void Laplace<dim>::assemble_system ()  
+* void Laplace<dim>::solve ()  
+* void Laplace<dim>::refine_grid()  
+* void Laplace<dim>::output_results  
+* void Laplace<dim>::process_solution  
+* void Laplace<dim>::print_table  
+* void Laplace<dim>::run ()  
+* 
+* <hr>
+
+*/
+
+
 /* ---------------------------------------------------------------------
  * $Id: step-41.cc 30526 2013-08-29 20:06:27Z felix.gruber $
  *
@@ -13,7 +106,6 @@
  * the top level of the deal.II distribution.
  *
  * ---------------------------------------------------------------------
-
  *
  * Authors: Joerg Frohne, Texas A&M University and
  *                        University of Siegen, 2011, 2012
@@ -70,6 +162,162 @@ namespace Step41
 {
   using namespace dealii;
 
+//====================================================
+/**
+* @class   Solution
+* @brief   Class used to define the exact solution.
+*
+* This class implement the closed form solution of the analyzed problem.
+* It contains a value method which implement the expression of the exact solution 
+* and a gradient method used to implement the closed form gradient expression of the exact solution.
+*/
+  template <int dim>
+  class Solution : public Function<dim>
+  {
+  public:
+    Solution () : Function<dim>() {}
+
+    virtual double value (const Point<dim>   &p,
+                          const unsigned int  component = 0) const;
+    virtual Tensor<1,dim> gradient (const Point<dim>   &p,
+                                    const unsigned int  component = 0) const;
+  };
+
+
+/// This method implement the closed form solution of the analyzed problem.
+  template <int dim>
+  double Solution<dim>::value (const Point<dim> &p,
+                               const unsigned int /*component*/) const
+  {
+    double value = p(0)*p(0) + p(1)*p(1) - 0.49;
+
+    if ( value > 0 )
+      return std::pow( value, 2);
+    else
+      return 0;
+  }
+
+
+/// This method implement the gradient of the closed form solution of the analyzed problem. <br>
+/// @note This method is used only to compute the H1 norm.
+  template <int dim>
+  Tensor<1,dim> Solution<dim>::gradient (const Point<dim> &p,
+                                         const unsigned int /*component*/) const
+  {
+    Tensor<1,dim> return_value;
+
+    double value = p(0)*p(0) + p(1)*p(1) - 0.49;
+
+    if ( value > 0)
+      {
+        return_value[0] = 4 * p(0) * value;
+        return_value[1] = 4 * p(1) * value;
+      }
+    else
+      {
+        return_value[0] = 0;
+        return_value[1] = 0;
+      }
+    return return_value;
+  }
+
+
+//====================================================
+/**
+* @class   RightHandSide
+* @brief   Class used to define the force vector.
+* 
+* This class implement the function that acts as forcing term.
+*/
+  template <int dim>
+  class RightHandSide : public Function<dim>
+  {
+  public:
+    RightHandSide () : Function<dim>() {}
+
+    virtual double value (const Point<dim>   &p,
+                          const unsigned int  component = 0) const;
+  };
+
+/// This method implement the function that acts as forcing term.
+  template <int dim>
+  double RightHandSide<dim>::value (const Point<dim> &p,
+                                    const unsigned int component) const
+  {
+    Assert (component == 0, ExcNotImplemented());
+
+    if (p.distance(Point<dim>()) > 0.5)
+      return -8 * (2*p(0)*p(0) + 2*p(1)*p(1) - 0.49);
+    else
+      return -8 * 0.49 * (1 - p(0)*p(0) - p(1)*p(1) + 0.49);
+  }
+
+
+//====================================================
+/**
+* @class   BoundaryValues
+* @brief   Class used to define the solution at the boundaries.
+*
+* This class implement the function that the solution must have at the boundaries.
+*/
+  template <int dim>
+  class BoundaryValues : public Function<dim>
+  {
+  public:
+    BoundaryValues () : Function<dim>() {}
+
+    virtual double value (const Point<dim>   &p,
+                          const unsigned int  component = 0) const;
+  };
+
+/// This method implement the function that the solution must have at the boundaries.
+  template <int dim>
+  double BoundaryValues<dim>::value (const Point<dim> &p,
+                                     const unsigned int component) const
+  {
+    Assert (component == 0, ExcNotImplemented());
+    return std::pow( p(0)*p(0) + p(1)*p(1) - 0.49, 2);
+  }
+
+
+//====================================================
+/**
+* @class   Obstacle
+* @brief   Class used to define the obstacle forcing the membrane.
+* 
+* This class implement the function characterizing the obstacle over which the membrane lies.
+* 
+*/
+  template <int dim>
+  class Obstacle : public Function<dim>
+  {
+  public:
+    Obstacle () : Function<dim>() {}
+
+    virtual double value (const Point<dim>   &p,
+                          const unsigned int  component = 0) const;
+  };
+
+  template <int dim>
+  double Obstacle<dim>::value (const Point<dim> &p,
+                               const unsigned int component) const
+  {
+    Assert (component == 0, ExcNotImplemented());
+    int val = p(0) * 0;    // <- [ USELESS ROW - Just to void warnings of unused p()! ]
+    return val*0;
+  }
+
+
+//====================================================
+/**
+* @class   ObstacleProblem
+* @brief   Main problem class
+* 
+* This class implement and collect every aspect of the defined problem.
+*
+* @note Differences with respect to the standard step-41. [TO BE UPDATED]
+* 
+*/
   template <int dim>
   class ObstacleProblem
   {
@@ -127,118 +375,7 @@ namespace Step41
   };
 
 
-
-  template <int dim>
-  class Solution : public Function<dim>
-  {
-  public:
-    Solution () : Function<dim>() {}
-
-    virtual double value (const Point<dim>   &p,
-                          const unsigned int  component = 0) const;
-    virtual Tensor<1,dim> gradient (const Point<dim>   &p,
-                                    const unsigned int  component = 0) const;
-  };
-
-
-  template <int dim>
-  double Solution<dim>::value (const Point<dim> &p,
-                               const unsigned int /*component*/) const
-  {
-    double value = p(0)*p(0) + p(1)*p(1) - 0.49;
-
-    if ( value > 0 )
-      return std::pow( value, 2);
-    else
-      return 0;
-  }
-
-  template <int dim>
-  Tensor<1,dim> Solution<dim>::gradient (const Point<dim> &p,
-                                         const unsigned int /*component*/) const
-  {
-    Tensor<1,dim> return_value;
-
-    double value = p(0)*p(0) + p(1)*p(1) - 0.49;
-
-    if ( value > 0)
-      {
-        return_value[0] = 4 * p(0) * value;
-        return_value[1] = 4 * p(1) * value;
-      }
-    else
-      {
-        return_value[0] = 0;
-        return_value[1] = 0;
-      }
-    return return_value;
-  }
-
-
-
-  template <int dim>
-  class RightHandSide : public Function<dim>
-  {
-  public:
-    RightHandSide () : Function<dim>() {}
-
-    virtual double value (const Point<dim>   &p,
-                          const unsigned int  component = 0) const;
-  };
-
-  template <int dim>
-  double RightHandSide<dim>::value (const Point<dim> &p,
-                                    const unsigned int component) const
-  {
-    Assert (component == 0, ExcNotImplemented());
-
-    if (p.distance(Point<dim>()) > 0.5)
-      return -8 * (2*p(0)*p(0) + 2*p(1)*p(1) - 0.49);
-    else
-      return -8 * 0.49 * (1 - p(0)*p(0) - p(1)*p(1) + 0.49);
-  }
-
-
-
-  template <int dim>
-  class BoundaryValues : public Function<dim>
-  {
-  public:
-    BoundaryValues () : Function<dim>() {}
-
-    virtual double value (const Point<dim>   &p,
-                          const unsigned int  component = 0) const;
-  };
-
-  template <int dim>
-  double BoundaryValues<dim>::value (const Point<dim> &p,
-                                     const unsigned int component) const
-  {
-    Assert (component == 0, ExcNotImplemented());
-    return std::pow( p(0)*p(0) + p(1)*p(1) - 0.49, 2);
-  }
-
-
-  template <int dim>
-  class Obstacle : public Function<dim>
-  {
-  public:
-    Obstacle () : Function<dim>() {}
-
-    virtual double value (const Point<dim>   &p,
-                          const unsigned int  component = 0) const;
-  };
-
-  template <int dim>
-  double Obstacle<dim>::value (const Point<dim> &p,
-                               const unsigned int component) const
-  {
-    Assert (component == 0, ExcNotImplemented());
-    int val = p(0) * 0;    // <- [ USELESS ROW - Just to void warnings of unused p()! ]
-    return val*0;
-  }
-
-
+/// Main problem class: Constructor
   template <int dim>
   ObstacleProblem<dim>::ObstacleProblem (IgaHandler<dim,dim> &iga_handler,
                                          ConvergenceTable &convergence_table)
@@ -253,6 +390,7 @@ namespace Step41
   {}
 
 
+/// Main problem class: Destructor
   template <int dim>
   ObstacleProblem<dim>::~ObstacleProblem ()
   {
@@ -264,6 +402,7 @@ namespace Step41
   }
 
 
+/// Main problem class: Method used to generate the triangulation and to refine it.
   template <int dim>
   void ObstacleProblem<dim>::make_grid ()
   {
@@ -280,6 +419,7 @@ namespace Step41
   }
 
 
+/// Main problem class: Method used to setup the matrix system.
   template <int dim>
   void ObstacleProblem<dim>::setup_system ()
   {
@@ -338,7 +478,7 @@ namespace Step41
   }
 
 
-
+/// Main problem class: Method used to assemble the main system.
   template <int dim>
   void ObstacleProblem<dim>::assemble_system ()
   {
@@ -396,7 +536,7 @@ namespace Step41
   }
 
 
-
+/// Main problem class: Method used to assemble the mass matrix.
   template <int dim>
   void
   ObstacleProblem<dim>::
@@ -439,7 +579,7 @@ namespace Step41
   }
 
 
-
+/// Main problem class: Method used to update the solution.
   template <int dim>
   void
   ObstacleProblem<dim>::update_solution_and_constraints ()
@@ -532,7 +672,7 @@ namespace Step41
   }
 
 
-
+/// Main problem class: This method is called in order to solve the system.
   template <int dim>
   void ObstacleProblem<dim>::solve ()
   {
@@ -557,7 +697,9 @@ namespace Step41
   }
 
 
-
+/// Main problem class: This method construct and save the image output files. <br>
+/*! In particular it prints on .vtk files the 3D plot of the function at every cycle step.
+*/
   template <int dim>
   void ObstacleProblem<dim>::output_results (const unsigned int iteration)
   {
@@ -614,6 +756,9 @@ namespace Step41
   }
 
 
+/// Main problem class: This method process the solution in order to compute the L2 and the H1 norm.  <br>
+/*! In addition it prepares the convergence table.
+*/
   template <int dim>
   void ObstacleProblem<dim>::compute_error (unsigned int cycle)
   {
@@ -668,6 +813,7 @@ namespace Step41
   }
 
 
+/// Main problem class: This is the function which has the top-level control over everything. 
   template <int dim>
   void ObstacleProblem<dim>::run (unsigned int cycle)
   {
@@ -721,7 +867,11 @@ namespace Step41
 
 
 
-
+//====================================================
+/**
+* MAIN FUNCTION
+* Entry point of the entire code.
+*/
 int main (int argc, char *argv[])
 {
   std::cout << " " << std::endl;

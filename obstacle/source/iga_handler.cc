@@ -37,18 +37,12 @@ DEAL_II_NAMESPACE_OPEN
 //using namespace dealii;
 
 
-/* Return the second elapsed since Epoch (00:00:00 UTC, January 1, 1970)
-
-double seconds()
-{
-  struct timeval tmp;
-  double sec;
-  gettimeofday( &tmp, (struct timezone *)0 );
-  sec = tmp.tv_sec + ((double)tmp.tv_usec)/1000000.0;
-  return sec;
-}
- */
-
+//====================================================
+/**
+* Global function
+*
+* Perform the Kronecker product over matrices.
+*/
 FullMatrix<double> kronecker_product(const FullMatrix<double> &a,
                                      const FullMatrix<double> &b)
 {
@@ -59,6 +53,13 @@ FullMatrix<double> kronecker_product(const FullMatrix<double> &a,
   return axb;
 }
 
+
+//====================================================
+/**
+* Global function
+*
+* Perform the Kronecker product over vectors.
+*/
 std::vector<unsigned int> kronecker_product(const std::vector<unsigned int> &a,
                                             const std::vector<unsigned int> &b,
                                             unsigned int Nb)
@@ -74,6 +75,12 @@ std::vector<unsigned int> kronecker_product(const std::vector<unsigned int> &a,
 }
 
 
+//====================================================
+/**
+* Global function
+*
+* Reduced row echelon form.
+*/
 void reduced_row_echelon_form (FullMatrix<double> &matrix,
                                std::vector<unsigned int> &jb,
                                double toll)
@@ -135,6 +142,12 @@ void reduced_row_echelon_form (FullMatrix<double> &matrix,
 
 
 
+
+//====================================================
+/**
+* @class   IgaHandler
+* @brief   Constructor.
+*/
 template <int dim, int spacedim>
 IgaHandler<dim,spacedim>::IgaHandler (const std::vector<std::vector<double> > &knot_vectors,
                                       const std::vector<std::vector<unsigned int> > &mults,
@@ -282,6 +295,7 @@ IgaHandler<dim,spacedim>::IgaHandler (const std::vector<std::vector<double> > &k
 }
 
 
+
 template <int dim, int spacedim>
 unsigned int
 IgaHandler<dim,spacedim>::n_cells(const std::vector<std::vector<double> > &p) const
@@ -291,6 +305,7 @@ IgaHandler<dim,spacedim>::n_cells(const std::vector<std::vector<double> > &p) co
     n *= (p[i].size()-1);
   return n;
 }
+
 
 
 template <int dim, int spacedim>

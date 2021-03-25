@@ -49,7 +49,10 @@ DEAL_II_NAMESPACE_OPEN
  * @author Marco Tezzele, Luca Heltai, 2013
  */
 
-
+//====================================================
+/**
+* @class   UnivariateBezierExtractor
+*/
 struct UnivariateBezierExtractor
 {
   // Degree of the BSpline
@@ -89,6 +92,9 @@ struct UnivariateBezierExtractor
 };
 
 
+//====================================================
+/**
+*/
 // This function performs a Kronecker product between two full matrices given as input
 // and returns the resulting full matrix
 FullMatrix<double> kronecker_product(const FullMatrix<double> &a,
@@ -108,6 +114,10 @@ void reduced_row_echelon_form (FullMatrix<double> &matrix,
                                double toll=1e-6);
 
 
+//====================================================
+/**
+* @class   BezierExtractor
+*/
 template<int dim>
 struct BezierExtractor
 {
@@ -155,6 +165,13 @@ struct BezierExtractor
 };
 
 
+
+//====================================================
+/**
+* @class   IgaHandler
+* @brief   This class handle the Isogeometric Analysis tools needed to compute the solution.
+*
+*/
 template <int dim, int spacedim>
 class IgaHandler
 {

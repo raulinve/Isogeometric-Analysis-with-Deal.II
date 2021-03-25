@@ -42,7 +42,6 @@ DEAL_II_NAMESPACE_OPEN
 namespace GridGenerator
 {
 
-
   template <int dim, int spacedim>
   void
   subdivided_hyper_rectangle(
@@ -50,9 +49,6 @@ namespace GridGenerator
     const std::vector< std::vector<double> >   &p)
   {
     AssertDimension(p.size(),dim);
-
-
-
 
     // Check the consistency of
     // the points vector, i.e. that
@@ -64,66 +60,36 @@ namespace GridGenerator
         Assert(p[d][i-1] < p[d][i],
                ExcMessage("Points are not properly ordered") );
 
-
-
     // then generate the necessary
     // points
     std::vector<Point<spacedim> > points;
 
+    switch (dim) {
 
-
-    switch (dim)
-      {
-
-      case 1:
-
-      {
-
-        for (unsigned int i=0; i<p[0].size(); ++i)
-          {
+      case 1: {
+        for (unsigned int i=0; i<p[0].size(); ++i) {
             Point<spacedim> tmp;
             tmp[0] = p[0][i];
             points.push_back( tmp );
-          }
+        }
+        break; }
 
-
-        break;
-
-      }
-
-
-      case 2:
-
-      {
-
+      case 2: {
         unsigned int n_x = p[0].size();
-
         unsigned int n_y = p[1].size();
-
         for (unsigned int j=0; j<n_y; ++j)
-          for (unsigned int i=0; i<n_x; ++i)
-            {
+          for (unsigned int i=0; i<n_x; ++i) {
               Point<spacedim> tmp;
               tmp[0] = p[0][i];
               tmp[1] = p[1][j];
               points.push_back( tmp );
-            }
+          }
+          break; }
 
-        break;
-
-      }
-
-
-      case 3:
-
-      {
-
+      case 3: {
         unsigned int n_x = p[0].size();
-
         unsigned int n_y = p[1].size();
-
         unsigned int n_z = p[2].size();
-
         for (unsigned int k=0; k<n_z; ++k)
           for (unsigned int j=0; j<n_y; ++j)
             for (unsigned int i=0; i<n_x; ++i)
@@ -134,140 +100,74 @@ namespace GridGenerator
                 tmp[2] = p[2][k];
                 points.push_back( tmp );
               }
-        break;
-
-
-      }
-
+        break; }
 
       default:
-
         Assert (false, ExcNotImplemented());
-
       }
-
 
 
     // next create the cells
     // Prepare cell data
     std::vector<CellData<dim> > cells;
 
-    switch (dim)
-      {
+    switch (dim) {
 
-      case 1:
-
-      {
-
+      case 1: {
         unsigned int x_cells = int(p[0].size())-1;
-
         cells.resize(x_cells);
-
         for (unsigned int x=0; x<x_cells; ++x)
           {
-
             cells[x].vertices[0] = x;
-
             cells[x].vertices[1] = x+1;
-
             cells[x].material_id = 0;
-
           }
+        break; }
 
-        break;
-
-      }
-
-
-      case 2:
-
-      {
-
+      case 2: {
         unsigned int x_cells = int(p[0].size())-1;
-
         unsigned int y_cells = int(p[1].size())-1;
-
         cells.resize(x_cells*y_cells);
-
         for (unsigned int y=0; y<y_cells; ++y)
           for (unsigned int x=0; x<x_cells; ++x)
             {
-
               const unsigned int c = x+y*(x_cells);
-
               cells[c].vertices[0] = y*(x_cells+1)+x;
-
               cells[c].vertices[1] = y*(x_cells+1)+x+1;
-
               cells[c].vertices[2] = (y+1)*(x_cells+1)+x;
-
               cells[c].vertices[3] = (y+1)*(x_cells+1)+x+1;
-
               cells[c].material_id = 0;
-
             }
+        break; }
 
-        break;
-
-      }
-
-
-      case 3:
-
-      {
-
+      case 3: {
         unsigned int x_cells = int(p[0].size())-1;
-
         unsigned int y_cells = int(p[1].size())-1;
-
         unsigned int z_cells = int(p[2].size())-1;
-
         cells.resize(x_cells*y_cells*z_cells);
-
-
         const unsigned int n_x  = (x_cells+1);
-
         const unsigned int n_xy = (x_cells+1)*(y_cells+1);
-
 
         for (unsigned int z=0; z<z_cells; ++z)
           for (unsigned int y=0; y<y_cells; ++y)
             for (unsigned int x=0; x<x_cells; ++x)
               {
-
                 const unsigned int c = x+y*x_cells +
                                        z*x_cells*y_cells;
-
                 cells[c].vertices[0] = z*n_xy + y*n_x + x;
-
                 cells[c].vertices[1] = z*n_xy + y*n_x + x+1;
-
                 cells[c].vertices[2] = z*n_xy + (y+1)*n_x + x;
-
                 cells[c].vertices[3] = z*n_xy + (y+1)*n_x + x+1;
-
                 cells[c].vertices[4] = (z+1)*n_xy + y*n_x + x;
-
                 cells[c].vertices[5] = (z+1)*n_xy + y*n_x + x+1;
-
                 cells[c].vertices[6] = (z+1)*n_xy + (y+1)*n_x + x;
-
                 cells[c].vertices[7] = (z+1)*n_xy + (y+1)*n_x + x+1;
-
                 cells[c].material_id = 0;
-
               }
-
-        break;
-
-
-      }
-
+        break; }
 
       default:
-
         Assert (false, ExcNotImplemented());
-
       }
 
 

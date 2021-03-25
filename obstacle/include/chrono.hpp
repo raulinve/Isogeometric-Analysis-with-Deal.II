@@ -1,4 +1,4 @@
-//! An example of use of the C++11 chrono library.
+//! Little C++11 header-only collection of utilities used to take running time of code segments.
 
 /*
 This file illustrate the use of the ctime library,
