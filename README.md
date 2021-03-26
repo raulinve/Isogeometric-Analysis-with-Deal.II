@@ -141,6 +141,35 @@ The executable takes no arguments. To run, go to the "build" folder, and use the
 
 <br/>  
 
+#### ↘️ Code output:
+
+The main outputs are usually easy-to-consult text files reporting the convergence table and other execution data.  
+
+The **output image files** are saved in **.vtk** format.  
+The *Visualization Toolkit* (*VTK*) is an open-source software system for 3D computer graphics, image processing and scientific visualization.  
+
+In order to open *.vtk* files you can use a graphical software like "**VisIt**".  
+
+In order to install VisIt:  
+1. Go to the project website: https://wci.llnl.gov/simulation/computer-codes/visit/executables;
+2. Download the archive for your system (es: *Linux - x86_64 64 bit Ubuntu 20*) and download also the "*VisIt install script*";
+3. Make the install script executable (es: $`chmod 755 visit-install3_1_4`);
+4. Use the following command to install the program:  
+$`sudo [script_name] [visit version] [System in use] [Installation path]`  
+Example:  $`sudo visit-install3_1_4 3.1.4 linux-x86_64-ubuntu20 /usr/local/bin/visit`  
+5. During the installation, if asked, select the remote-computing center nearest to your location and press *enter* until the installation has finished.
+
+Steps to correctly see the .vtk results (for beginners):  
+1. Open VisIt: `/usr/local/bin/visit/bin/visit`;
+2. Click on "Open" > Select the directory > Select the \*.vtk database;
+3. Now press on "Add" > "Pseudocolor" > "Active set";
+4. Make the plot 3D: "Operators" > "Transform" > "Elevate";
+5. Click on "**Draw**" and you should see a 3D movable picture in the Window.
+
+Note: It is possible to add features to the plot as "Contour" or "Mesh".
+
+<br/>  
+
 ---
 ### 🛠️ Installation
 
