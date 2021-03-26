@@ -162,6 +162,8 @@ namespace Step41
 {
   using namespace dealii;
 
+  bool original_problem_41 = true;
+
 //====================================================
 /**
 * @class   Solution
@@ -244,12 +246,18 @@ namespace Step41
   double RightHandSide<dim>::value (const Point<dim> &p,
                                     const unsigned int component) const
   {
-    Assert (component == 0, ExcNotImplemented());
+     if (original_problem_41) {
+		(void)component;
+		AssertIndexRange(component, 1);
+		return -10;
+     } else {
+		Assert (component == 0, ExcNotImplemented());
 
-    if (p.distance(Point<dim>()) > 0.5)
-      return -8 * (2*p(0)*p(0) + 2*p(1)*p(1) - 0.49);
-    else
-      return -8 * 0.49 * (1 - p(0)*p(0) - p(1)*p(1) + 0.49);
+		if (p.distance(Point<dim>()) > 0.5)
+		  return -8 * (2*p(0)*p(0) + 2*p(1)*p(1) - 0.49);
+		else
+		  return -8 * 0.49 * (1 - p(0)*p(0) - p(1)*p(1) + 0.49);
+     }
   }
 
 
@@ -275,8 +283,14 @@ namespace Step41
   double BoundaryValues<dim>::value (const Point<dim> &p,
                                      const unsigned int component) const
   {
-    Assert (component == 0, ExcNotImplemented());
-    return std::pow( p(0)*p(0) + p(1)*p(1) - 0.49, 2);
+     if (original_problem_41) {
+        (void)component;
+        AssertIndexRange(component, 1);
+        return 0;
+     } else {
+        Assert (component == 0, ExcNotImplemented());
+        return std::pow( p(0)*p(0) + p(1)*p(1) - 0.49, 2);
+     }
   }
 
 
@@ -302,9 +316,22 @@ namespace Step41
   double Obstacle<dim>::value (const Point<dim> &p,
                                const unsigned int component) const
   {
-    Assert (component == 0, ExcNotImplemented());
-    int val = p(0) * 0;    // <- [ USELESS ROW - Just to void warnings of unused p()! ]
-    return val*0;
+     if (original_problem_41) {
+        (void)component;
+        Assert(component == 0, ExcIndexRange(component, 0, 1));
+        if (p(0) < -0.5)
+          return -0.2;
+        else if (p(0) >= -0.5 && p(0) < 0.0)
+          return -0.4;
+        else if (p(0) >= 0.0 && p(0) < 0.5)
+          return -0.6;
+        else
+          return -0.8;
+     } else {
+        Assert (component == 0, ExcNotImplemented());
+        int val = p(0) * 0;    // <- [ USELESS ROW - Just to void warnings of unused p()! ]
+        return val*0;
+     }
   }
 
 

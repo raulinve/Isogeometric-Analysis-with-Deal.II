@@ -12,14 +12,16 @@ This repository contains code used to introduce the Isogeometric Analysis (IGA) 
 <br/>  
 
 ---
-### 🆕 Recent updates:
-Date: **MAR-2021**
+### 🆕 Major updates:
+Last update: **MAR-2021**  
 
+From newest to oldest:  
+* Note: Added Doxygen documentation.
+* Obstacle example: :warning: BUG IN EXECUTION.
+* Obstacle example: :heavy_check_mark: Fixed  (*The code now compiles without errors or warnings*).
+* Poisson example : Improved (*Reorganization of the code, improved user interaction*).
+* Poisson example : :heavy_check_mark: Fixed  (*The code now compiles without errors or warnings*).
 * Note: A previous version of this repository has been completely deleted and substituted with this new one.
-* Poisson example : :heavy_check_mark: Fixed  (*The code now compiles without errors or warnings*)
-* Poisson example : Improved (*Reorganization of the code, improved user interaction*)
-* Obstacle example : :heavy_check_mark: Fixed  (*The code now compiles without errors or warnings*)
-* Obstacle example : :warning: BUG IN EXECUTION
 
 <br/>  
 
@@ -70,7 +72,10 @@ make
 ```
 NOTE: The default installation folder of deal.II library should be: `/usr/include/deal.II/`
 
-If everything went well, you should have an executable named `poisson` in the new *build* directory. 
+If everything went well, you should have an executable named `poisson` in the new *build* directory.  
+
+Note: At this point, if you want to recompile the code after some changes to the source code, 
+it is sufficient to go to the *build* directory and use the command $`make`.
 
 
 #### 👉 Instructions to **execute** the code:
@@ -123,10 +128,13 @@ NOTE: The default installation folder of deal.II library should be: `/usr/includ
 
 If everything went well, you should have an executable named `exe` in the new *build* directory. 
 
+Note: At this point, if you want to recompile the code after some changes to the source code, 
+it is sufficient to go to the *build* directory and use the command $`make`.
+
 
 #### 👉 Instructions to **execute** the code:
 
-The executable takes no arguments. To run use the following command:
+The executable takes no arguments. To run, go to the "build" folder, and use the following command:
 ```
 ./exe
 ```

@@ -1,0 +1,106 @@
+
+
+MEMEBERS OF IGA_HANDLER CLASS:
+----------------------------------------------------
+  ...
+
+  SparsityPattern            sparsity;
+  SparseMatrix<double>       GlobalExtractor;
+
+  SparsityPattern            square_sparsity;
+  SparseMatrix<double>       square_C_CT;         [<- MATRIX]
+
+  AffineConstraints<double>  constraints_matrix;
+
+  SparseDirectUMFPACK        square_global_extractor;
+
+  ...
+----------------------------------------------------
+
+
+The code has problems when initializing the IgaHandler:
+  IgaHandler<dim,spacedim>::IgaHandler  // constructor
+
+Inside IgaHandler.cc it fails at:
+  square_global_extractor.initialize(square_C_CT);
+
+INFO:
+
+  "square_global_extractor" 
+    is declared in the header as:
+    SparseDirectUMFPACK square_global_extractor;
+
+  ".initialize" 
+    Initialize memory and call SparseDirectUMFPACK::factorize. 
+
+  "square_C_CT" is a matrix declared in the header as:
+    SparseMatrix<double> square_C_CT;
+    [this matrix is printed on terminal to check it]
+
+    It is initialized with the method:
+      assemble_global_extractor();
+        unsigned int n_d = n_dofs(knot_vectors, mults, degree);
+        [...]
+        [ GlobalExtractor ... ]
+        [...]
+        DynamicSparsityPattern scp(n_d,n_d);
+        square_sparsity.copy_from(scp);
+        square_C_CT.reinit(square_sparsity);
+        GlobalExtractor.Tmmult(square_C_CT, GlobalExtractor);
+         ( Perform matrix-matrix multiplication as:  
+           square_C_CT = (GlobalExtractor)^T * GlobalExtractor )
+
+
+
+
+
+
+MATRIX (square_C_CT):
+
+Cond number:  10825906985310260  (1.0826E+16)
+
+   16    0    2    2    0    0    0    0    0    0    0    0    2    0 0.25 0.25    0    0    2    0 0.25 0.25    0    0    0    0    0    0    0    0    0    0    0    0    0    0
+    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0
+    2    0    4    4    0    0    0    0    0    0    0    0 0.25    0  0.5  0.5    0    0 0.25    0  0.5  0.5    0    0    0    0    0    0    0    0    0    0    0    0    0    0
+    2    0    4    4    0    0    0    0    0    0    0    0 0.25    0  0.5  0.5    0    0 0.25    0  0.5  0.5    0    0    0    0    0    0    0    0    0    0    0    0    0    0
+    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0
+    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0
+    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0
+    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0
+    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0
+    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0
+    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0
+    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0
+    2    0 0.25 0.25    0    0    0    0    0    0    0    0    4    0  0.5  0.5    0    0    4    0  0.5  0.5    0    0    0    0    0    0    0    0    0    0    0    0    0    0
+    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0
+ 0.25    0  0.5  0.5    0    0    0    0    0    0    0    0  0.5    0    1    1    0    0  0.5    0    1    1    0    0    0    0    0    0    0    0    0    0    0    0    0    0
+ 0.25    0  0.5  0.5    0    0    0    0    0    0    0    0  0.5    0    1    1    0    0  0.5    0    1    1    0    0    0    0    0    0    0    0    0    0    0    0    0    0
+    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0
+    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0
+    2    0 0.25 0.25    0    0    0    0    0    0    0    0    4    0  0.5  0.5    0    0    4    0  0.5  0.5    0    0    0    0    0    0    0    0    0    0    0    0    0    0
+    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0
+ 0.25    0  0.5  0.5    0    0    0    0    0    0    0    0  0.5    0    1    1    0    0  0.5    0    1    1    0    0    0    0    0    0    0    0    0    0    0    0    0    0
+ 0.25    0  0.5  0.5    0    0    0    0    0    0    0    0  0.5    0    1    1    0    0  0.5    0    1    1    0    0    0    0    0    0    0    0    0    0    0    0    0    0
+    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0
+    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0
+    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0
+    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0
+    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0
+    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0
+    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0
+    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0
+    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0
+    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0
+    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0
+    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0
+    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0
+    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0
+
+
+
+
+
+
+
+
+
