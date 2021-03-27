@@ -162,7 +162,7 @@ namespace Step41
 {
   using namespace dealii;
 
-  bool original_problem_41 = true;
+  bool original_problem_41 = false;		// Used only to debug [SHOULD BE REMOVED NEXT]
 
 //====================================================
 /**

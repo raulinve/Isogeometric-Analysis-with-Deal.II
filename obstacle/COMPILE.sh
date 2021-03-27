@@ -19,6 +19,8 @@ echo " "
 mkdir build
 cd build
 cmake .. -DDEAL_II_DIR=/usr/include/deal.II/
+#cmake .. -DDEAL_II_DIR=/usr/local/include/deal.II/
+#cmake .. -DDEAL_II_DIR=/home/user100/dealII/dealii-9.2.0/include/deal.II/
 printf "\n\n--------------------------------\n  make\n--------------------------------\n\n"
 make
 #---------------------------------------------

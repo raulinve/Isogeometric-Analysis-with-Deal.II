@@ -1,13 +1,16 @@
 # Isogeometric Analysis with Deal.II 
 
+https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II  
+
 :octocat:  :electron: 
 
 ![extra](https://img.shields.io/badge/status-under%20development-ff69b4)
 ![extra](https://img.shields.io/badge/maintained-actively-success)
 
+
 Isogeometric Analysis classes for the [deal.II library](https://www.dealii.org/).  
 
-This repository contains code used to introduce the Isogeometric Analysis (IGA) framework into the standard deal.II Finite Element (FE) library.
+This repository contains code used to introduce the **Isogeometric Analysis** (IGA) framework into the standard **deal.II** Finite Element (FE) library.
 
 <br/>  
 
@@ -150,34 +153,34 @@ The *Visualization Toolkit* (*VTK*) is an open-source software system for 3D com
 
 In order to open *.vtk* files you can use a graphical software like "**VisIt**".  
 
-In order to install VisIt:  
+In order to install VisIt software on Linux systems:  
 1. Go to the project website: https://wci.llnl.gov/simulation/computer-codes/visit/executables;
 2. Download the archive for your system (es: *Linux - x86_64 64 bit Ubuntu 20*) and download also the "*VisIt install script*";
 3. Make the install script executable (es: $`chmod 755 visit-install3_1_4`);
 4. Use the following command to install the program:  
-$`sudo [script_name] [visit version] [System in use] [Installation path]`  
+$`sudo [script_name] [visit version] [system in use] [installation path]`  
 Example:  $`sudo visit-install3_1_4 3.1.4 linux-x86_64-ubuntu20 /usr/local/bin/visit`  
-5. During the installation, if asked, select the remote-computing center nearest to your location and press *enter* until the installation has finished.
+5. During the installation, if asked, select the remote-computing center nearest to your location and press *enter* until the installation has finished. (es: ETH Zurich in Europe)
 
-Steps to correctly see the .vtk results (for beginners):  
+Steps to correctly see the .vtk image files with VisIt (*for beginners*):  
 1. Open VisIt: `/usr/local/bin/visit/bin/visit`;
 2. Click on "Open" > Select the directory > Select the \*.vtk database;
 3. Now press on "Add" > "Pseudocolor" > "Active set";
 4. Make the plot 3D: "Operators" > "Transform" > "Elevate";
-5. Click on "**Draw**" and you should see a 3D movable picture in the Window.
+5. Click on "**Draw**" and you should see a 3D movable picture in the active window.
 
-Note: It is possible to add features to the plot as "Contour" or "Mesh".
+Note: It is possible to add features to the plot like "Contour" or "Mesh".
 
 <br/>  
 
 ---
 ### 🛠️ Installation
 
-Note: The codes have been tested under Xubuntu, version 20.04 LTS.
+Note: The codes have been tested under a clean installation of Xubuntu, version 20.04 LTS.
 
 
 These examples require **deal.II** version 8.3 or later to work properly.  
-Note: The codes have been tested using the version **deal.II 9.2.0**.
+Note: The codes have been tested using the apt-version: **deal.II 9.1.1-9 build2**.
 
 In order to setup the environment, follow the following steps:  
 
@@ -217,6 +220,6 @@ SISSA - International School for Advanced Studies
 Unless stated otherwise all works are licensed under the:  
 *GNU Lesser General Public License v2.1*  
 
-Please see the attached license file.  
+Please see the attached [license file](https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/blob/master/LICENSE).  
 
 

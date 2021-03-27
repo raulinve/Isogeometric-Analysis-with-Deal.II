@@ -279,21 +279,23 @@ IgaHandler<dim,spacedim>::IgaHandler (const std::vector<std::vector<double> > &k
   std::cout << "   Non-zero elms:    " << square_C_CT.n_nonzero_elements () << std::endl;
 
   // Print the matrix on screen:
-  /* // <- [REMOVE THE COMMENT TO PRINT THE MATRIX]
-  //std::vector<std::vector<double>> MAT(m, std::vector<double>(n, 0.0));
-  std::string  separating_char   = "";
-  bool         scintific_format  = false;
-  unsigned     col_width         = 5;       
-  for (size_t i=0; i<square_C_CT.m(); ++i) {
-    for  (size_t j=0; j<square_C_CT.n(); ++j) {
-      //MAT[i][j] = square_C_CT(i,j);		// Used to store the matrix if needed
-      if(scintific_format)
-        std::cout << std::setw(col_width) << std::scientific << square_C_CT(i,j) << separating_char;
-      else
-        std::cout << std::setw(col_width) << square_C_CT(i,j) << separating_char;
-    }
-    std::cout << std::endl;
-  } /**/
+  bool print_matrix = true;   // <- [CHANGE IF NEEDED]
+  if(print_matrix) {
+	  //std::vector<std::vector<double>> MAT(m, std::vector<double>(n, 0.0));
+	  std::string  separating_char   = "";
+	  bool         scintific_format  = false;
+	  unsigned     col_width         = 5;       
+	  for (size_t i=0; i<square_C_CT.m(); ++i) {
+		for  (size_t j=0; j<square_C_CT.n(); ++j) {
+		  //MAT[i][j] = square_C_CT(i,j);		// Used to store the matrix if needed
+		  if(scintific_format)
+		    std::cout << std::setw(col_width) << std::scientific << square_C_CT(i,j) << separating_char;
+		  else
+		    std::cout << std::setw(col_width) << square_C_CT(i,j) << separating_char;
+		}
+		std::cout << std::endl;
+	  }
+  }
 
   std::cout << "\n\n  ===== INITIALIZE GLOBAL EXTRACTOR : START ===== \n\n";
   square_global_extractor.initialize(square_C_CT);			// [DIRECT SOLVER - UMFPACK]

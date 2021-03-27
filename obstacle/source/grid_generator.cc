@@ -84,7 +84,7 @@ namespace GridGenerator
               tmp[1] = p[1][j];
               points.push_back( tmp );
           }
-          break; }
+        break; }
 
       case 3: {
         unsigned int n_x = p[0].size();
