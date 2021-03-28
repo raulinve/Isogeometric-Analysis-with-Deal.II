@@ -36,6 +36,30 @@ DEAL_II_NAMESPACE_OPEN
 
 //using namespace dealii;
 
+bool debug_matrices = true;   // Used only to debug [SHOULD BE REMOVED NEXT]
+
+// MatrixDebug(square_C_CT, "square_C_CT", 6, "x", true);
+void MatrixDebug (const SparseMatrix<double> &  M, 
+                  std::string                   name, 
+                  const unsigned int  	        precision         = 6,
+                  std::string                   separating_char   = "x",
+                  bool                          scintific_format  = true )
+{
+  std::cout << "\n\n***************\n  \"" << name << "\" matrix information: " << std::endl;
+  std::string output_name = "MATRIX-"+name+".txt";
+  unsigned m = M.m();
+  unsigned n = M.n();
+  std::cout << "   Dimensions (mxn): " << m << " x " << n << std::endl;
+  std::cout << "   Non-zero elms:    " << M.n_nonzero_elements () << std::endl;
+  std::cout << "   > PRINTING THE MATRIX:  " << output_name << std::endl;
+  std::ofstream outfile;
+  outfile.open(output_name);
+  M.print_formatted(outfile,precision,scintific_format,0,separating_char.c_str());
+  std::cout << "   > Completed!  " << std::endl;
+}
+
+
+
 
 //====================================================
 /**
@@ -264,38 +288,15 @@ IgaHandler<dim,spacedim>::IgaHandler (const std::vector<std::vector<double> > &k
       n_bspline *= knots_with_repetition[i].size() - degree - 1;
     }
 
-  assemble_global_extractor();
-
   std::cout << "\n\n  *********************************" << std::endl;
   std::cout << "  DEBUG: \"iga_handler.cc\" > \"IgaHandler<dim,spacedim>::IgaHandler(knot, mults, deg)\"" << std::endl;  
   std::cout << "  *********************************" << std::endl;  
   std::cout << "  \"iga_handler.h\" > \"SparseMatrix<double> square_C_CT;\"" << std::endl;  
   std::cout << "  \"iga_handler.h\" > \"SparseDirectUMFPACK square_global_extractor;\"\n" << std::endl;  
 
-  std::cout << "  \"square_C_CT\" matrix information: " << std::endl;
-  int m = square_C_CT.m();
-  int n = square_C_CT.n();
-  std::cout << "   Dimensions (mxn): " << m << " x " << n << std::endl;
-  std::cout << "   Non-zero elms:    " << square_C_CT.n_nonzero_elements () << std::endl;
+  assemble_global_extractor();
 
-  // Print the matrix on screen:
-  bool print_matrix = true;   // <- [CHANGE IF NEEDED]
-  if(print_matrix) {
-	  //std::vector<std::vector<double>> MAT(m, std::vector<double>(n, 0.0));
-	  std::string  separating_char   = "";
-	  bool         scintific_format  = false;
-	  unsigned     col_width         = 5;       
-	  for (size_t i=0; i<square_C_CT.m(); ++i) {
-		for  (size_t j=0; j<square_C_CT.n(); ++j) {
-		  //MAT[i][j] = square_C_CT(i,j);		// Used to store the matrix if needed
-		  if(scintific_format)
-		    std::cout << std::setw(col_width) << std::scientific << square_C_CT(i,j) << separating_char;
-		  else
-		    std::cout << std::setw(col_width) << square_C_CT(i,j) << separating_char;
-		}
-		std::cout << std::endl;
-	  }
-  }
+  if(debug_matrices) {MatrixDebug(square_C_CT, "square_C_CT", 6, "x", true);} // [SHOULD BE REMOVED NEXT]
 
   std::cout << "\n\n  ===== INITIALIZE GLOBAL EXTRACTOR : START ===== \n\n";
   square_global_extractor.initialize(square_C_CT);			// [DIRECT SOLVER - UMFPACK]
@@ -403,6 +404,8 @@ void IgaHandler<dim,spacedim>::assemble_global_extractor()
 
   GlobalExtractor.reinit(sparsity);
 
+  if(debug_matrices) {MatrixDebug(GlobalExtractor, "GlobalExtractor_reinit", 6, "x", true);}  // [SHOULD BE REMOVED NEXT]
+
   for (typename DoFHandler<dim, spacedim>::active_cell_iterator
        cell = dh.begin_active(); cell!=dh.end(); ++cell)
     {
@@ -415,10 +418,16 @@ void IgaHandler<dim,spacedim>::assemble_global_extractor()
                                 iga_objects[cell].local_b_extractor(i,j));
           }
     }
+
+  if(debug_matrices) {MatrixDebug(GlobalExtractor, "GlobalExtractor_set", 6, "x", true);}  // [SHOULD BE REMOVED NEXT]
+
   DynamicSparsityPattern scp(n_d,n_d);
   square_sparsity.copy_from(scp);
   square_C_CT.reinit(square_sparsity);
   GlobalExtractor.Tmmult(square_C_CT, GlobalExtractor);
+
+  if(debug_matrices) {MatrixDebug(GlobalExtractor, "GlobalExtractor_Tmmult", 6, "x", true);}  // [SHOULD BE REMOVED NEXT]
+
 }
 
 

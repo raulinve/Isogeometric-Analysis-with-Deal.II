@@ -53,7 +53,7 @@ INFO:
 
 
 
-
+[PLEASE SEE THE .ods FILE TO SEE THE MATRICES]
 
 MATRIX (square_C_CT):
 
