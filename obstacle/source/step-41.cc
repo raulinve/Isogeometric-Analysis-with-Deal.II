@@ -434,13 +434,13 @@ namespace Step41
   void ObstacleProblem<dim>::make_grid ()
   {
     std::cout << std::endl
-              << "Degree: "
+              << "  Degree: "
               << degree
               << std::endl
-              << "Number of active cells: "
+              << "  Number of active cells: "
               << triangulation.n_active_cells()
               << std::endl
-              << "Total number of cells: "
+              << "  Total number of cells: "
               << triangulation.n_cells()
               << std::endl;
   }
@@ -455,10 +455,10 @@ namespace Step41
     active_set.set_size (iga_handler.n_bspline);
     active_set_vector.reinit(iga_handler.n_bspline);
 
-    std::cout << "Number of degrees of freedom: "
+    std::cout << "  Number of degrees of freedom: "
               << dof_handler.n_dofs()
               << std::endl
-              << "Number of degrees of freedom IGA: "
+              << "  Number of degrees of freedom IGA: "
               << iga_handler.n_bspline
               << std::endl
               << std::endl;
@@ -949,10 +949,10 @@ int main (int argc, char *argv[])
       Vector<double> times(n_cycle);
 
 
-	  std::cout << "\n > STARTING THE CYCLES: \n" << std::endl;
+	  std::cout << "\n > STARTING THE CYCLES: ===================\n" << std::endl;
       for (unsigned int cycle=1; cycle<n_cycle; ++cycle)
         {
-		  std::cout << " CYCLE # " << cycle << " of " << n_cycle << "  =========" << std::endl;
+		  std::cout << "\n\n\n CYCLE # " << cycle << " of " << n_cycle << "  =========" << std::endl;
 
           if (h_refinement)  {
 			  std::cout << " - Setup h-refinement" << std::endl;

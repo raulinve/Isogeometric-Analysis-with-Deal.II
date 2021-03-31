@@ -13,8 +13,7 @@
 #include <deal.II/lac/sparse_matrix.h>
 #include <deal.II/fe/fe_tools.h>
 #include <deal.II/numerics/data_out.h>
-#include <deal.II/lac/sparse_direct.h>			// [DIRECT SOLVER    - UMFPACK]
-#include <deal.II/lac/solver_gmres.h>			// [ITERATIVE SOLVER - GMRES  ]
+#include <deal.II/lac/sparse_direct.h>
 #include <deal.II/numerics/matrix_tools.h>
 #include <deal.II/base/thread_management.h>
 #include <deal.II/base/function.h>
@@ -22,6 +21,7 @@
 #include <deal.II/fe/fe_system.h>
 #include <deal.II/fe/fe_bernstein.h>
 #include <deal.II/fe/mapping_fe_field.h>
+#include <deal.II/fe/fe_q.h>
 
 #include <fstream>
 #include <iostream>
@@ -36,9 +36,12 @@ DEAL_II_NAMESPACE_OPEN
 
 //using namespace dealii;
 
-bool debug_matrices = true;   // Used only to debug [SHOULD BE REMOVED NEXT]
 
-// MatrixDebug(square_C_CT, "square_C_CT", 6, "x", true);
+//====================================================
+// Global function [USED ONLY TO DEBUG]
+
+bool debug_matrices = false;   // Used only to debug [PRINT MATRIX ON A FILE]
+// Example of use: "MatrixDebug(square_C_CT, "square_C_CT", 6, "x", true);"
 void MatrixDebug (const SparseMatrix<double> &  M, 
                   std::string                   name, 
                   const unsigned int  	        precision         = 6,
@@ -57,8 +60,6 @@ void MatrixDebug (const SparseMatrix<double> &  M,
   M.print_formatted(outfile,precision,scintific_format,0,separating_char.c_str());
   std::cout << "   > Completed!  " << std::endl;
 }
-
-
 
 
 //====================================================
@@ -242,14 +243,17 @@ IgaHandler<dim,spacedim>::IgaHandler (const std::vector<std::vector<double> > &k
   for (unsigned int i=1; i<dpo.size(); ++i)
     dpo[i]=dpo[i-1]*(degree-1);
 
-  //std::vector<unsigned int> col_order(Utilities::fixed_power<dim>(degree+1));
-  //std::vector<unsigned int> row_order(Utilities::fixed_power<dim>(degree+1));
-  std::vector<size_t> col_order(Utilities::fixed_power<dim>(degree+1));          // <- [ NEW: size_t ]
-  std::vector<size_t> row_order(Utilities::fixed_power<dim>(degree+1));          // <- [ NEW_ size_t ]
-  std::vector<unsigned int> col_orderUNS(col_order.begin(), col_order.end());    // <- [ NEW ]
+  std::vector<unsigned int> col_order(Utilities::fixed_power<dim>(degree+1));
+  //std::vector<unsigned int> row_order(Utilities::fixed_power<dim>(degree+1));     //[NOTE: DE-COMMENT TO BACK-COMPILE WITH dealii 8.3.0]
+  std::vector<long unsigned int> row_order(Utilities::fixed_power<dim>(degree+1));  //[NOTE:  COMMENT   TO BACK-COMPILE WITH dealii 8.3.0]
 
-  const FiniteElementData<dim> fe_data(dpo, 1, degree);
-  FETools::hierarchic_to_lexicographic_numbering (fe_data, col_orderUNS);        // <- [ col_orderUNS ]
+  //const FiniteElementData<dim> fe_data(dpo, 1, degree);
+  //FETools::hierarchic_to_lexicographic_numbering (fe_data, col_order);     // <- [ DEPRECATED ]
+  col_order = FETools::hierarchic_to_lexicographic_numbering<dim>(degree);   // <- [ NEW ]
+
+  // Conversion to long unsigned: 
+  //[NOTE: COMMENT THE FOLLOWING LINE TO BACK-COMPILE WITH dealii 8.3.0]
+  std::vector<long unsigned int> col_order_long(begin(col_order), end(col_order));
 
   for (unsigned int i=0; i<row_order.size(); ++i)
     row_order[i] = i;
@@ -276,7 +280,8 @@ IgaHandler<dim,spacedim>::IgaHandler (const std::vector<std::vector<double> > &k
       iga_objects[cell].local_b_extractor.fill_permutation(
         ex.local_b_extractor,
         row_order,
-        col_order);
+        //col_order);       //[NOTE: DE-COMMENT THIS LINE TO BACK-COMPILE WITH dealii 8.3.0]
+        col_order_long);    //[NOTE:  COMMENT   THIS LINE TO BACK-COMPILE WITH dealii 8.3.0]
 
     }
 
@@ -288,19 +293,11 @@ IgaHandler<dim,spacedim>::IgaHandler (const std::vector<std::vector<double> > &k
       n_bspline *= knots_with_repetition[i].size() - degree - 1;
     }
 
-  std::cout << "\n\n  *********************************" << std::endl;
-  std::cout << "  DEBUG: \"iga_handler.cc\" > \"IgaHandler<dim,spacedim>::IgaHandler(knot, mults, deg)\"" << std::endl;  
-  std::cout << "  *********************************" << std::endl;  
-  std::cout << "  \"iga_handler.h\" > \"SparseMatrix<double> square_C_CT;\"" << std::endl;  
-  std::cout << "  \"iga_handler.h\" > \"SparseDirectUMFPACK square_global_extractor;\"\n" << std::endl;  
-
   assemble_global_extractor();
 
-  if(debug_matrices) {MatrixDebug(square_C_CT, "square_C_CT", 6, "x", true);} // [SHOULD BE REMOVED NEXT]
+  if(debug_matrices) {MatrixDebug(square_C_CT, "square_C_CT", 6, "x", true);} // [DUBUG]
+  square_global_extractor.initialize(square_C_CT);
 
-  std::cout << "\n\n  ===== INITIALIZE GLOBAL EXTRACTOR : START ===== \n\n";
-  square_global_extractor.initialize(square_C_CT);			// [DIRECT SOLVER - UMFPACK]
-  std::cout << "\n\n  ===== INITIALIZE GLOBAL EXTRACTOR : END   ===== \n";
 }
 
 
@@ -403,8 +400,7 @@ void IgaHandler<dim,spacedim>::assemble_global_extractor()
   sparsity.copy_from(cp);
 
   GlobalExtractor.reinit(sparsity);
-
-  if(debug_matrices) {MatrixDebug(GlobalExtractor, "GlobalExtractor_reinit", 6, "x", true);}  // [SHOULD BE REMOVED NEXT]
+  if(debug_matrices) {MatrixDebug(GlobalExtractor, "GlobalExtractor_reinit", 6, "x", true);} // [DUBUG]
 
   for (typename DoFHandler<dim, spacedim>::active_cell_iterator
        cell = dh.begin_active(); cell!=dh.end(); ++cell)
@@ -419,14 +415,14 @@ void IgaHandler<dim,spacedim>::assemble_global_extractor()
           }
     }
 
-  if(debug_matrices) {MatrixDebug(GlobalExtractor, "GlobalExtractor_set", 6, "x", true);}  // [SHOULD BE REMOVED NEXT]
+  if(debug_matrices) {MatrixDebug(GlobalExtractor, "GlobalExtractor_set", 6, "x", true);} // [DUBUG]
 
   DynamicSparsityPattern scp(n_d,n_d);
   square_sparsity.copy_from(scp);
   square_C_CT.reinit(square_sparsity);
   GlobalExtractor.Tmmult(square_C_CT, GlobalExtractor);
 
-  if(debug_matrices) {MatrixDebug(GlobalExtractor, "GlobalExtractor_Tmmult", 6, "x", true);}  // [SHOULD BE REMOVED NEXT]
+  if(debug_matrices) {MatrixDebug(GlobalExtractor, "GlobalExtractor_Tmmult", 6, "x", true);} // [DUBUG]
 
 }
 
@@ -520,9 +516,9 @@ IgaHandler<dim,spacedim>::transform_vector_into_bspline_space(
   AssertDimension(dh.n_dofs(), src.size());
 
   GlobalExtractor.Tvmult(dst, src);
-  std::cout << "\n\n ===== SOLVE GLOBAL EXTRACTOR : START ===== \n\n";
-  square_global_extractor.solve(dst);			// [DIRECT SOLVER - UMFPACK]
-  std::cout << "\n\n ===== SOLVE GLOBAL EXTRACTOR : END   ===== \n\n";
+
+  square_global_extractor.solve(dst);
+
 }
 
 

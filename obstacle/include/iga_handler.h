@@ -32,8 +32,7 @@
 #include <deal.II/fe/fe_tools.h>
 #include <deal.II/numerics/data_out.h>
 #include <deal.II/base/thread_management.h>
-#include <deal.II/lac/sparse_direct.h>		// [DIRECT SOLVER    - UMFPACK]
-//#include <deal.II/lac/solver_gmres.h>			// [ITERATIVE SOLVER - GMRES  ]
+#include <deal.II/lac/sparse_direct.h>
 #include <deal.II/fe/fe_system.h>
 #include <deal.II/fe/fe_bernstein.h>
 #include <deal.II/fe/mapping_fe_field.h>

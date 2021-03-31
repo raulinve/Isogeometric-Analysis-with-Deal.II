@@ -18,7 +18,10 @@ echo " "
 #---------------------------------------------
 mkdir build
 cd build
-cmake .. -DDEAL_II_DIR=/usr/include/deal.II/
+#cmake ..
+#cmake .. -DDEAL_II_DIR=/usr/include/deal.II/                    # Default location
+cmake .. /u/sw/pkgs/toolchains/gcc-glibc/9/pkgs/dealii/9.2.0/   # PoliMi mkModules
+
 printf "\n\n--------------------------------\n  make\n--------------------------------\n\n"
 make
 #---------------------------------------------

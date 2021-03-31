@@ -4,14 +4,13 @@
 #include <deal.II/base/thread_management.h>
 #include <deal.II/lac/vector.h>
 #include <deal.II/lac/vector_memory.h>
-#include <deal.II/lac/filtered_matrix.h>
+//#include <deal.II/lac/filtered_matrix.h>            // DEPRECATED
 #include <deal.II/lac/precondition.h>
 #include <deal.II/lac/solver_cg.h>
 #include <deal.II/base/quadrature_lib.h>
 #include <deal.II/base/thread_management.h>
 #include <deal.II/lac/vector.h>
 #include <deal.II/lac/vector_memory.h>
-#include <deal.II/lac/filtered_matrix.h>
 #include <deal.II/lac/precondition.h>
 #include <deal.II/lac/solver_cg.h>
 #include <deal.II/lac/sparse_matrix.h>
