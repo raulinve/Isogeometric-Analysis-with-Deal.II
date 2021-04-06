@@ -19,7 +19,7 @@ echo " "
 #---------------------------------------------
 mkdir build
 cd build
-#--------------------------------------------- [COMMENT/DE-COMMENT SECTION
+#--------------------------------------------- [COMMENT/DE-COMMENT SECTION]
 #cmake .. -DDEAL_II_DIR=/usr/include/deal.II/                                 # apt-intalled location [COMMENT/DE-COMMENT]
 cmake .. -DDEAL_II_DIR=/u/sw/pkgs/toolchains/gcc-glibc/9/pkgs/dealii/9.2.0/   # PoliMi mkModules [COMMENT/DE-COMMENT]
 #cmake ..                                                                     # Standard [DO NOT USE]
@@ -44,7 +44,6 @@ echo " "
 
 # RUNNING COMMANDS:
 #---------------------------------------------
-cd build
 ./exe
 #mpiexec -np 2 exe
 #---------------------------------------------

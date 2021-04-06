@@ -18,15 +18,20 @@ echo " "
 #---------------------------------------------
 mkdir build
 cd build
-#cmake ..
-#cmake .. -DDEAL_II_DIR=/usr/include/deal.II/                    # Default location
-cmake .. /u/sw/pkgs/toolchains/gcc-glibc/9/pkgs/dealii/9.2.0/   # PoliMi mkModules
+#--------------------------------------------- [COMMENT/DE-COMMENT SECTION]
+#cmake .. -DDEAL_II_DIR=/usr/include/deal.II/                                 # apt-intalled location [COMMENT/DE-COMMENT]
+cmake .. -DDEAL_II_DIR=/u/sw/pkgs/toolchains/gcc-glibc/9/pkgs/dealii/9.2.0/   # PoliMi mkModules [COMMENT/DE-COMMENT]
+#cmake ..                                                                     # Standard [DO NOT USE]
+#cmake .. -DDEAL_II_DIR=/opt/dealii/8.3.0                                     # Other versions [DO NOT USE]
+#---------------------------------------------
 
 printf "\n\n--------------------------------\n  make\n--------------------------------\n\n"
 make
 #---------------------------------------------
+
+
 printf "\n\n--------------------------------\n\n"
-echo "    COMPILATION ENDED CORRECTLY ! "
+echo "    COMPILATION ENDED [CHECK ABOVE IF ANY ERROR OCCURRED!] "
 echo " "
 echo "=============================================================================="
 
