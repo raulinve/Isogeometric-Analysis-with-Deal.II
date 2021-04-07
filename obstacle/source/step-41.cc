@@ -115,7 +115,9 @@
 #include <deal.II/base/quadrature_lib.h>
 #include <deal.II/base/function.h>
 #include <deal.II/base/index_set.h>
+#include <deal.II/base/convergence_table.h>   // IGA
 
+#include <deal.II/lac/affine_constraints.h>
 #include <deal.II/lac/vector.h>
 #include <deal.II/lac/full_matrix.h>
 #include <deal.II/lac/dynamic_sparsity_pattern.h>
@@ -123,47 +125,47 @@
 #include <deal.II/lac/trilinos_sparse_matrix.h>
 #include <deal.II/lac/trilinos_vector.h>
 #include <deal.II/lac/trilinos_precondition.h>
-#include <deal.II/lac/sparse_matrix.h>
+#include <deal.II/lac/sparse_matrix.h>        // IGA
+#include <deal.II/lac/sparse_direct.h>        // IGA
+#include <deal.II/lac/precondition.h>         // IGA
 
 #include <deal.II/grid/tria.h>
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/tria_accessor.h>
 #include <deal.II/grid/tria_iterator.h>
+
 #include <deal.II/fe/fe_q.h>
 #include <deal.II/fe/fe_values.h>
-#include <deal.II/fe/fe_system.h>
-#include <deal.II/fe/fe_bernstein.h>
-#include <deal.II/fe/mapping_fe_field.h>
+#include <deal.II/fe/fe_system.h>             // IGA
+#include <deal.II/fe/fe_bernstein.h>          // IGA
+#include <deal.II/fe/mapping_fe_field.h>      // IGA
 
 #include <deal.II/dofs/dof_handler.h>
 #include <deal.II/dofs/dof_accessor.h>
 #include <deal.II/dofs/dof_tools.h>
+
 #include <deal.II/numerics/vector_tools.h>
 #include <deal.II/numerics/data_out.h>
-#include <deal.II/lac/sparse_direct.h>
-#include <deal.II/numerics/matrix_tools.h>
-#include <deal.II/lac/precondition.h>
-//#include <deal.II/lac/constraint_matrix.h>    // DEPRECATED
-#include <deal.II/lac/affine_constraints.h>     // NEW
-#include <deal.II/base/convergence_table.h>
+#include <deal.II/numerics/matrix_tools.h>    // IGA
 
 #include <fstream>
 #include <iostream>
-#include <list>
+#include <list>                               // IGA
+#include <string>                             // NEW
+#include <filesystem>                         // NEW
 
-#include "grid_generator.h"
-#include "iga_handler.h"
+#include "grid_generator.h"                   // IGA HEADER
+#include "iga_handler.h"                      // IGA HEADER
 
-#include <string>
-#include "chrono.hpp"       // NEW (timer)
-#include <filesystem>
+#include "chrono.hpp"                         // NEW (timer)
+
 
 
 namespace Step41
 {
   using namespace dealii;
 
-  bool original_problem_41 = false;		// Used only to debug [SHOULD BE REMOVED NEXT]
+  bool original_problem_41 = false;		// Default: "false" [SHOULD BE REMOVED NEXT]
 
 //====================================================
 /**
@@ -363,47 +365,47 @@ namespace Step41
     void update_solution_and_constraints ();
     void solve ();
     void output_results (const unsigned int iteration);
-    void compute_error (unsigned int cycle);
+    void compute_error (unsigned int cycle);    // IGA
 
 
-    IgaHandler<dim,dim>  &iga_handler;
+    IgaHandler<dim,dim>  &iga_handler;          // IGA HEADER
 
-    unsigned int     degree;
-    unsigned int     cg_iter;
+    unsigned int         degree;                // IGA
+    unsigned int         cg_iter;               // IGA  [ ?? used only in solve ]
 
     Triangulation<dim>   &triangulation;
-    FE_Bernstein<dim>    &fe;
+    FE_Bernstein<dim>    &fe;                   // IGA MODIFICATION
     DoFHandler<dim>      &dof_handler;
 
-    MappingFEField<dim>       *mappingfe;
+    MappingFEField<dim>  *mappingfe;            // IGA
     IndexSet             active_set;
 
-    AffineConstraints<double>   bspline_constraints;
+    AffineConstraints<double>   bspline_constraints;      // IGA NAME
 
-    SparseMatrix<double> bspline_system_matrix;
-    SparseMatrix<double> bspline_complete_system_matrix;
-    SparseMatrix<double> bspline_mass_matrix;
+    SparseMatrix<double> bspline_system_matrix;           // IGA NAME
+    SparseMatrix<double> bspline_complete_system_matrix;  // IGA NAME
 
-    Vector<double>       mass_lumping;
+    SparseMatrix<double> bspline_mass_matrix;             // IGA [ TAKE OUT from setup_system ]
+    Vector<double>       mass_lumping;                    // IGA [ TAKE OUT from setup_system ]
     Vector<double>       diagonal_of_mass_matrix;
+    Vector<double>       bspline_mass_lumping;            // IGA [ no ref here ?? ]
 
     Vector<double>       bspline_solution;
-    Vector<double>       bspline_mass_lumping;
     Vector<double>       bspline_system_rhs;
     Vector<double>       bspline_complete_system_rhs;
+
     Vector<double>       bspline_contact_force;
-    Vector<double>       bspline_lambda;
+    Vector<double>       bspline_lambda;                  // IGA [ TAKE OUT from update_solution_and_constraints ]
 
-    SparsityPattern      sparsity_bspline;
+    SparsityPattern      sparsity_bspline;                // IGA [ NEW from setup_system]
 
-    TrilinosWrappers::PreconditionAMG   precondition;
+    TrilinosWrappers::PreconditionAMG   precondition;     // IGA[ TAKE OUT from solve ]
+    Vector<double>                 active_set_vector;     // IGA[ TAKE OUT from output_results ]
 
-    Vector<double>                 active_set_vector;
-
-    ConvergenceTable              &convergence_table;
+    ConvergenceTable              &convergence_table;     // IGA [ NEW Addition ]
   };
 
-
+//-------------------------
 /// Main problem class: Constructor
   template <int dim>
   ObstacleProblem<dim>::ObstacleProblem (IgaHandler<dim,dim> &iga_handler,
@@ -416,9 +418,11 @@ namespace Step41
     dof_handler (iga_handler.dh),
     mappingfe(iga_handler.map_fe),
     convergence_table(convergence_table)
-  {}
+  {	
+    std::cout << " - Initialization of the obstacle problem." << std::endl;
+  }
 
-
+//-------------------------
 /// Main problem class: Destructor
   template <int dim>
   ObstacleProblem<dim>::~ObstacleProblem ()
@@ -430,7 +434,7 @@ namespace Step41
       delete mappingfe;
   }
 
-
+//-------------------------
 /// Main problem class: Method used to generate the triangulation and to refine it.
   template <int dim>
   void ObstacleProblem<dim>::make_grid ()
@@ -447,7 +451,7 @@ namespace Step41
               << std::endl;
   }
 
-
+//-------------------------
 /// Main problem class: Method used to setup the matrix system.
   template <int dim>
   void ObstacleProblem<dim>::setup_system ()
@@ -507,7 +511,7 @@ namespace Step41
                                         bspline_constraints);
   }
 
-
+//-------------------------
 /// Main problem class: Method used to assemble the main system.
   template <int dim>
   void ObstacleProblem<dim>::assemble_system ()
@@ -565,7 +569,7 @@ namespace Step41
       }
   }
 
-
+//-------------------------
 /// Main problem class: Method used to assemble the mass matrix.
   template <int dim>
   void
@@ -610,7 +614,7 @@ namespace Step41
       }
   }
 
-
+//-------------------------
 /// Main problem class: Method used to update the solution.
   template <int dim>
   void
@@ -703,7 +707,7 @@ namespace Step41
                                         bspline_constraints);
   }
 
-
+//-------------------------
 /// Main problem class: This method is called in order to solve the system.
   template <int dim>
   void ObstacleProblem<dim>::solve ()
@@ -718,7 +722,7 @@ namespace Step41
     solver.solve (bspline_system_matrix, bspline_solution, bspline_system_rhs, precondition);
     bspline_constraints.distribute (bspline_solution);
 
-    cg_iter = reduction_control.last_step();
+    cg_iter = reduction_control.last_step();    // [ ?? ]
 
     std::cout << "  |  Error: " << reduction_control.initial_value()
               << " -> " << reduction_control.last_value()
@@ -728,7 +732,7 @@ namespace Step41
               << std::endl;
   }
 
-
+//-------------------------
 /// Main problem class: This method construct and save the image output files. <br>
 /*! In particular it prints on .vtk files the 3D plot of the function at every cycle step.
 */
@@ -794,7 +798,7 @@ namespace Step41
     data_out.write_vtk (output_vtk);
   }
 
-
+//-------------------------
 /// Main problem class: This method process the solution in order to compute the L2 and the H1 norm.  <br>
 /*! In addition it prepares the convergence table.
 */
@@ -851,11 +855,12 @@ namespace Step41
     convergence_table.add_value("Linfty", Linfty_error);
   }
 
-
+//-------------------------
 /// Main problem class: This is the function which has the top-level control over everything. 
   template <int dim>
   void ObstacleProblem<dim>::run (unsigned int cycle)
   {
+	std::cout << " - Problem RUN" << std::endl;
 
     std::cout << " - Checking/creating the output directory \"RESULTS\". " << std::endl;
     std::string OutputFolderName = "RESULTS";
@@ -886,7 +891,7 @@ namespace Step41
 
         if (active_set == active_set_old)
           {
-            compute_error (cycle);
+            compute_error (cycle);    // [ IGA ONLY DIFFERENCE! ]
             break;
           }
 
@@ -976,6 +981,8 @@ void print_table (dealii::ConvergenceTable & convergence_table,
 
 
 //====================================================
+//====================================================
+//====================================================
 /**
 * MAIN FUNCTION
 * Entry point of the entire code.
@@ -1035,6 +1042,7 @@ int main (int argc, char *argv[])
         {
 		  std::cout << "\n\n\n CYCLE # " << cycle << " of " << n_cycle << "  ======================" << std::endl;
 
+          // REFINEMENT:START ========================================
           if (h_refinement)  {
 			  std::cout << " - Setup h-refinement" << std::endl;
               subdivisions[0] = std::pow(2, cycle);
@@ -1043,39 +1051,30 @@ int main (int argc, char *argv[])
 			  std::cout << " - Setup p-refinement" << std::endl;
               subdivisions[0] = 100;
               degree = cycle;  }
-
           if (k_refinement)  {
 			  std::cout << " - Setup k-refinement" << std::endl;
               subdivisions[0] = 100;
               degree = 4;  }
 
-		  // Initialize the knot matrix:
-          std::vector<std::vector<double> >
-          knots(1, std::vector<double>(subdivisions[0]+1));
-
+		  // KNOTS MATRIX:
+          std::vector<std::vector<double> > knots(1, std::vector<double>(subdivisions[0]+1));
           for (unsigned int i=0; i<subdivisions[0]+1; ++i)
             knots[0][i] = -1+i*2./subdivisions[0];
 
-          std::vector<std::vector<unsigned int> >
-          mults(1, std::vector<unsigned int>(subdivisions[0]+1, 1));
-
-		  // Setup continuity:
+          //MULTS MATRIX:
+          std::vector<std::vector<unsigned int> > mults(1, std::vector<unsigned int>(subdivisions[0]+1, 1));
 		  if(continuity == "C0") {
 				std::cout << " - Setup C0 continuity" << std::endl;
 				for (unsigned int i=0; i<subdivisions[0]; ++i)
-				mults[0][i] = degree;
-			}
+				mults[0][i] = degree;  }
 		  else if(continuity == "C1") {
 				std::cout << " - Setup C1 continuity" << std::endl;
 				for (unsigned int i=0; i<subdivisions[0]; ++i)
-					mults[0][i] = degree-1;
-			}
+					mults[0][i] = degree-1;  }
 		  else if(continuity == "C2") {
 				std::cout << " - Setup C2 continuity" << std::endl;
 				for (unsigned int i=0; i<subdivisions[0]; ++i)
-					mults[0][i] = degree-2;
-			}
-
+					mults[0][i] = degree-2;  }
           if (k_refinement)
             for (unsigned int i=0; i<subdivisions[0]; ++i)
               mults[0][i] = cycle+1;
@@ -1083,14 +1082,14 @@ int main (int argc, char *argv[])
           // open knot vectors
           mults[0][0] = degree+1;
           mults[0][subdivisions[0]] = degree+1;
-
           mults.push_back(mults[0]);
           knots.push_back(knots[0]);
+          // REFINEMENT:END ========================================
 
 
 		  // SETUP COMPLETED - STARTING THE MAIN PROCEDURES:
 
-		  // (1) - Initialize the IGA handler 2d:
+		  // RUN: =========
 		  std::cout << " - Assemble IgaHandler ...  " << std::endl;
 		  Timings::Chrono Timer;		// NEW (START TIMER)
           Timer.start();				// NEW
@@ -1099,14 +1098,9 @@ int main (int argc, char *argv[])
           std::cout << "   (Time to assemble the IgaHandler: "
                     << Timer.wallTime()/1000000 << " seconds)" << std::endl;
 
-		  // (2) - Setup the main problem:
-		  std::cout << " - Initialization of the obstacle problem." << std::endl;
           ObstacleProblem<2> obstacle_problem(iga_hd2, convergence_table);
-
-		  // (3) - Run the problem:
-		  std::cout << " - Problem RUN" << std::endl;
           obstacle_problem.run (cycle);
-
+          // END: =========
 
 		  std::cout << " - CYCLE # " << cycle << " successfully ended!" << std::endl;
         }
@@ -1119,7 +1113,6 @@ int main (int argc, char *argv[])
 
   catch (std::exception &exc)
     {
-	  std::cout << " == ERROR #1 ==" << std::endl;
       std::cerr << std::endl << std::endl
                 << "----------------------------------------------------"
                 << std::endl;
@@ -1131,11 +1124,8 @@ int main (int argc, char *argv[])
 
       return 1;
     }
-
-
   catch (...)
     {
-	  std::cout << " == ERROR #2 ==" << std::endl;
       std::cerr << std::endl << std::endl
                 << "----------------------------------------------------"
                 << std::endl;
@@ -1153,3 +1143,9 @@ int main (int argc, char *argv[])
 
   return 0;
 }
+
+//====================================================
+//====================================================
+//====================================================
+
+

@@ -29,10 +29,10 @@ Last update: **APR-2021**
 
 From newest to oldest:  
 * Note: Added Doxygen documentation.
-* Obstacle example: :warning: Improving in progress . . .
-* Obstacle example: :heavy_check_mark: Fixed  (*The code now compiles without errors or warnings*).
-* Poisson example : Improved (*Reorganization of the code, improved user interaction*).
-* Poisson example : :heavy_check_mark: Fixed  (*The code now compiles without errors or warnings*).
+* Obstacle example: :heavy_check_mark: Improved (*Reorganization of the code, improved user interaction*).
+* Obstacle example: :heavy_check_mark: Fixed  (*The code now compiles without errors or warnings with deal.II 9.2.0*).
+* Poisson example : :heavy_check_mark: Improved (*Reorganization of the code, improved user interaction*).
+* Poisson example : :heavy_check_mark: Fixed  (*The code now compiles without errors or warnings with deal.II 9.2.0*).
 * Note: A previous version of this repository has been completely deleted and substituted with this new one.
 
 <br/>  

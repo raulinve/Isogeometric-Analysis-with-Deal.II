@@ -319,6 +319,7 @@ private:
   Quadrature<dim-1>  boundary_quad;
 };
 
+
 /// Main problem class: Constructor
 template <int dim>
 Laplace<dim>::Laplace (const std::string fe_name,
@@ -369,6 +370,7 @@ Laplace<dim>::~Laplace ()
     delete fe;
 }
 
+
 /// Main problem class: Method used to generate the triangulation and to refine it.
 template <int dim>
 void Laplace<dim>::make_grid ()
@@ -376,6 +378,7 @@ void Laplace<dim>::make_grid ()
   GridGenerator::hyper_cube (triangulation, -1, 1);
   triangulation.refine_global (n_cycles_low+1);
 }
+
 
 /// Main problem class: Method used to setup the matrix system.
 template <int dim>
@@ -395,6 +398,7 @@ void Laplace<dim>::setup_system ()
   solution.reinit (dof_handler.n_dofs());
   system_rhs.reinit (dof_handler.n_dofs());
 }
+
 
 /// Main problem class: Method used to assemble the main system.
 template <int dim>
@@ -472,6 +476,7 @@ void Laplace<dim>::assemble_system ()
                                       system_rhs);
 }
 
+
 /// Main problem class: This method is called in order to solve the system using the CG solver.
 template <int dim>
 void Laplace<dim>::solve ()
@@ -494,12 +499,14 @@ void Laplace<dim>::solve ()
   cg_iter = solver_control.last_step();
 }
 
+
 /// Main problem class: Method used to refine the grid on each step.
 template <int dim>
 void Laplace<dim>::refine_grid()
 {
   triangulation.refine_global (1);
 }
+
 
 /// Main problem class: This method construct and save the image output files. <br>
 /*! In particular it prints on .vtk files the 3D plot of the function at every cycle step.
