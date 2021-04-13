@@ -7,7 +7,7 @@
 #       to do this, find below "DDEAL_II_DIR" and change "/usr/include/deal.II/".
 
 echo "=============================================================================="
-echo "      COMPILE: main-step-41      "
+echo "      COMPILE: step-41 (original example)      "
 echo "=============================================================================="
 echo " "
 echo ">>> Press ENTER to run "
@@ -41,7 +41,7 @@ echo " "
 
 # RUNNING COMMANDS:
 #---------------------------------------------
-./main-step-41
+./step-41
 #---------------------------------------------
 
 echo " "
