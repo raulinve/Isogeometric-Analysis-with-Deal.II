@@ -338,20 +338,20 @@ Laplace<dim>::Laplace (const std::string fe_name,
 {
   if (quadrature_name == "legendre")
     {
-      matrix_quad = QGauss<dim>(degree+1);
+      matrix_quad   = QGauss<dim>(degree+1);
       boundary_quad = QGauss<dim-1>(degree+2);
-      error_quad = QGauss<dim>(degree+3);
+      error_quad    = QGauss<dim>(degree+3);
     }
   else if (quadrature_name == "lobatto")
     {
-      matrix_quad = QGaussLobatto<dim>(degree+2);
+      matrix_quad   = QGaussLobatto<dim>(degree+2);
       boundary_quad = QGaussLobatto<dim-1>(degree+3);
-      error_quad = QGaussLobatto<dim>(degree+4);
+      error_quad    = QGaussLobatto<dim>(degree+4);
     }
   else
     AssertThrow(false, ExcMessage("Quadrature not Implemented"));
 
-  if (fe_name == "bernstein")
+  if      (fe_name == "bernstein")
     fe = new FE_Bernstein<dim>(degree);
   else if (fe_name == "lagrange")
     fe = new FE_Q<dim>(degree);
@@ -390,9 +390,9 @@ void Laplace<dim>::setup_system ()
             << dof_handler.n_dofs()
             << std::endl;
 
-  DynamicSparsityPattern d_sparsity(dof_handler.n_dofs());
-  DoFTools::make_sparsity_pattern (dof_handler, d_sparsity);
-  sparsity_pattern.copy_from(d_sparsity);
+  DynamicSparsityPattern dsp(dof_handler.n_dofs());
+  DoFTools::make_sparsity_pattern (dof_handler, dsp);
+  sparsity_pattern.copy_from(dsp);
 
   system_matrix.reinit (sparsity_pattern);
   solution.reinit (dof_handler.n_dofs());
@@ -428,7 +428,7 @@ void Laplace<dim>::assemble_system ()
     {
       fe_values.reinit (cell);
       cell_matrix = 0;
-      cell_rhs = 0;
+      cell_rhs    = 0;
 
       // Now we have to assemble the local matrix and right hand side.  
       for (unsigned int q_point=0; q_point<n_q_points; ++q_point)
@@ -704,11 +704,11 @@ int main (int argc, char **argv)
   tmp[1] = fe_name;
   tmp[2] = quad_name;
 
-  if (argc == 1)
+  if (argc == 1)  // Default parameters
     {
       argv = tmp;
     }
-  else
+  else            // User-passed parameters
     {
       AssertThrow(argc == 6,
                   ExcMessage("Wrong number of arguments: 0 or 5"));

@@ -68,9 +68,10 @@ Note: For any other question, please refer to the Doxygen official website at th
 ### :triangular_flag_on_post: Poisson example:
 
 The code of the **Poisson example** consist of a single file:
-* "poisson.cc"
+* "poisson.cc"  
 
-Note: The file "CMakeLists.txt" is used to compile the code.
+Note: This code is strongly based on the deal.II library example "[step-4](https://www.dealii.org/current/doxygen/deal.II/step_4.html)".  
+Note: The file "CMakeLists.txt" is used to easily compile the code.
 
 
 #### 👉 Instructions to **compile** the code:
@@ -124,7 +125,8 @@ The code of the **Obstacle example** consist of a series of files incuded in two
 * "source" directory
 * "include" directory
 
-Note: The file "CMakeLists.txt" is used to compile the code.
+Note: This code is based on the deal.II library example "[step-41](https://www.dealii.org/current/doxygen/deal.II/step_41.html)".  
+Note: The file "CMakeLists.txt" is used to easily compile the code.
 
 
 #### 👉 Instructions to **compile** the code:
@@ -153,7 +155,8 @@ The executable takes no arguments. To run, go to the "build" folder, and use the
 
 <br/>  
 
-#### ↘️ Code output:
+---
+### ↘️ Code output:
 
 The main outputs are usually easy-to-consult text files reporting the convergence table and other execution data.  
 
