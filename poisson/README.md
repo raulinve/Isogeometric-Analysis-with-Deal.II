@@ -26,6 +26,15 @@ The problem is initialized by calling the **constructor** of the problem class:
 ```cpp
 Laplace<2> laplace_problem_2d(argv[1], argv[2], degree, n_cycles_down, n_cycles_up);
 ```
+Its template is:
+```cpp
+template <int dim>
+Laplace<dim>::Laplace (const std::string   fe_name,
+                       const std::string   quadrature_name,
+                       const unsigned int  degree,
+                       const unsigned int  n_cycles_low,
+                       const unsigned int  n_cycles_up );
+```
 
 <br/>  
 
@@ -39,21 +48,21 @@ Laplace<2> laplace_problem_2d(argv[1], argv[2], degree, n_cycles_down, n_cycles_
 Note: Until here the code is identical to the original step-4 example.  
 
 4. Then the constructor initializes the **quadrature formula**:  
-    ```
+    ```cpp
     if (quadrature_name == "legendre")  {    // <-[default]
-      matrix_quad   = QGauss<dim>(degree+1);
+      matrix_quad   = QGauss<dim>  (degree+1);
       boundary_quad = QGauss<dim-1>(degree+2);
-      error_quad    = QGauss<dim>(degree+3);
+      error_quad    = QGauss<dim>  (degree+3);
     }
     else if (quadrature_name == "lobatto")  {
-      matrix_quad   = QGaussLobatto<dim>(degree+2);
+      matrix_quad   = QGaussLobatto<dim>  (degree+2);
       boundary_quad = QGaussLobatto<dim-1>(degree+3);
-      error_quad    = QGaussLobatto<dim>(degree+4);
+      error_quad    = QGaussLobatto<dim>  (degree+4);
     }
     ```
 
 5. And it also initializes the **FiniteElement** type:  
-    ```
+    ```cpp
     if (fe_name == "bernstein")
       fe = new FE_Bernstein<dim>(degree);
     else if (fe_name == "lagrange")    // <-[default]
@@ -113,12 +122,12 @@ laplace_problem_2d.run ();
     SolverCG<Vector<double>> solver(solver_control);
     solver.solve(system_matrix, solution, system_rhs, PreconditionIdentity());
     ```  
-    Note: In the original ste-4 code the solver controls were `(1000, 1e-12)`.  
+    Note: In the original step-4 code the solver controls were `(1000, 1e-12)`.  
 
 6. `output_results(cycle);`  
     This method produces the output drawings in .vtk format.  
 
-7. `process_solution (cycle);`  
+7. `process_solution(cycle);`  
     This method is an additon with respect to the step-4 code.  
     It is used to compute the L2- and H1-norm errors.  
 

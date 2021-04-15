@@ -439,7 +439,7 @@ namespace Step41
   template <int dim>
   void ObstacleProblem<dim>::make_grid ()
   {
-    std::cout << " - Making the grid" << std::endl;
+    //std::cout << " - Making the grid" << std::endl;
     std::cout << "   (Degree: "
               << degree << ")"
               << std::endl
@@ -714,7 +714,7 @@ namespace Step41
   {
   std::cout << "  |> SOLVING THE SYSTEM (wait) ... " << std::endl;
 
-    ReductionControl                    reduction_control (1000, 1e-12, 1e-5);
+    ReductionControl          reduction_control (1000, 1e-12, 1e-5);
     SolverCG<Vector<double>>  solver (reduction_control);
 
     precondition.initialize (bspline_system_matrix);
@@ -879,7 +879,7 @@ namespace Step41
 
         assemble_system ();
 
-        if (iteration == 0)
+        if (iteration == 0)    // Initialization at iteration 0
           {
             bspline_complete_system_matrix.copy_from (bspline_system_matrix);
             bspline_complete_system_rhs = bspline_system_rhs;
@@ -1028,13 +1028,13 @@ int main (int argc, char *argv[])
     {
       using namespace dealii;
       using namespace Step41;
+      deallog.depth_console (0);
+
+	  Utilities::MPI::MPI_InitFinalize mpi_initialization (argc, argv);
 
       // Initializations before the loops:
-      deallog.depth_console (0);
-	  Utilities::MPI::MPI_InitFinalize mpi_initialization (argc, argv);
       std::vector<unsigned int> subdivisions(1);
-      ConvergenceTable  convergence_table;
-      Vector<double> times(n_cycle);
+      ConvergenceTable          convergence_table;
 
 
 	  std::cout << "\n > STARTING THE CYCLES: ========================" << std::endl;
