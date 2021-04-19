@@ -1,4 +1,12 @@
-# Poisson code
+# ℹ️ Poisson code
+
+https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/tree/master/poisson  
+
+<br/>  
+
+<img src="https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/tree/master/poisson/doc/IMG_poisson_t5.png" alt="Poisson example result" width="480" height="480">  
+
+**Img. 1**: Result plot of the *poisson* code.  
 
 <br/>  
 

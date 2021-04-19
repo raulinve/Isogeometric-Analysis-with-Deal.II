@@ -15,6 +15,7 @@ This repository contains C++ code used to introduce the **Isogeometric Analysis*
 <br/>  
 
 **Organization of the main files and folders:**  
+- 📁 [*references*](https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/tree/master/References) : contains only a reference copy of the deal.II step examples used for this project.  
 - 📁 [*obstacle*](https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/tree/master/obstacle) : contains a IGA modification of *step-41* of the deal.II library.  
 - 📁 [*poisson*](https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/tree/master/poisson) : contains a IGA modification of *step-4* of the deal.II library.  
 - 📁 [*scripts*](https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/tree/master/scripts) : contains scripts used for automatic code indentation.  
@@ -28,7 +29,7 @@ This repository contains C++ code used to introduce the **Isogeometric Analysis*
 Last update: **APR-2021**  
 
 From newest to oldest:  
-* Note: Added Doxygen documentation.
+* Note: Added documentation (Doxygen, Readme files, Images).
 * Obstacle example: :heavy_check_mark: Improved (*Reorganization of the code, improved user interaction*).
 * Obstacle example: :heavy_check_mark: Fixed  (*The code now compiles without errors or warnings with deal.II 9.2.0*).
 * Poisson example : :heavy_check_mark: Improved (*Reorganization of the code, improved user interaction*).
@@ -73,6 +74,9 @@ The code of the **Poisson example** consist of a single file:
 Note: This code is strongly based on the deal.II library example "[step-4](https://www.dealii.org/current/doxygen/deal.II/step_4.html)".  
 Note: The file "CMakeLists.txt" is used to easily compile the code.
 
+<img src="https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/tree/master/poisson/doc/IMG_poisson_t5.png" alt="Poisson example result" width="480" height="480">  
+
+**Img. 1**: Result plot of the *poisson* code.  
 
 #### 👉 Instructions to **compile** the code:
 
@@ -128,6 +132,9 @@ The code of the **Obstacle example** consist of a series of files incuded in two
 Note: This code is based on the deal.II library example "[step-41](https://www.dealii.org/current/doxygen/deal.II/step_41.html)".  
 Note: The file "CMakeLists.txt" is used to easily compile the code.
 
+<img src="https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/tree/master/obstacle/doc/IMG_obstacle_t6.png" alt="Obstacle example result" width="480" height="480">  
+
+**Img. 2**: Result plot of the *obstacle* code.  
 
 #### 👉 Instructions to **compile** the code:
 
@@ -152,36 +159,6 @@ The executable takes no arguments. To run, go to the "build" folder, and use the
 ```
 ./exe
 ```
-
-<br/>  
-
----
-### ↘️ Code output:
-
-The main outputs are usually easy-to-consult text files reporting the convergence table and other execution data.  
-
-The **output image files** are saved in **.vtk** format.  
-The *Visualization Toolkit* (*VTK*) is an open-source software system for 3D computer graphics, image processing and scientific visualization.  
-
-In order to open *.vtk* files you can use a graphical software like "**VisIt**".  
-
-In order to install VisIt software on Linux systems:  
-1. Go to the project website: https://wci.llnl.gov/simulation/computer-codes/visit/executables;
-2. Download the archive for your system (es: *Linux - x86_64 64 bit Ubuntu 20*) and download also the "*VisIt install script*";
-3. Make the install script executable (es: $ `chmod 755 visit-install3_1_4`);
-4. Use the following command to install the program:  
-$ `sudo [script_name] [visit version] [system in use] [installation path]`  
-Example:  $ `sudo visit-install3_1_4 3.1.4 linux-x86_64-ubuntu20 /usr/local/bin/visit`  
-5. During the installation, if asked, select the remote-computing center nearest to your location and press *enter* until the installation has finished. (es: ETH Zurich in Europe)
-
-Steps to correctly see the .vtk image files with VisIt (*for beginners*):  
-1. Open VisIt: `/usr/local/bin/visit/bin/visit`;
-2. Click on "Open" > Select the directory > Select the \*.vtk database;
-3. Now press on "Add" > "Pseudocolor" > "Active set";
-4. Make the plot 3D: "Operators" > "Transform" > "Elevate";
-5. Click on "**Draw**" and you should see a 3D movable picture in the active window.
-
-Note: It is possible to add features to the plot like "Contour" or "Mesh".
 
 <br/>  
 
@@ -269,6 +246,50 @@ For any other information, please see the following links:
 [www.dealii.org / Main page](https://www.dealii.org/)  
 [www.dealii.org / Installation instructions](https://www.dealii.org/current/readme.html)  
 
+
+<br/>  
+
+---
+### ↘️ Code outputs:
+
+The main outputs are usually easy-to-consult text files reporting the convergence table and other execution data.  
+
+The **output image files** are saved in **.vtk** format.  
+The *Visualization Toolkit* (*VTK*) is an open-source software system for 3D computer graphics, image processing and scientific visualization.  
+
+In order to open *.vtk* files you can use a graphical software like "**ParaView**" or "**VisIt**".  
+
+<br/>  
+
+#### ⚙️ Installation and usage of ParaView on Unix systems:  
+1. Use the following command to install the program (using the Linux Advanced Packaging Tool):  
+    $ `sudo apt install paraview`  
+
+👉 Steps to correctly see the .vtk image files with **ParaView** (*for beginners*):  
+1. Open "*ParaView Client*" from the applications menu;  
+2. Click on "File" > "Open" > Select the directory > Select the \*.vtk Group;  
+3. Make the plot 3D: "Filters" > "Search" > "Warp By Scalar";  
+4. Note: Always click on the "Apply" button to view any changes;  
+
+#### ⚙️ Installation and usage of VisIt on Unix systems:  
+1. Go to the project website: https://wci.llnl.gov/simulation/computer-codes/visit/executables;
+2. Download the archive for your system (es: *Linux - x86_64 64 bit Ubuntu 20*) and download also the "*VisIt install script*";
+3. Make the install script executable (es: $ `chmod 755 visit-install3_1_4`);
+4. Use the following command to install the program:  
+    $ `sudo [script_name] [visit version] [system in use] [installation path]`  
+    Example:  $ `sudo visit-install3_1_4 3.1.4 linux-x86_64-ubuntu20 /usr/local/bin/visit`  
+5. During the installation, if asked, select the remote-computing center nearest to your location and press *enter* until the installation has finished. (es: ETH Zurich in Europe)
+
+👉 Steps to correctly see the .vtk image files with **VisIt** (*for beginners*):  
+1. Open VisIt: `/usr/local/bin/visit/bin/visit`;
+2. Click on "Open" > Select the directory > Select the \*.vtk database;
+3. Now press on "Add" > "Pseudocolor" > "Active set";  
+    Note: it is also possible to add features like "Contour" or "Mesh".
+4. Make the plot 3D: "Operators" > "Transform" > "Elevate";
+5. Click on "**Draw**" and you should see a 3D movable picture in the active window.
+
+
+
 <br/>  
 
 ---
@@ -289,6 +310,7 @@ Unless stated otherwise all works are licensed under the:
 *GNU Lesser General Public License v2.1*  
 
 Please see the attached [license file](https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/blob/master/LICENSE).  
+
 
 
 

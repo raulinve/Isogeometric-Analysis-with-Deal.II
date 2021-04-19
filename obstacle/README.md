@@ -1,4 +1,12 @@
-# Obstacle code
+# ℹ️ Obstacle code
+
+https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/tree/master/obstacle
+
+<br/>  
+
+<img src="https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/tree/master/obstacle/doc/IMG_obstacle_t6.png" alt="Obstacle example result" width="480" height="480">  
+
+**Img. 2**: Result plot of the *obstacle* code.  
 
 <br/>  
 

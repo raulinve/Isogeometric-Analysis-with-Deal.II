@@ -1,0 +1,355 @@
+ 
+============================================================
+================= THE CODE IS RUNNING ======================
+============================================================
+
+  SELECTED OPTIONS : 
+   Dimensions            : 2
+   Number of cycles      : 5
+   Polynomial degree     : 0
+   h_ref | p_ref | k_ref : 1 | 0 | 0
+   Continuity            : C1
+
+
+ > STARTING THE CYCLES: ========================
+
+
+
+ CYCLE # 1 of 5  ======================
+ - Setup h-refinement
+ - Setup C1 continuity
+ - Assemble IgaHandler ...  
+   (Time to assemble the IgaHandler: 0.491557 seconds)
+ - Initialization of the obstacle problem.
+ - Problem RUN
+ - Checking/creating the output directory "RESULTS". 
+ - Making the grid
+   (Degree: 3)
+   (Number of active cells: 4)
+   (Total number of cells:  4)
+ - Setup the system
+   (Number of degrees of freedom:     49)
+   (Number of degrees of freedom IGA: 36)
+ - Assembling the mass matrix ... 
+ > Starting the Newton iterations:
+
+  |[ Newton iteration: 0 ]
+  |> ASSEMBLING THE SYSTEM (wait) ... 
+  |> SOLVING THE SYSTEM (wait) ... 
+  |  Error: 3.2675 -> 1.61182e-12 in 1 CG iterations.
+  |- Updating active set...
+  |  (Size of active set: 16)
+  |  (Residual of the non-contact part of the system: 5.55112e-17)
+  |- Saving/overwriting the .vtk result files.
+
+  |[ Newton iteration: 1 ]
+  |> ASSEMBLING THE SYSTEM (wait) ... 
+  |> SOLVING THE SYSTEM (wait) ... 
+  |  Error: 5.55112e-17 -> 5.55112e-17 in 0 CG iterations.
+  |- Updating active set...
+  |  (Size of active set: 16)
+  |  (Residual of the non-contact part of the system: 5.55112e-17)
+  |- Saving/overwriting the .vtk result files.
+
+ - Computing the error...
+ - CYCLE # 1 successfully ended!
+
+
+
+ CYCLE # 2 of 5  ======================
+ - Setup h-refinement
+ - Setup C1 continuity
+ - Assemble IgaHandler ...  
+   (Time to assemble the IgaHandler: 0.0420565 seconds)
+ - Initialization of the obstacle problem.
+ - Problem RUN
+ - Checking/creating the output directory "RESULTS". 
+ - Making the grid
+   (Degree: 3)
+   (Number of active cells: 16)
+   (Total number of cells:  16)
+ - Setup the system
+   (Number of degrees of freedom:     169)
+   (Number of degrees of freedom IGA: 100)
+ - Assembling the mass matrix ... 
+ > Starting the Newton iterations:
+
+  |[ Newton iteration: 0 ]
+  |> ASSEMBLING THE SYSTEM (wait) ... 
+  |> SOLVING THE SYSTEM (wait) ... 
+  |  Error: 3.29684 -> 2.3728e-12 in 1 CG iterations.
+  |- Updating active set...
+  |  (Size of active set: 52)
+  |  (Residual of the non-contact part of the system: 5.42658e-13)
+  |- Saving/overwriting the .vtk result files.
+
+  |[ Newton iteration: 1 ]
+  |> ASSEMBLING THE SYSTEM (wait) ... 
+  |> SOLVING THE SYSTEM (wait) ... 
+  |  Error: 0.115987 -> 4.65429e-07 in 10 CG iterations.
+  |- Updating active set...
+  |  (Size of active set: 48)
+  |  (Residual of the non-contact part of the system: 0.00213125)
+  |- Saving/overwriting the .vtk result files.
+
+  |[ Newton iteration: 2 ]
+  |> ASSEMBLING THE SYSTEM (wait) ... 
+  |> SOLVING THE SYSTEM (wait) ... 
+  |  Error: 0.00213125 -> 1.10974e-08 in 14 CG iterations.
+  |- Updating active set...
+  |  (Size of active set: 48)
+  |  (Residual of the non-contact part of the system: 5.46774e-09)
+  |- Saving/overwriting the .vtk result files.
+
+ - Computing the error...
+ - CYCLE # 2 successfully ended!
+
+
+
+ CYCLE # 3 of 5  ======================
+ - Setup h-refinement
+ - Setup C1 continuity
+ - Assemble IgaHandler ...  
+   (Time to assemble the IgaHandler: 0.165771 seconds)
+ - Initialization of the obstacle problem.
+ - Problem RUN
+ - Checking/creating the output directory "RESULTS". 
+ - Making the grid
+   (Degree: 3)
+   (Number of active cells: 64)
+   (Total number of cells:  64)
+ - Setup the system
+   (Number of degrees of freedom:     625)
+   (Number of degrees of freedom IGA: 324)
+ - Assembling the mass matrix ... 
+ > Starting the Newton iterations:
+
+  |[ Newton iteration: 0 ]
+  |> ASSEMBLING THE SYSTEM (wait) ... 
+  |> SOLVING THE SYSTEM (wait) ... 
+  |  Error: 5.20508 -> 7.87192e-12 in 1 CG iterations.
+  |- Updating active set...
+  |  (Size of active set: 184)
+  |  (Residual of the non-contact part of the system: 3.90011e-12)
+  |- Saving/overwriting the .vtk result files.
+
+  |[ Newton iteration: 1 ]
+  |> ASSEMBLING THE SYSTEM (wait) ... 
+  |> SOLVING THE SYSTEM (wait) ... 
+  |  Error: 0.370325 -> 1.46234e-06 in 17 CG iterations.
+  |- Updating active set...
+  |  (Size of active set: 124)
+  |  (Residual of the non-contact part of the system: 0.252346)
+  |- Saving/overwriting the .vtk result files.
+
+  |[ Newton iteration: 2 ]
+  |> ASSEMBLING THE SYSTEM (wait) ... 
+  |> SOLVING THE SYSTEM (wait) ... 
+  |  Error: 0.252346 -> 9.73891e-07 in 16 CG iterations.
+  |- Updating active set...
+  |  (Size of active set: 132)
+  |  (Residual of the non-contact part of the system: 2.92019e-07)
+  |- Saving/overwriting the .vtk result files.
+
+  |[ Newton iteration: 3 ]
+  |> ASSEMBLING THE SYSTEM (wait) ... 
+  |> SOLVING THE SYSTEM (wait) ... 
+  |  Error: 0.0171691 -> 1.67584e-07 in 18 CG iterations.
+  |- Updating active set...
+  |  (Size of active set: 128)
+  |  (Residual of the non-contact part of the system: 0.000573005)
+  |- Saving/overwriting the .vtk result files.
+
+  |[ Newton iteration: 4 ]
+  |> ASSEMBLING THE SYSTEM (wait) ... 
+  |> SOLVING THE SYSTEM (wait) ... 
+  |  Error: 0.000573005 -> 3.95186e-09 in 19 CG iterations.
+  |- Updating active set...
+  |  (Size of active set: 128)
+  |  (Residual of the non-contact part of the system: 2.42179e-09)
+  |- Saving/overwriting the .vtk result files.
+
+ - Computing the error...
+ - CYCLE # 3 successfully ended!
+
+
+
+ CYCLE # 4 of 5  ======================
+ - Setup h-refinement
+ - Setup C1 continuity
+ - Assemble IgaHandler ...  
+   (Time to assemble the IgaHandler: 0.688493 seconds)
+ - Initialization of the obstacle problem.
+ - Problem RUN
+ - Checking/creating the output directory "RESULTS". 
+ - Making the grid
+   (Degree: 3)
+   (Number of active cells: 256)
+   (Total number of cells:  256)
+ - Setup the system
+   (Number of degrees of freedom:     2401)
+   (Number of degrees of freedom IGA: 1156)
+ - Assembling the mass matrix ... 
+ > Starting the Newton iterations:
+
+  |[ Newton iteration: 0 ]
+  |> ASSEMBLING THE SYSTEM (wait) ... 
+  |> SOLVING THE SYSTEM (wait) ... 
+  |  Error: 8.41791 -> 1.92953e-11 in 1 CG iterations.
+  |- Updating active set...
+  |  (Size of active set: 684)
+  |  (Residual of the non-contact part of the system: 1.01901e-11)
+  |- Saving/overwriting the .vtk result files.
+
+  |[ Newton iteration: 1 ]
+  |> ASSEMBLING THE SYSTEM (wait) ... 
+  |> SOLVING THE SYSTEM (wait) ... 
+  |  Error: 0.481471 -> 4.41236e-06 in 24 CG iterations.
+  |- Updating active set...
+  |  (Size of active set: 540)
+  |  (Residual of the non-contact part of the system: 0.356487)
+  |- Saving/overwriting the .vtk result files.
+
+  |[ Newton iteration: 2 ]
+  |> ASSEMBLING THE SYSTEM (wait) ... 
+  |> SOLVING THE SYSTEM (wait) ... 
+  |  Error: 0.356487 -> 3.43858e-06 in 25 CG iterations.
+  |- Updating active set...
+  |  (Size of active set: 468)
+  |  (Residual of the non-contact part of the system: 0.0648088)
+  |- Saving/overwriting the .vtk result files.
+
+  |[ Newton iteration: 3 ]
+  |> ASSEMBLING THE SYSTEM (wait) ... 
+  |> SOLVING THE SYSTEM (wait) ... 
+  |  Error: 0.0648088 -> 4.08302e-07 in 26 CG iterations.
+  |- Updating active set...
+  |  (Size of active set: 468)
+  |  (Residual of the non-contact part of the system: 0.00358445)
+  |- Saving/overwriting the .vtk result files.
+
+  |[ Newton iteration: 4 ]
+  |> ASSEMBLING THE SYSTEM (wait) ... 
+  |> SOLVING THE SYSTEM (wait) ... 
+  |  Error: 0.00534601 -> 5.17816e-08 in 26 CG iterations.
+  |- Updating active set...
+  |  (Size of active set: 464)
+  |  (Residual of the non-contact part of the system: 0.000357037)
+  |- Saving/overwriting the .vtk result files.
+
+  |[ Newton iteration: 5 ]
+  |> ASSEMBLING THE SYSTEM (wait) ... 
+  |> SOLVING THE SYSTEM (wait) ... 
+  |  Error: 0.000357037 -> 2.83053e-09 in 27 CG iterations.
+  |- Updating active set...
+  |  (Size of active set: 464)
+  |  (Residual of the non-contact part of the system: 1.04353e-09)
+  |- Saving/overwriting the .vtk result files.
+
+ - Computing the error...
+ - CYCLE # 4 successfully ended!
+
+
+
+ CYCLE # 5 of 5  ======================
+ - Setup h-refinement
+ - Setup C1 continuity
+ - Assemble IgaHandler ...  
+   (Time to assemble the IgaHandler: 2.96758 seconds)
+ - Initialization of the obstacle problem.
+ - Problem RUN
+ - Checking/creating the output directory "RESULTS". 
+ - Making the grid
+   (Degree: 3)
+   (Number of active cells: 1024)
+   (Total number of cells:  1024)
+ - Setup the system
+   (Number of degrees of freedom:     9409)
+   (Number of degrees of freedom IGA: 4356)
+ - Assembling the mass matrix ... 
+ > Starting the Newton iterations:
+
+  |[ Newton iteration: 0 ]
+  |> ASSEMBLING THE SYSTEM (wait) ... 
+  |> SOLVING THE SYSTEM (wait) ... 
+  |  Error: 12.5943 -> 2.96532e-05 in 10 CG iterations.
+  |- Updating active set...
+  |  (Size of active set: 2784)
+  |  (Residual of the non-contact part of the system: 1.65789e-05)
+  |- Saving/overwriting the .vtk result files.
+
+  |[ Newton iteration: 1 ]
+  |> ASSEMBLING THE SYSTEM (wait) ... 
+  |> SOLVING THE SYSTEM (wait) ... 
+  |  Error: 0.347389 -> 2.48702e-06 in 48 CG iterations.
+  |- Updating active set...
+  |  (Size of active set: 2392)
+  |  (Residual of the non-contact part of the system: 0.460286)
+  |- Saving/overwriting the .vtk result files.
+
+  |[ Newton iteration: 2 ]
+  |> ASSEMBLING THE SYSTEM (wait) ... 
+  |> SOLVING THE SYSTEM (wait) ... 
+  |  Error: 0.460286 -> 3.33747e-06 in 47 CG iterations.
+  |- Updating active set...
+  |  (Size of active set: 2084)
+  |  (Residual of the non-contact part of the system: 0.214877)
+  |- Saving/overwriting the .vtk result files.
+
+  |[ Newton iteration: 3 ]
+  |> ASSEMBLING THE SYSTEM (wait) ... 
+  |> SOLVING THE SYSTEM (wait) ... 
+  |  Error: 0.214877 -> 2.07363e-06 in 44 CG iterations.
+  |- Updating active set...
+  |  (Size of active set: 1860)
+  |  (Residual of the non-contact part of the system: 0.0929899)
+  |- Saving/overwriting the .vtk result files.
+
+  |[ Newton iteration: 4 ]
+  |> ASSEMBLING THE SYSTEM (wait) ... 
+  |> SOLVING THE SYSTEM (wait) ... 
+  |  Error: 0.0929899 -> 8.04322e-07 in 43 CG iterations.
+  |- Updating active set...
+  |  (Size of active set: 1724)
+  |  (Residual of the non-contact part of the system: 0.0268904)
+  |- Saving/overwriting the .vtk result files.
+
+  |[ Newton iteration: 5 ]
+  |> ASSEMBLING THE SYSTEM (wait) ... 
+  |> SOLVING THE SYSTEM (wait) ... 
+  |  Error: 0.0268904 -> 2.49241e-07 in 43 CG iterations.
+  |- Updating active set...
+  |  (Size of active set: 1704)
+  |  (Residual of the non-contact part of the system: 0.00248612)
+  |- Saving/overwriting the .vtk result files.
+
+  |[ Newton iteration: 6 ]
+  |> ASSEMBLING THE SYSTEM (wait) ... 
+  |> SOLVING THE SYSTEM (wait) ... 
+  |  Error: 0.00248612 -> 1.54842e-08 in 44 CG iterations.
+  |- Updating active set...
+  |  (Size of active set: 1704)
+  |  (Residual of the non-contact part of the system: 8.21071e-09)
+  |- Saving/overwriting the .vtk result files.
+
+ - Computing the error...
+ - CYCLE # 5 successfully ended!
+
+
+ - Preparing the output converging table.
+
+ALL CYCLES CONVERGENCE SUMMARY : 
+---------------------------------------------------------------------- 
+cycle cells dofs bsplines CG memory_sys    L2        H1      Linfty   
+    1     4   49       36  0       6440 1.987e-01 1.022e+00 1.647e-01 
+    2    16  169      100 14      21800 2.817e-02 2.404e-01 3.435e-02 
+    3    64  625      324 19      80168 4.276e-03 6.698e-02 8.019e-03 
+    4   256 2401     1156 27     307496 7.995e-04 1.911e-02 2.220e-03 
+    5  1024 9409     4356 44    1204520 7.833e-05 5.334e-03 4.032e-04 
+---------------------------------------------------------------------- 
+ 
+
+============================================================
+================= CODE ENDED CORRECTLY =====================
+============================================================
+
