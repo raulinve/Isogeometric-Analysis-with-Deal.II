@@ -74,7 +74,7 @@ The code of the **Poisson example** consist of a single file:
 Note: This code is strongly based on the deal.II library example "[step-4](https://www.dealii.org/current/doxygen/deal.II/step_4.html)".  
 Note: The file "CMakeLists.txt" is used to easily compile the code.
 
-<img src="https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/tree/master/poisson/doc/IMG_poisson_t5.png" alt="Poisson example result" width="480" height="480">  
+<img src="https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/blob/master/poisson/doc/IMG_poisson_t5.png" alt="Poisson example result" width="480" height="480">  
 
 **Img. 1**: Result plot of the *poisson* code.  
 
@@ -132,7 +132,7 @@ The code of the **Obstacle example** consist of a series of files incuded in two
 Note: This code is based on the deal.II library example "[step-41](https://www.dealii.org/current/doxygen/deal.II/step_41.html)".  
 Note: The file "CMakeLists.txt" is used to easily compile the code.
 
-<img src="https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/tree/master/obstacle/doc/IMG_obstacle_t6.png" alt="Obstacle example result" width="480" height="480">  
+<img src="https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/blob/master/obstacle/doc/IMG_obstacle_t6.png" alt="Obstacle example result" width="480" height="480">  
 
 **Img. 2**: Result plot of the *obstacle* code.  
 
