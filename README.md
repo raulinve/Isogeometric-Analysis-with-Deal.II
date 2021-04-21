@@ -15,9 +15,9 @@ This repository contains C++ code used to introduce the **Isogeometric Analysis*
 <br/>  
 
 **Organization of the main files and folders:**  
-- 📁 [*step-4 IGA (poisson)*](https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/tree/master/step-4 IGA (poisson)) : contains a IGA modification of *step-4* of the deal.II library.  
-- 📁 [*step-5 IGA (ext. poisson)*](https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/tree/master/step-5 IGA (ext. poisson)) : contains a IGA modification of *step-5* of the deal.II library.  
-- 📁 [*step-41 IGA (obstacle)*](https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/tree/master/step-41 IGA (obstacle)) : contains a IGA modification of *step-41* of the deal.II library.  
+- 📁 [*step-4 IGA (poisson)*](https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/tree/master/step-04_IGA_(poisson)) : contains a IGA modification of *step-4* of the deal.II library.  
+- 📁 [*step-5 IGA (ext. poisson)*](https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/tree/master/step-05_IGA_(ext_poisson)) : contains a IGA modification of *step-5* of the deal.II library.  
+- 📁 [*step-41 IGA (obstacle)*](https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/tree/master/step-41_IGA_(obstacle)) : contains a IGA modification of *step-41* of the deal.II library.  
 - 📁 [*references*](https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/tree/master/references) : contains only a reference copy of the deal.II step examples used for this project.  
 - 📁 [*scripts*](https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/tree/master/scripts) : contains scripts used for automatic code indentation.  
 - 📄 [*LICENSE*](https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/blob/master/LICENSE) : contains the license of use provided with this code.  
@@ -78,7 +78,7 @@ The code of the **Poisson example** consist of a single file:
 Note: This code is strongly based on the deal.II library example "[step-4](https://www.dealii.org/current/doxygen/deal.II/step_4.html)".  
 Note: The file "CMakeLists.txt" is used to easily compile the code.
 
-<img src="https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/blob/master/step-4 IGA (poisson)/doc/IMG_step-4_IGA_t5.png" alt="Poisson example result" width="480" height="480">  
+<img src="https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/blob/master/step-04_IGA_(poisson)/doc/IMG_step-4_IGA_t5.png" alt="Poisson example result" width="480" height="480">  
 
 **Img. 1**: Result plot of the *poisson* code.  
 
@@ -136,7 +136,7 @@ The code of the **Obstacle example** consist of a series of files incuded in two
 Note: This code is based on the deal.II library example "[step-41](https://www.dealii.org/current/doxygen/deal.II/step_41.html)".  
 Note: The file "CMakeLists.txt" is used to easily compile the code.
 
-<img src="https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/blob/master/step-41 IGA (obstacle)/doc/IMG_step-41_IGA_t6.png" alt="Obstacle example result" width="480" height="480">  
+<img src="https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/blob/master/step-41_IGA_(obstacle)/doc/IMG_step-41_IGA_t6.png" alt="Obstacle example result" width="480" height="480">  
 
 **Img. 2**: Result plot of the *obstacle* code.  
 

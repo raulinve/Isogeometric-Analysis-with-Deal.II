@@ -1,16 +1,16 @@
-# ℹ️ Step-5 IGA code (extended poisson)
+# ℹ️ Step-4 IGA code (poisson)
 
-https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/tree/master/step-5 IGA (ext. poisson)  
-
-<br/>  
-
-<img src="https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/blob/master/step-5 IGA (ext. poisson)/doc/IMG_step-5_t3.png" alt="Step-5 IGA example result" width="480" height="480">  
-
-**Img. 1**: Result plot of the *step-5 IGA (extended poisson)* code.  
+https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/tree/master/step-04_IGA_(poisson)  
 
 <br/>  
 
-The following are the steps executed by the **main** function of the *step-5 IGA* code:
+<img src="https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/blob/master/step-04_IGA_(poisson)/doc/IMG_step-4_IGA_t5.png" alt="Poisson example result" width="480" height="480">  
+
+**Img. 1**: Result plot of the *poisson* code.  
+
+<br/>  
+
+The following are the steps executed by the **main** function of the *poisson* code:
 
 <br/>  
 
@@ -32,16 +32,16 @@ The following are the steps executed by the **main** function of the *step-5 IGA
 ### 02. Initialization of the problem:
 The problem is initialized by calling the **constructor** of the problem class:
 ```cpp
-Step5<2> laplace_problem_2d(argv[1], argv[2], degree, n_cycles_down, n_cycles_up);
+Laplace<2> laplace_problem_2d(argv[1], argv[2], degree, n_cycles_down, n_cycles_up);
 ```
 Its template is:
 ```cpp
 template <int dim>
-Step5<dim>::Step5 (const std::string   fe_name,
-                   const std::string   quadrature_name,
-                   const unsigned int  degree,
-                   const unsigned int  n_cycles_low,
-                   const unsigned int  n_cycles_up );
+Laplace<dim>::Laplace (const std::string   fe_name,
+                       const std::string   quadrature_name,
+                       const unsigned int  degree,
+                       const unsigned int  n_cycles_low,
+                       const unsigned int  n_cycles_up );
 ```
 
 <br/>  
@@ -53,7 +53,7 @@ Step5<dim>::Step5 (const std::string   fe_name,
 3. Associates the DoFHandler to the triangulation;  
     `dof_handler (triangulation)`  
 
-Note: Until here the code is identical to the original step-5 example 
+Note: Until here the code is identical to the original step-4 example 
 (exept from the fact that the finite element object "fe" is a pointer).  
 
 4. Then the constructor initializes the **quadrature formula**:  
@@ -88,32 +88,26 @@ Note: Until here the code is identical to the original step-5 example
 ### 03. Solution of the problem:
 The problem is solved by calling the **run** method:  
 ```cpp
-  laplace_problem_2d.run();
+laplace_problem_2d.run ();
 ```
 
 <br/>  
 
 #### The run method performs the following actions:  
 
-1. **Read the grid from file:**
-    A series of commands handle the grid creation.  
-    Note: This step is performed only once, (it is not repeated in the cycles).  
-    The grid is red from the file *circle-grid.inp*.  
+1. `make_grid();`  
+    This method handle the grid creation.  
+    Note: This method is invoked only once, when the first cycle runs.  
+    The grid is produced with the use of *hyper_cube*:  
     ```cpp
-	GridIn<dim> grid_in;
-	grid_in.attach_triangulation(triangulation);
-	std::ifstream input_file("circle-grid.inp");
-
-	Assert(dim == 2, ExcInternalError());
-	grid_in.read_ucd(input_file);
-
-	const SphericalManifold<dim> boundary;
-	triangulation.set_all_manifold_ids_on_boundary(0);
-	triangulation.set_manifold(0, boundary);
+    GridGenerator::hyper_cube(triangulation, -1, 1);
+    triangulation.refine_global(n_cycles_low+1);
     ```
+    In the original step-4 example the refinement is fixed at `refine_global(4)`.  
 
-2. **Grid refinement:**
-    On each cycle a library command is used to refine the grid:  
+2. `refine_grid();`  
+    This method is an additon with respect to the step-4 code.  
+    It is used to refine the grid at each cycle using the library command:  
     ```cpp
     triangulation.refine_global (1);
     ```
@@ -122,11 +116,11 @@ The problem is solved by calling the **run** method:
     This method enumerates all the degrees of freedom and sets up matrix and 
     vector objects to hold the system data.  
     For this purpose, a sparse matrix (subdivided in values and pattern structures) is used.  
-    The only difference between this code and the original step-5 is the use of `*fe` instead of `fe`.  
+    The only difference between this code and the original step-4 is the use of `*fe` instead of `fe`.  
 
 4. `assemble_system();`  
     This method assemble the matrices and the vector producing the system to solve.  
-    The implementation is very similar between this code and the original step-5.  
+    The implementation is very similar between the *poisson* code and the original step-4.  
     Note: See the documentation for more details.  
 
 5. `solve();`  
@@ -135,17 +129,20 @@ The problem is solved by calling the **run** method:
     ```cpp
     SolverControl            solver_control(100000, 1e-14);
     SolverCG<Vector<double>> solver(solver_control);
-
-    PreconditionSSOR<SparseMatrix<double>> preconditioner;
-    preconditioner.initialize(system_matrix, 1.2);
-
-    solver.solve(system_matrix, solution, system_rhs, preconditioner);
+    solver.solve(system_matrix, solution, system_rhs, PreconditionIdentity());
     ```  
-    Note: In the original step-5 code the solver controls were `(1000, 1e-12)`.  
+    Note: In the original step-4 code the solver controls were `(1000, 1e-12)`.  
 
 6. `output_results(cycle);`  
-    This method produces the output drawings in .vtu format.  
+    This method produces the output drawings in .vtk format.  
 
+7. `process_solution(cycle);`  
+    This method is an additon with respect to the step-4 code.  
+    It is used to compute the L2- and H1-norm errors.  
+
+8. `print_table(cycle);`  
+    This method is an additon with respect to the step-4 code.  
+    It is used to setup and save to file a convergence table.  
 
 
 
