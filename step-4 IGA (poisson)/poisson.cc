@@ -117,10 +117,10 @@
 #include <deal.II/grid/tria_accessor.h>
 #include <deal.II/grid/tria_iterator.h>
 #include <deal.II/dofs/dof_accessor.h>
-#include <deal.II/fe/fe.h>
+#include <deal.II/fe/fe.h>                   // IGA
 #include <deal.II/fe/fe_q.h>
-#include <deal.II/fe/fe_nothing.h>
-#include <deal.II/fe/fe_bernstein.h>
+#include <deal.II/fe/fe_nothing.h>           // IGA
+#include <deal.II/fe/fe_bernstein.h>         // IGA
 #include <deal.II/dofs/dof_tools.h>
 #include <deal.II/fe/fe_values.h>
 #include <deal.II/base/quadrature_lib.h>
@@ -133,18 +133,20 @@
 #include <deal.II/lac/dynamic_sparsity_pattern.h>
 #include <deal.II/lac/solver_cg.h>
 #include <deal.II/lac/precondition.h>
-#include <deal.II/lac/sparse_ilu.h>
+#include <deal.II/lac/sparse_ilu.h>          // IGA
 
 #include <deal.II/numerics/data_out.h>
-#include <deal.II/base/convergence_table.h>
+#include <deal.II/base/convergence_table.h>  // IGA
 #include <fstream>
 #include <iostream>
 #include <deal.II/base/logstream.h>
 
-#include <filesystem>
+#include <filesystem>    // IGA
 
 
 using namespace dealii;
+
+  bool original_problem_4 = false;	// Default: "false" [SHOULD BE REMOVED NEXT]
 
 //====================================================
 /**
@@ -215,7 +217,12 @@ template <int dim>
 double BoundaryValues<dim>::value (const Point<dim> &p,
                                    const unsigned int /*component*/) const
 {
-  return std::sin(2*p(0)*numbers::PI)*std::sin(3*p(1)*numbers::PI);
+  if (original_problem_4) {
+    return p.square();
+  }
+  else {
+    return std::sin(2*p(0)*numbers::PI)*std::sin(3*p(1)*numbers::PI);
+  }
 }
 
 
@@ -242,7 +249,15 @@ template <int dim>
 double RightHandSide<dim>::value (const Point<dim> &p,
                                   const unsigned int /*component*/) const
 {
-  return 13*std::pow(numbers::PI,2)*std::sin(2*p(0)*numbers::PI)*std::sin(3*p(1)*numbers::PI);
+  if (original_problem_4) {
+    double return_value = 0.0;
+    for (unsigned int i = 0; i < dim; ++i)
+      return_value += 4.0 * std::pow(p(i), 4.0);
+    return return_value;
+  }
+  else {
+    return 13*std::pow(numbers::PI,2)*std::sin(2*p(0)*numbers::PI)*std::sin(3*p(1)*numbers::PI);
+  }
 }
 
 
@@ -290,12 +305,12 @@ private:
   void process_solution (const unsigned int cycle);
   void print_table (const unsigned int cycle);
 
-  const std::string fe_name;
-  const std::string quadrature_name;
-  const unsigned int degree;
-  const unsigned int n_cycles_low;
-  const unsigned int n_cycles_up;
-  unsigned int cg_iter;
+  const std::string    fe_name;            // IGA
+  const std::string    quadrature_name;    // IGA
+  const unsigned int   degree;             // IGA
+  const unsigned int   n_cycles_low;       // IGA
+  const unsigned int   n_cycles_up;        // IGA
+  unsigned int         cg_iter;            // IGA
 
   Triangulation<dim>   triangulation;
 
@@ -303,7 +318,8 @@ private:
   // don't know it yet at construction time, and FiniteElements do not
   // support assignement operators.
 
-  FiniteElement<dim>   *fe;
+  //FE_Q<dim>            fe;
+  FiniteElement<dim>   *fe;                // IGA
   DoFHandler<dim>      dof_handler;
 
   SparsityPattern      sparsity_pattern;
@@ -312,31 +328,31 @@ private:
   Vector<double>       solution;
   Vector<double>       system_rhs;
 
-  ConvergenceTable     convergence_table;
+  ConvergenceTable     convergence_table;  // IGA
 
-  Quadrature<dim>    matrix_quad;
-  Quadrature<dim>    error_quad;
-  Quadrature<dim-1>  boundary_quad;
+  Quadrature<dim>      matrix_quad;        // IGA
+  Quadrature<dim>      error_quad;         // IGA
+  Quadrature<dim-1>    boundary_quad;      // IGA
 };
 
 
 /// Main problem class: Constructor
 template <int dim>
-Laplace<dim>::Laplace (const std::string fe_name,
-                       const std::string quadrature_name,
+Laplace<dim>::Laplace (const std::string  fe_name,
+                       const std::string  quadrature_name,
                        const unsigned int degree,
                        const unsigned int n_cycles_low,
                        const unsigned int n_cycles_up)
   :
-  fe_name(fe_name),
-  quadrature_name(quadrature_name),
-  degree(degree),
-  n_cycles_low(n_cycles_low),
-  n_cycles_up(n_cycles_up),
-  fe(NULL),
-  dof_handler (triangulation)
+  fe_name         (fe_name),
+  quadrature_name (quadrature_name),
+  degree          (degree),
+  n_cycles_low    (n_cycles_low),
+  n_cycles_up     (n_cycles_up),
+  fe              (NULL),
+  dof_handler     (triangulation)
 {
-  if (quadrature_name == "legendre")
+  if (quadrature_name == "legendre")     // [DEFAULT]
     {
       matrix_quad   = QGauss<dim>(degree+1);
       boundary_quad = QGauss<dim-1>(degree+2);
@@ -353,7 +369,7 @@ Laplace<dim>::Laplace (const std::string fe_name,
 
   if      (fe_name == "bernstein")
     fe = new FE_Bernstein<dim>(degree);
-  else if (fe_name == "lagrange")
+  else if (fe_name == "lagrange")     // [DEFAULT]
     fe = new FE_Q<dim>(degree);
   else if (fe_name == "lobatto")
     fe = new FE_Q<dim>(QGaussLobatto<1>(degree+1));
@@ -363,7 +379,7 @@ Laplace<dim>::Laplace (const std::string fe_name,
 
 /// Main problem class: Destructor
 template <int dim>
-Laplace<dim>::~Laplace ()
+Laplace<dim>::~Laplace ()    // IGA ONLY
 {
   dof_handler.clear();
   if (fe)
@@ -384,7 +400,7 @@ void Laplace<dim>::make_grid ()
 template <int dim>
 void Laplace<dim>::setup_system ()
 {
-  dof_handler.distribute_dofs (*fe);
+  dof_handler.distribute_dofs (*fe);    // IGA: "*"
 
   std::cout << "   Number of degrees of freedom: "
             << dof_handler.n_dofs()
@@ -411,8 +427,8 @@ void Laplace<dim>::assemble_system ()
                            update_values   | update_gradients |
                            update_quadrature_points | update_JxW_values);
 
-  const unsigned int   dofs_per_cell = fe->dofs_per_cell;
-  const unsigned int   n_q_points    = matrix_quad.size();
+  const unsigned int   dofs_per_cell = fe->dofs_per_cell;   // IGA: "->"
+  const unsigned int   n_q_points    = matrix_quad.size();  // IGA
 
   FullMatrix<double>   cell_matrix (dofs_per_cell, dofs_per_cell);
   Vector<double>       cell_rhs (dofs_per_cell);
@@ -459,12 +475,13 @@ void Laplace<dim>::assemble_system ()
 
   // Non-homogeneous boundary values:
   std::map<types::global_dof_index,double> boundary_values;
+
   //typename FunctionMap<dim>::type  dirichlet_boundary;
   using type=std::map<types::boundary_id, const Function<dim>*>;
   type dirichlet_boundary;
-
   BoundaryValues<dim> boundary_funct;
   dirichlet_boundary[0] = &boundary_funct;
+
   VectorTools::project_boundary_values (dof_handler,
                                         dirichlet_boundary,
                                         boundary_quad,
@@ -481,7 +498,7 @@ void Laplace<dim>::assemble_system ()
 template <int dim>
 void Laplace<dim>::solve ()
 {
-  SolverControl           solver_control (100000, 1e-14);
+  SolverControl           solver_control (100000, 1e-14);   // default: (1000, 1e-12)
   SolverCG<>              solver (solver_control);
 
   std::cout << "   Memory consumption " << system_matrix.memory_consumption()
@@ -698,6 +715,8 @@ int main (int argc, char **argv)
   unsigned int n_cycles_down = 0;           // 0
   unsigned int n_cycles_up   = 5;           // 5
   //--------------------------------------------------------
+  // ./poisson lagrange legendre 1 0 1
+  // ./poisson bernstein legendre 1 0 1
 
   char *tmp[3];
   tmp[0] = argv[0];
@@ -723,8 +742,10 @@ int main (int argc, char **argv)
   deallog.depth_console (0);
   try
     {
+      //=======================================
       Laplace<2> laplace_problem_2d(argv[1], argv[2], degree, n_cycles_down, n_cycles_up);
       laplace_problem_2d.run ();
+      //=======================================
     }
   catch (std::exception &exc)
     {

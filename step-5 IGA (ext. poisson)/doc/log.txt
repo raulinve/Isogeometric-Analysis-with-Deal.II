@@ -1,0 +1,72 @@
+============================================================
+================= THE CODE IS RUNNING ======================
+============================================================
+ 
+                    polyn     quad  deg refinements
+SELECTED OPTIONS : lagrange legendre 1 0 5
+
+Checking/creating the output directory "RESULTS". 
+Reading the grid file "circle-grid.inp".
+Solving problem in 2 space dimensions. 
+
+
+Cycle 0:
+   Number of active cells: 20
+   Total number of cells: 20
+   Number of degrees of freedom: 25
+   > ASSEMBLING THE SYSTEM (wait) ... 
+   Memory consumption 1712 bytes
+   > SOLVING THE SYSTEM (wait) ... 
+   14 CG iterations needed to obtain convergence.
+   Saving/overwriting the .vtu result files.
+Cycle 1:
+   Number of active cells: 80
+   Total number of cells: 100
+   Number of degrees of freedom: 89
+   > ASSEMBLING THE SYSTEM (wait) ... 
+   Memory consumption 6128 bytes
+   > SOLVING THE SYSTEM (wait) ... 
+   19 CG iterations needed to obtain convergence.
+   Saving/overwriting the .vtu result files.
+Cycle 2:
+   Number of active cells: 320
+   Total number of cells: 420
+   Number of degrees of freedom: 337
+   > ASSEMBLING THE SYSTEM (wait) ... 
+   Memory consumption 23600 bytes
+   > SOLVING THE SYSTEM (wait) ... 
+   32 CG iterations needed to obtain convergence.
+   Saving/overwriting the .vtu result files.
+Cycle 3:
+   Number of active cells: 1280
+   Total number of cells: 1700
+   Number of degrees of freedom: 1313
+   > ASSEMBLING THE SYSTEM (wait) ... 
+   Memory consumption 93104 bytes
+   > SOLVING THE SYSTEM (wait) ... 
+   57 CG iterations needed to obtain convergence.
+   Saving/overwriting the .vtu result files.
+Cycle 4:
+   Number of active cells: 5120
+   Total number of cells: 6820
+   Number of degrees of freedom: 5185
+   > ASSEMBLING THE SYSTEM (wait) ... 
+   Memory consumption 370352 bytes
+   > SOLVING THE SYSTEM (wait) ... 
+   104 CG iterations needed to obtain convergence.
+   Saving/overwriting the .vtu result files.
+Cycle 5:
+   Number of active cells: 20480
+   Total number of cells: 27300
+   Number of degrees of freedom: 20609
+   > ASSEMBLING THE SYSTEM (wait) ... 
+   Memory consumption 1477808 bytes
+   > SOLVING THE SYSTEM (wait) ... 
+   197 CG iterations needed to obtain convergence.
+   Saving/overwriting the .vtu result files.
+ 
+
+============================================================
+================= CODE ENDED CORRECTLY =====================
+============================================================
+

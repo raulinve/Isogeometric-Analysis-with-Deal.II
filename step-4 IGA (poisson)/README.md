@@ -1,10 +1,10 @@
-# ℹ️ Poisson code
+# ℹ️ Step-4 IGA code (poisson)
 
-https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/tree/master/poisson  
+https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/tree/master/step-4 IGA (poisson)  
 
 <br/>  
 
-<img src="https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/blob/master/poisson/doc/IMG_poisson_t5.png" alt="Poisson example result" width="480" height="480">  
+<img src="https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/blob/master/step-4 IGA (poisson)/doc/IMG_step-4_IGA_t5.png" alt="Poisson example result" width="480" height="480">  
 
 **Img. 1**: Result plot of the *poisson* code.  
 
@@ -53,7 +53,8 @@ Laplace<dim>::Laplace (const std::string   fe_name,
 3. Associates the DoFHandler to the triangulation;  
     `dof_handler (triangulation)`  
 
-Note: Until here the code is identical to the original step-4 example.  
+Note: Until here the code is identical to the original step-4 example 
+(exept from the fact that the finite element object "fe" is a pointer).  
 
 4. Then the constructor initializes the **quadrature formula**:  
     ```cpp
@@ -119,7 +120,7 @@ laplace_problem_2d.run ();
 
 4. `assemble_system();`  
     This method assemble the matrices and the vector producing the system to solve.  
-    The implementation is very similar between the *poisson* code and the original step-41.  
+    The implementation is very similar between the *poisson* code and the original step-4.  
     Note: See the documentation for more details.  
 
 5. `solve();`  
@@ -138,7 +139,6 @@ laplace_problem_2d.run ();
 7. `process_solution(cycle);`  
     This method is an additon with respect to the step-4 code.  
     It is used to compute the L2- and H1-norm errors.  
-
 
 8. `print_table(cycle);`  
     This method is an additon with respect to the step-4 code.  

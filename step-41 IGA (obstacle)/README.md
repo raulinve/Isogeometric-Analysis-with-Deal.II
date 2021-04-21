@@ -1,10 +1,10 @@
-# ℹ️ Obstacle code
+# ℹ️ Step-41 IGA code (obstacle)
 
-https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/tree/master/obstacle
+https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/tree/master/step-41 IGA (obstacle)
 
 <br/>  
 
-<img src="https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/blob/master/obstacle/doc/IMG_obstacle_t6.png" alt="Obstacle example result" width="480" height="480">  
+<img src="https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/blob/master/step-41 IGA (obstacle)/doc/IMG_step-41_IGA_t6.png" alt="Obstacle example result" width="480" height="480">  
 
 **Img. 2**: Result plot of the *obstacle* code.  
 

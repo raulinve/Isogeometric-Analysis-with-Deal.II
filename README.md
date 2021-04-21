@@ -15,9 +15,10 @@ This repository contains C++ code used to introduce the **Isogeometric Analysis*
 <br/>  
 
 **Organization of the main files and folders:**  
-- 📁 [*references*](https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/tree/master/References) : contains only a reference copy of the deal.II step examples used for this project.  
-- 📁 [*obstacle*](https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/tree/master/obstacle) : contains a IGA modification of *step-41* of the deal.II library.  
-- 📁 [*poisson*](https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/tree/master/poisson) : contains a IGA modification of *step-4* of the deal.II library.  
+- 📁 [*step-4 IGA (poisson)*](https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/tree/master/step-4 IGA (poisson)) : contains a IGA modification of *step-4* of the deal.II library.  
+- 📁 [*step-5 IGA (ext. poisson)*](https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/tree/master/step-5 IGA (ext. poisson)) : contains a IGA modification of *step-5* of the deal.II library.  
+- 📁 [*step-41 IGA (obstacle)*](https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/tree/master/step-41 IGA (obstacle)) : contains a IGA modification of *step-41* of the deal.II library.  
+- 📁 [*references*](https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/tree/master/references) : contains only a reference copy of the deal.II step examples used for this project.  
 - 📁 [*scripts*](https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/tree/master/scripts) : contains scripts used for automatic code indentation.  
 - 📄 [*LICENSE*](https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/blob/master/LICENSE) : contains the license of use provided with this code.  
 - 📄 [*README.md*](https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/blob/master/README.md) : \***this file**\*.  
@@ -29,6 +30,7 @@ This repository contains C++ code used to introduce the **Isogeometric Analysis*
 Last update: **APR-2021**  
 
 From newest to oldest:  
+* Note: Added a new example based on the deal.II step-5.
 * Note: Added documentation (Doxygen, Readme files, Images).
 * Obstacle example: :heavy_check_mark: Improved (*Reorganization of the code, improved user interaction*).
 * Obstacle example: :heavy_check_mark: Fixed  (*The code now compiles without errors or warnings with deal.II 9.2.0*).
@@ -68,13 +70,15 @@ Note: For any other question, please refer to the Doxygen official website at th
 
 ### :triangular_flag_on_post: Poisson example:
 
+**Note:** Follow these instructions also for the **step-5 IGA (ext. poisson)** example.  
+
 The code of the **Poisson example** consist of a single file:
 * "poisson.cc"  
 
 Note: This code is strongly based on the deal.II library example "[step-4](https://www.dealii.org/current/doxygen/deal.II/step_4.html)".  
 Note: The file "CMakeLists.txt" is used to easily compile the code.
 
-<img src="https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/blob/master/poisson/doc/IMG_poisson_t5.png" alt="Poisson example result" width="480" height="480">  
+<img src="https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/blob/master/step-4 IGA (poisson)/doc/IMG_step-4_IGA_t5.png" alt="Poisson example result" width="480" height="480">  
 
 **Img. 1**: Result plot of the *poisson* code.  
 
@@ -132,7 +136,7 @@ The code of the **Obstacle example** consist of a series of files incuded in two
 Note: This code is based on the deal.II library example "[step-41](https://www.dealii.org/current/doxygen/deal.II/step_41.html)".  
 Note: The file "CMakeLists.txt" is used to easily compile the code.
 
-<img src="https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/blob/master/obstacle/doc/IMG_obstacle_t6.png" alt="Obstacle example result" width="480" height="480">  
+<img src="https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/blob/master/step-41 IGA (obstacle)/doc/IMG_step-41_IGA_t6.png" alt="Obstacle example result" width="480" height="480">  
 
 **Img. 2**: Result plot of the *obstacle* code.  
 
