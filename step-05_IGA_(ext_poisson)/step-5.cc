@@ -90,9 +90,10 @@ double BoundaryValues<dim>::value (const Point<dim> &p,
                                    const unsigned int /*component*/) const
 {
   if (original_problem_5) {
-    return 0;
+    return 0*p(0);
+  }
   else {
-    return 0;
+    return 0*p(0);
   }
 }
 
@@ -117,6 +118,7 @@ double coefficient(const Point<dim> &p)
       return 20;
     else
       return 1;
+  }
   else {
     return 1;
   }
@@ -276,13 +278,13 @@ void Step5<dim>::assemble_system()
   FEValues<dim> fe_values(*fe, matrix_quad,  // IGA: *, matrix_quad
                           update_values | update_gradients |
                             update_quadrature_points | update_JxW_values);
-std::cout << "A" << std::endl;
+
   const unsigned int dofs_per_cell = fe->dofs_per_cell;   // IGA: "->"
   const unsigned int n_q_points    = matrix_quad.size();  // IGA
 
   FullMatrix<double> cell_matrix(dofs_per_cell, dofs_per_cell);
   Vector<double>     cell_rhs(dofs_per_cell);
-std::cout << "B" << std::endl;
+
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
 
   // Next is the typical loop over all cells to compute local contributions
@@ -294,7 +296,7 @@ std::cout << "B" << std::endl;
   typename DoFHandler<dim>::active_cell_iterator
   cell = dof_handler.begin_active(),
   endc = dof_handler.end();
-std::cout << "C" << std::endl;
+
   for (; cell!=endc; ++cell)
   //for (const auto &cell : dof_handler.active_cell_iterators())
     {
@@ -338,21 +340,21 @@ std::cout << "C" << std::endl;
           system_rhs(local_dof_indices[i]) += cell_rhs(i);
         }
     }
-std::cout << "D1" << std::endl;
+
   // With the matrix so built, we use zero boundary values again:
   std::map<types::global_dof_index, double> boundary_values;
-std::cout << "D2" << std::endl;
+
   using type=std::map<types::boundary_id, const Function<dim>*>;
   type dirichlet_boundary;
   BoundaryValues<dim> boundary_funct;
   dirichlet_boundary[0] = &boundary_funct;
-std::cout << "D3" << std::endl;
+
   //VectorTools::interpolate_boundary_values(...)
   VectorTools::project_boundary_values(dof_handler,       // IGA (different method)
                                        dirichlet_boundary,  // IGA: 0,
                                        boundary_quad,       // IGA: Functions::ZeroFunction<dim>(),
                                        boundary_values);
-std::cout << "E" << std::endl;
+
   MatrixTools::apply_boundary_values(boundary_values,
                                      system_matrix,
                                      solution,

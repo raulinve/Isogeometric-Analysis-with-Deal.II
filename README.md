@@ -15,8 +15,8 @@ This repository contains C++ code used to introduce the **Isogeometric Analysis*
 <br/>  
 
 **Organization of the main files and folders:**  
-- 📁 [*step-4 IGA (poisson)*](https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/tree/master/step-04_IGA_(poisson)) : contains a IGA modification of *step-4* of the deal.II library.  
-- 📁 [*step-5 IGA (ext. poisson)*](https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/tree/master/step-05_IGA_(ext_poisson)) : contains a IGA modification of *step-5* of the deal.II library.  
+- 📁 [*step-04 IGA (poisson)*](https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/tree/master/step-04_IGA_(poisson)) : contains a IGA modification of *step-4* of the deal.II library.  
+- 📁 [*step-05 IGA (ext. poisson)*](https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/tree/master/step-05_IGA_(ext_poisson)) : contains a IGA modification of *step-5* of the deal.II library.  
 - 📁 [*step-41 IGA (obstacle)*](https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/tree/master/step-41_IGA_(obstacle)) : contains a IGA modification of *step-41* of the deal.II library.  
 - 📁 [*references*](https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/tree/master/references) : contains only a reference copy of the deal.II step examples used for this project.  
 - 📁 [*scripts*](https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/tree/master/scripts) : contains scripts used for automatic code indentation.  
@@ -261,7 +261,7 @@ The main outputs are usually easy-to-consult text files reporting the convergenc
 The **output image files** are saved in **.vtk** format.  
 The *Visualization Toolkit* (*VTK*) is an open-source software system for 3D computer graphics, image processing and scientific visualization.  
 
-In order to open *.vtk* files you can use a graphical software like "**ParaView**" or "**VisIt**".  
+In order to open *.vtk* or *.vtu* files you can use a graphical software like "**ParaView**" or "**VisIt**".  
 
 <br/>  
 
