@@ -15,32 +15,49 @@ This repository contains C++ code used to introduce the **Isogeometric Analysis*
 <br/>  
 
 **Organization of the main files and folders:**  
-- 📁 [*step-04 IGA (poisson)*](https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/tree/master/step-04_IGA_(poisson)) : contains a IGA modification of *step-4* of the deal.II library.  
-- 📁 [*step-05 IGA (ext. poisson)*](https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/tree/master/step-05_IGA_(ext_poisson)) : contains a IGA modification of *step-5* of the deal.II library.  
-- 📁 [*step-41 IGA (obstacle)*](https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/tree/master/step-41_IGA_(obstacle)) : contains a IGA modification of *step-41* of the deal.II library.  
-- 📁 [*references*](https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/tree/master/references) : contains only a reference copy of the deal.II step examples used for this project.  
-- 📁 [*scripts*](https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/tree/master/scripts) : contains scripts used for automatic code indentation.  
-- 📄 [*LICENSE*](https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/blob/master/LICENSE) : contains the license of use provided with this code.  
-- 📄 [*README.md*](https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/blob/master/README.md) : \***this file**\*.  
+- 📁 [*step-04 IGA (poisson)*](./step-04_IGA_(poisson)) : contains a IGA modification of *step-4* of the deal.II library.  
+- 📁 [*step-05 IGA (ext. poisson)*](./step-05_IGA_(ext_poisson)) : contains a IGA modification of *step-5* of the deal.II library.  
+- 📁 [*step-41 IGA (obstacle)*](./step-41_IGA_(obstacle)) : contains a IGA modification of *step-41* of the deal.II library.  
+- 📁 [*references*](./references) : contains only a reference copy of the deal.II step examples used for this project.  
+- 📁 [*scripts*](./scripts) : contains scripts used for automatic code indentation.  
+- 📄 [*LICENSE*](./LICENSE) : contains the license of use provided with this code.  
+- 📄 [*README.md*](./README.md) : \***this file**\*.  
+
+<br/>  
+
+**Table of contents:**
+- [🆕 Major updates](major-updates)  
+- [📄 Documentation](documentation)  
+- [ℹ️ Usage](usage)  
+    - [🔤 Easy compilation and execution](easy-compilation)  
+    - [:triangular_flag_on_post: Poisson example](poisson)  
+    - [:triangular_flag_on_post: Obstacle exampl](obstacle)  
+- [🛠️ Installation](installation)  
+- [↘️ Code output](output)  
+- [✍️ Contributors and motivation](contributions)  
+- [©️ License](license)  
 
 <br/>  
 
 ---
+<a name="major-updates"></a>
 ### 🆕 Major updates:
 Last update: **APR-2021**  
 
 From newest to oldest:  
-* Note: Added a new example based on the deal.II step-5.
-* Note: Added documentation (Doxygen, Readme files, Images).
+* Note: Added a new example based on the deal.II **step-5**.
+* Note: Added **documentation** (Doxygen, Readme files, Images).
 * Obstacle example: :heavy_check_mark: Improved (*Reorganization of the code, improved user interaction*).
-* Obstacle example: :heavy_check_mark: Fixed  (*The code now compiles without errors or warnings with deal.II 9.2.0*).
+* **Obstacle example**: :heavy_check_mark: Fixed  (*The code now compiles without errors or warnings with deal.II 9.2.0*).
 * Poisson example : :heavy_check_mark: Improved (*Reorganization of the code, improved user interaction*).
-* Poisson example : :heavy_check_mark: Fixed  (*The code now compiles without errors or warnings with deal.II 9.2.0*).
-* Note: A previous version of this repository has been completely deleted and substituted with this new one.
+* **Poisson example** : :heavy_check_mark: Fixed  (*The code now compiles without errors or warnings with deal.II 9.2.0*).
+* Note: A previous version of this repository has been completely deleted and substituted with this new one.  
+
 
 <br/>  
 
 ---
+<a name="documentation"></a>
 ### 📄 Documentation:
 
 Documentation files can be generated using [Doxygen](https://www.doxygen.nl/).  
@@ -64,10 +81,31 @@ Note: For any other question, please refer to the Doxygen official website at th
 <br/>  
 
 ---
+<a name="usage"></a>
 ### ℹ️ Usage:
+
+Note: :warning: The code is intended to be **executed on a Linux system** only (it has been tested under **Ubuntu 20.04 LTS**).  
+
+Every folder is equipped with two files that simplify the compilation of the code:
+* "*COMPILE.sh*"  (it is a script that contains some simple lines of code used to start the compilation process)  
+* "*CMakeLists.txt*"  (it contains a set of directives and instructions describing the project's source files and targets)  
+
+<a name="easy-compilation"></a>
+**🔤 Easy compilation and execution:**  
+To **compile and run** each example open the terminal in the folder containing the "*COMPILE.sh*" file and execute it using the following command:  
+```
+./COMPILE.sh
+```  
+
+**Note:** Before executing the "*COMPILE.sh*" script, try to make it executable using the following command: $`chmod +x COMPILE.sh`  
+
+**Note:** The default deal.II path used in the script is the one that makes use of the PoliMi mkModules (see the [Installation](#installation) section). If you use a standard version of deal.II or have a custom installation, please modify the PATH contained in the "*COMPILE.sh*" at the tag "DDEAL_II_DIR" before running it.  
+
+
 
 <br/>  
 
+<a name="poisson"></a>
 ### :triangular_flag_on_post: Poisson example:
 
 **Note:** Follow these instructions also for the **step-5 IGA (ext. poisson)** example.  
@@ -76,9 +114,8 @@ The code of the **Poisson example** consist of a single file:
 * "poisson.cc"  
 
 Note: This code is strongly based on the deal.II library example "[step-4](https://www.dealii.org/current/doxygen/deal.II/step_4.html)".  
-Note: The file "CMakeLists.txt" is used to easily compile the code.
 
-<img src="https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/blob/master/step-04_IGA_(poisson)/doc/IMG_step-4_IGA_t5.png" alt="Poisson example result" width="480" height="480">  
+<img src="./step-04_IGA_(poisson)/doc/IMG_step-4_IGA_t5.png" alt="FIGURE: Poisson example result" width="480" height="480">  
 
 **Img. 1**: Result plot of the *poisson* code.  
 
@@ -127,6 +164,7 @@ Example: ` ./poisson bernstein legendre 1 0 5 `
 
 <br/>  
 
+<a name="obstacle"></a>
 ### :triangular_flag_on_post: Obstacle example:
 
 The code of the **Obstacle example** consist of a series of files incuded in two folders:
@@ -134,9 +172,8 @@ The code of the **Obstacle example** consist of a series of files incuded in two
 * "include" directory
 
 Note: This code is based on the deal.II library example "[step-41](https://www.dealii.org/current/doxygen/deal.II/step_41.html)".  
-Note: The file "CMakeLists.txt" is used to easily compile the code.
 
-<img src="https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/blob/master/step-41_IGA_(obstacle)/doc/IMG_step-41_IGA_t6.png" alt="Obstacle example result" width="480" height="480">  
+<img src="./step-41_IGA_(obstacle)/doc/IMG_step-41_IGA_t6.png" alt="FIGURE: Obstacle example result" width="480" height="480">  
 
 **Img. 2**: Result plot of the *obstacle* code.  
 
@@ -167,7 +204,8 @@ The executable takes no arguments. To run, go to the "build" folder, and use the
 <br/>  
 
 ---
-### 🛠️ Installation
+<a name="installation"></a>
+### 🛠️ Installation:
 
 Note: The codes have been tested under a clean installation of Xubuntu, version **20.04 LTS**.  
 Note: The codes have been tested using the **deal.II version 9.2.0** (and *9.1.1-9 build2*).  
@@ -254,7 +292,8 @@ For any other information, please see the following links:
 <br/>  
 
 ---
-### ↘️ Code outputs:
+<a name="output"></a>
+### ↘️ Code output:
 
 The main outputs are usually easy-to-consult text files reporting the convergence table and other execution data.  
 
@@ -297,6 +336,7 @@ In order to open *.vtk* or *.vtu* files you can use a graphical software like "*
 <br/>  
 
 ---
+<a name="contributions"></a>
 ### ✍️ Contributors and motivation:  
 
 The development of this project is started as homework for the Mathematical Engineering master courses of "*Advanced Programming for Scientific Computing*" (APSC / PACS) held by Professor L.Formaggia and of "*Numerical Analysis for Partial Differential Equations*" (NAPDE) held by Professor A.M.Quarteroni of the [Polytechnic of Milan](https://www.polimi.it/en/).  
@@ -309,11 +349,12 @@ SISSA - International School for Advanced Studies
 
 
 ---
+<a name="license"></a>
 ### ©️ License:  
 Unless stated otherwise all works are licensed under the:  
 *GNU Lesser General Public License v2.1*  
 
-Please see the attached [license file](https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/blob/master/LICENSE).  
+Please see the attached [license file](./LICENSE).  
 
 
 
