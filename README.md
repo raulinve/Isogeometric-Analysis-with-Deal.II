@@ -14,7 +14,7 @@ This repository contains C++ code used to introduce the **Isogeometric Analysis*
 
 <br/>  
 
-**Organization of the main files and folders:**  
+**Organization of files and folders:**  
 - 📁 [*step-04 IGA (poisson)*](./step-04_IGA_(poisson)) : contains a IGA modification of *step-4* of the deal.II library.  
 - 📁 [*step-05 IGA (ext. poisson)*](./step-05_IGA_(ext_poisson)) : contains a IGA modification of *step-5* of the deal.II library.  
 - 📁 [*step-41 IGA (obstacle)*](./step-41_IGA_(obstacle)) : contains a IGA modification of *step-41* of the deal.II library.  
@@ -26,16 +26,16 @@ This repository contains C++ code used to introduce the **Isogeometric Analysis*
 <br/>  
 
 **Table of contents:**
-- [🆕 Major updates](major-updates)  
-- [📄 Documentation](documentation)  
-- [ℹ️ Usage](usage)  
-    - [🔤 Easy compilation and execution](easy-compilation)  
-    - [:triangular_flag_on_post: Poisson example](poisson)  
-    - [:triangular_flag_on_post: Obstacle exampl](obstacle)  
-- [🛠️ Installation](installation)  
-- [↘️ Code output](output)  
-- [✍️ Contributors and motivation](contributions)  
-- [©️ License](license)  
+- [🆕 Major updates](#major-updates)  
+- [📄 Documentation](#documentation)  
+- [ℹ️ Usage](#usage)  
+    - [🔤 Easy compilation and execution](#easy-compilation)  
+    - [:triangular_flag_on_post: Poisson example](#poisson)  
+    - [:triangular_flag_on_post: Obstacle example](#obstacle)  
+- [🛠️ Installation](#installation)  
+- [↘️ Code output](#output)  
+- [✍️ Contributors and motivation](#contributions)  
+- [©️ License](#license)  
 
 <br/>  
 
