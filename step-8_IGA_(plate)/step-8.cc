@@ -36,6 +36,7 @@
 
 #include <deal.II/grid/tria.h>
 #include <deal.II/grid/grid_generator.h>
+#include <deal.II/grid/grid_tools.h>   // [ ADD ]
 #include <deal.II/grid/grid_refinement.h>
 #include <deal.II/grid/tria_accessor.h>
 #include <deal.II/grid/tria_iterator.h>
@@ -73,48 +74,8 @@ namespace Step8
 
   bool original_problem_8 = false;	// Default: "true" [SHOULD BE REMOVED NEXT]
 
-  // @sect3{The <code>ElasticProblem</code> class template}
 
-  // The main class is, except for its name, almost unchanged with respect to
-  // the step-6 example.
-  //
-  // The only change is the use of a different class for the <code>fe</code>
-  // variable: Instead of a concrete finite element class such as FE_Q, we now
-  // use a more generic one, FESystem. In fact, FESystem is not really a
-  // finite element itself in that it does not implement shape functions of
-  // its own. Rather, it is a class that can be used to stack several other
-  // elements together to form one vector-valued finite element. In our case,
-  // we will compose the vector-valued element of <code>FE_Q(1)</code>
-  // objects, as shown below in the constructor of this class.
-  template <int dim>
-  class ElasticProblem
-  {
-  public:
-    ElasticProblem();
-    void run(const unsigned int n_cycles);
-
-  private:
-    void setup_system();
-    void assemble_system();
-    void solve();
-    void refine_grid();
-    void output_results(const unsigned int cycle) const;
-
-    Triangulation<dim> triangulation;
-    DoFHandler<dim>    dof_handler;
-
-    FESystem<dim> fe;
-
-    AffineConstraints<double> constraints;
-
-    SparsityPattern      sparsity_pattern;
-    SparseMatrix<double> system_matrix;
-
-    Vector<double> solution;
-    Vector<double> system_rhs;
-  };
-
-
+//====================================================
   // @sect3{Right hand side values}
 
   // Before going over to the implementation of the main class, we declare and
@@ -186,14 +147,19 @@ namespace Step8
 	{
 		// Points of application:
 		Point<dim> point_1, point_2;
-		point_1(0) =  0.5;   point_1(1) =  0.5;
-		point_2(0) = -0.5;   point_2(1) = -0.5;
+		point_1(0) =  46;   point_1(1) =  50;
+		//point_2(0) = -0.5;   point_2(1) = -0.5;
 	
-		double radius = 0.2;    // Radius of the force footprint
-		double force  = 5;     // Absolute modulus of the forces
+		double radius = 2;    // Radius of the force footprint
+		double force  = -0.1;     // Absolute modulus of the forces
 
 		for (unsigned int point_n = 0; point_n < points.size(); ++point_n)
-		  {
+		  { 
+		    if (((points[point_n] - point_1).norm_square() < radius * radius))
+		      values[point_n][1] = force;
+		    else
+		      values[point_n][1] = 0.0;
+            /*
 		    // If <code>points[point_n]</code> is in a circle (sphere) of radius
 		    // 0.2 around one of these points, then set the force in x-direction
 		    // to one, otherwise to zero:
@@ -209,9 +175,54 @@ namespace Step8
 		      values[point_n][1] = force;
 		    else
 		      values[point_n][1] = 0.0;
+            */
 		  }
 	}
   }
+
+
+//====================================================
+  // @sect3{The <code>ElasticProblem</code> class template}
+
+  // The main class is, except for its name, almost unchanged with respect to
+  // the step-6 example.
+  //
+  // The only change is the use of a different class for the <code>fe</code>
+  // variable: Instead of a concrete finite element class such as FE_Q, we now
+  // use a more generic one, FESystem. In fact, FESystem is not really a
+  // finite element itself in that it does not implement shape functions of
+  // its own. Rather, it is a class that can be used to stack several other
+  // elements together to form one vector-valued finite element. In our case,
+  // we will compose the vector-valued element of <code>FE_Q(1)</code>
+  // objects, as shown below in the constructor of this class.
+  template <int dim>
+  class ElasticProblem
+  {
+  public:
+    ElasticProblem();
+    void run(const unsigned int n_cycles);
+
+  private:
+    void make_grid();
+    void setup_system();
+    void assemble_system();
+    void solve();
+    void refine_grid();
+    void output_results(const unsigned int cycle) const;
+
+    Triangulation<dim> triangulation;
+    DoFHandler<dim>    dof_handler;
+
+    FESystem<dim> fe;
+
+    AffineConstraints<double> constraints;
+
+    SparsityPattern      sparsity_pattern;
+    SparseMatrix<double> system_matrix;
+
+    Vector<double> solution;
+    Vector<double> system_rhs;
+  };
 
 
 
@@ -241,6 +252,88 @@ namespace Step8
   // these possibilities in later examples.
 
 
+// On to the first of the private member functions. Here we create the
+// triangulation of the domain, for which we choose a scaled an anisotripically
+// discretised rectangle which is subsequently transformed into the correct
+// of the Cook cantilever. Each relevant boundary face is then given a boundary
+// ID number.
+//
+// We then determine the volume of the reference configuration and print it
+// for comparison.
+
+  template <int dim>
+  Point<dim> grid_y_transform (const Point<dim> &pt_in)                             // [ ADD ]
+  {
+    const double &x = pt_in[0];
+    const double &y = pt_in[1];
+
+    const double y_upper = 44.0 + (16.0/48.0)*x; // Line defining upper edge of beam
+    const double y_lower =  0.0 + (44.0/48.0)*x; // Line defining lower edge of beam
+    const double theta = y/44.0; // Fraction of height along left side of beam
+    const double y_transform = (1-theta)*y_lower + theta*y_upper; // Final transformation
+
+    Point<dim> pt_out = pt_in;
+    pt_out[1] = y_transform;
+
+    return pt_out;
+  }
+
+  template <int dim>
+  void ElasticProblem<dim>::make_grid()
+  {
+    // Divide the beam, but only along the x- and y-coordinate directions
+    unsigned int elements_per_edge = 16;
+    std::vector< unsigned int > repetitions(dim, elements_per_edge);
+    // Only allow one element through the thickness
+    // (modelling a plane strain condition)
+    if (dim == 3)
+      repetitions[dim-1] = 1;
+
+    const Point<dim> bottom_left = (dim == 3 ? Point<dim>( 0.0,  0.0, -0.5) : Point<dim>( 0.0,  0.0));
+    const Point<dim> top_right   = (dim == 3 ? Point<dim>(48.0, 44.0,  0.5) : Point<dim>(48.0, 44.0));
+
+    GridGenerator::subdivided_hyper_rectangle(triangulation,
+                                              repetitions,
+                                              bottom_left,
+                                              top_right);
+
+    // Since we wish to apply a Neumann BC to the right-hand surface, we
+    // must find the cell faces in this part of the domain and mark them with
+    // a distinct boundary ID number.  The faces we are looking for are on the
+    // +x surface and will get boundary ID 11.
+    // Dirichlet boundaries exist on the left-hand face of the beam (this fixed
+    // boundary will get ID 1) and on the +Z and -Z faces (which correspond to
+    // ID 2 and we will use to impose the plane strain condition)
+    const double tol_boundary = 1e-6;
+    typename Triangulation<dim>::active_cell_iterator cell =
+      triangulation.begin_active(), endc = triangulation.end();
+    for (; cell != endc; ++cell)
+      for (unsigned int face = 0;
+           face < GeometryInfo<dim>::faces_per_cell; ++face)
+        if (cell->face(face)->at_boundary() == true)
+          {
+            if (std::abs(cell->face(face)->center()[0] - 0.0) < tol_boundary)
+              cell->face(face)->set_boundary_id(1); // -X faces
+            else if (std::abs(cell->face(face)->center()[0] - 48.0) < tol_boundary)
+              cell->face(face)->set_boundary_id(11); // +X faces
+            else if (std::abs(std::abs(cell->face(face)->center()[0]) - 0.5) < tol_boundary)
+              cell->face(face)->set_boundary_id(2); // +Z and -Z faces
+          }
+
+    // Transform the hyper-rectangle into the beam shape
+    GridTools::transform(&grid_y_transform<dim>, triangulation);
+
+
+    //GridTools::scale(1e-3, triangulation);   // parameters.scale
+
+	/*
+    vol_reference = GridTools::volume(triangulation);
+    vol_current = vol_reference;
+    std::cout << "Grid:\n\t Reference volume: " << vol_reference << std::endl;
+	*/
+  }
+
+
   // @sect4{ElasticProblem::setup_system}
 
   // Setting up the system of equations is identical to the function used in
@@ -260,13 +353,28 @@ namespace Step8
     solution.reinit(dof_handler.n_dofs());
     system_rhs.reinit(dof_handler.n_dofs());
 
+	// IMPOSE CONSTRAINTS: -------------
     constraints.clear();
-    DoFTools::make_hanging_node_constraints(dof_handler, constraints);
-    VectorTools::interpolate_boundary_values(dof_handler,
-                                             0,
-                                             Functions::ZeroFunction<dim>(dim),
-                                             constraints);
+
+	if(original_problem_8) {
+      DoFTools::make_hanging_node_constraints(dof_handler, constraints);
+      VectorTools::interpolate_boundary_values(dof_handler,
+                                               0,
+                                               Functions::ZeroFunction<dim>(dim),
+                                               constraints);
+	}
+	else {
+	  // Fixed left hand side of the beam
+      const int boundary_id = 1;
+	  const FEValuesExtractors::Vector u_fe(0);
+      VectorTools::interpolate_boundary_values(dof_handler,  // dof_handler_ref
+                                               boundary_id,
+                                               ZeroFunction<dim>(dim),
+                                               constraints,
+                                               fe.component_mask(u_fe));
+	}
     constraints.close();
+	// ---------------------------------
 
     DynamicSparsityPattern dsp(dof_handler.n_dofs(), dof_handler.n_dofs());
     DoFTools::make_sparsity_pattern(dof_handler,
@@ -631,18 +739,23 @@ namespace Step8
       {
         std::cout << "Cycle " << cycle << ':' << std::endl;
 
-        if (cycle == 0)
-          {
+        if (cycle == 0) {
+          if(original_problem_8) {
             GridGenerator::hyper_cube(triangulation, -1, 1);
             triangulation.refine_global(4);
           }
-        else
+          else {
+            make_grid();                      // custom geometry
+          }
+        }
+        else {
           if(original_problem_8) {
             refine_grid();                    // smart refinement
           }
           else {
             triangulation.refine_global(1);   // constant refinement
           }
+        }
 
         std::cout << "   Number of active cells:       "
                   << triangulation.n_active_cells() << std::endl;
@@ -674,7 +787,7 @@ int main()
   try
     {
       Step8::ElasticProblem<2> elastic_problem_2d;
-      elastic_problem_2d.run(3);
+      elastic_problem_2d.run(2);
     }
   catch (std::exception &exc)
     {
