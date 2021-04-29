@@ -4,7 +4,7 @@ https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/tree/master/step-
 
 <br/>  
 
-<img src="./step-41_IGA_(obstacle)/doc/IMG_step-41_IGA_t6.png" alt="FIGURE: Obstacle example result" width="480" height="480">  
+<img src="./doc/IMG_step-41_IGA_t6.png" alt="FIGURE: Obstacle example result" width="480" height="480">  
 
 **Img. 2**: Result plot of the *obstacle* code.  
 

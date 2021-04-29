@@ -4,7 +4,7 @@ https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/tree/master/step-
 
 <br/>  
 
-<img src="./step-04_IGA_(poisson)/doc/IMG_step-4_IGA_t5.png" alt="FIGURE: Poisson example result" width="480" height="480">  
+<img src="./doc/IMG_step-4_IGA_t5.png" alt="FIGURE: Poisson example result" width="480" height="480">  
 
 **Img. 1**: Result plot of the *poisson* code.  
 
