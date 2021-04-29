@@ -62,12 +62,16 @@
 #include <fstream>
 #include <iostream>
 
+#include <filesystem>    // IGA
+
 // The last step is as in previous programs. In particular, just like in
 // step-7, we pack everything that's specific to this program into a namespace
 // of its own.
 namespace Step8
 {
   using namespace dealii;
+
+  bool original_problem_8 = false;	// Default: "true" [SHOULD BE REMOVED NEXT]
 
   // @sect3{The <code>ElasticProblem</code> class template}
 
@@ -87,7 +91,7 @@ namespace Step8
   {
   public:
     ElasticProblem();
-    void run();
+    void run(const unsigned int n_cycles);
 
   private:
     void setup_system();
@@ -145,37 +149,68 @@ namespace Step8
            ExcDimensionMismatch(values.size(), points.size()));
     Assert(dim >= 2, ExcNotImplemented());
 
-    // The rest of the function implements computing force values. We will use
-    // a constant (unit) force in x-direction located in two little circles
-    // (or spheres, in 3d) around points (0.5,0) and (-0.5,0), and y-force in
-    // an area around the origin; in 3d, the z-component of these centers is
-    // zero as well.
-    //
-    // For this, let us first define two objects that denote the centers of
-    // these areas. Note that upon construction of the Point objects, all
-    // components are set to zero.
-    Point<dim> point_1, point_2;
-    point_1(0) = 0.5;
-    point_2(0) = -0.5;
+	if(original_problem_8) {
+		// The rest of the function implements computing force values. We will use
+		// a constant (unit) force in x-direction located in two little circles
+		// (or spheres, in 3d) around points (0.5,0) and (-0.5,0), and y-force in
+		// an area around the origin; in 3d, the z-component of these centers is
+		// zero as well.
+		//
+		// For this, let us first define two objects that denote the centers of
+		// these areas. Note that upon construction of the Point objects, all
+		// components are set to zero.
+		Point<dim> point_1, point_2;
+		point_1(0) = 0.5;
+		point_2(0) = -0.5;
 
-    for (unsigned int point_n = 0; point_n < points.size(); ++point_n)
-      {
-        // If <code>points[point_n]</code> is in a circle (sphere) of radius
-        // 0.2 around one of these points, then set the force in x-direction
-        // to one, otherwise to zero:
-        if (((points[point_n] - point_1).norm_square() < 0.2 * 0.2) ||
-            ((points[point_n] - point_2).norm_square() < 0.2 * 0.2))
-          values[point_n][0] = 1.0;
-        else
-          values[point_n][0] = 0.0;
+		for (unsigned int point_n = 0; point_n < points.size(); ++point_n)
+		  {
+		    // If <code>points[point_n]</code> is in a circle (sphere) of radius
+		    // 0.2 around one of these points, then set the force in x-direction
+		    // to one, otherwise to zero:
+		    if (((points[point_n] - point_1).norm_square() < 0.2 * 0.2) ||
+		        ((points[point_n] - point_2).norm_square() < 0.2 * 0.2))
+		      values[point_n][0] = 1.0;
+		    else
+		      values[point_n][0] = 0.0;
 
-        // Likewise, if <code>points[point_n]</code> is in the vicinity of the
-        // origin, then set the y-force to one, otherwise to zero:
-        if (points[point_n].norm_square() < 0.2 * 0.2)
-          values[point_n][1] = 1.0;
-        else
-          values[point_n][1] = 0.0;
-      }
+		    // Likewise, if <code>points[point_n]</code> is in the vicinity of the
+		    // origin, then set the y-force to one, otherwise to zero:
+		    if (points[point_n].norm_square() < 0.2 * 0.2)
+		      values[point_n][1] = 1.0;
+		    else
+		      values[point_n][1] = 0.0;
+		  }
+	}
+	else
+	{
+		// Points of application:
+		Point<dim> point_1, point_2;
+		point_1(0) =  0.5;   point_1(1) =  0.5;
+		point_2(0) = -0.5;   point_2(1) = -0.5;
+	
+		double radius = 0.2;    // Radius of the force footprint
+		double force  = 5;     // Absolute modulus of the forces
+
+		for (unsigned int point_n = 0; point_n < points.size(); ++point_n)
+		  {
+		    // If <code>points[point_n]</code> is in a circle (sphere) of radius
+		    // 0.2 around one of these points, then set the force in x-direction
+		    // to one, otherwise to zero:
+		    if (((points[point_n] - point_1).norm_square() < radius * radius) ||
+		        ((points[point_n] - point_2).norm_square() < radius * radius))
+		      values[point_n][0] = force;
+		    else
+		      values[point_n][0] = 0.0;
+
+		    // Likewise, if <code>points[point_n]</code> is in the vicinity of the
+		    // origin, then set the y-force to one, otherwise to zero:
+		    if (points[point_n].norm_square() < radius * radius)
+		      values[point_n][1] = force;
+		    else
+		      values[point_n][1] = 0.0;
+		  }
+	}
   }
 
 
@@ -497,6 +532,7 @@ namespace Step8
   template <int dim>
   void ElasticProblem<dim>::output_results(const unsigned int cycle) const
   {
+    std::cout << "   Saving/overwriting the .vtk result files." << std::endl;
     DataOut<dim> data_out;
     data_out.attach_dof_handler(dof_handler);
 
@@ -519,6 +555,8 @@ namespace Step8
           Assert(false, ExcNotImplemented());
       }
 
+    // Full vector field:  x_displacement * iHat + y_displacement * jHat
+
     // After setting up the names for the different components of the
     // solution vector, we can add the solution vector to the list of
     // data vectors scheduled for output. Note that the following
@@ -530,7 +568,12 @@ namespace Step8
     data_out.add_data_vector(solution, solution_names);
     data_out.build_patches();
 
-    std::ofstream output("solution-" + std::to_string(cycle) + ".vtk");
+	std::string filename = "solution-" + std::to_string(dim) + "d-";
+	filename += ('0' + cycle);
+	filename += ".vtk";
+
+    std::string relpath = "RESULTS/" + filename;
+    std::ofstream output (relpath);
     data_out.write_vtk(output);
   }
 
@@ -575,9 +618,16 @@ namespace Step8
   // see the right hand side. Thus, we refine globally four times. (Any larger
   // number of global refinement steps would of course also work.)
   template <int dim>
-  void ElasticProblem<dim>::run()
+  void ElasticProblem<dim>::run(const unsigned int n_cycles)
   {
-    for (unsigned int cycle = 0; cycle < 8; ++cycle)
+
+    std::cout << "Checking/creating the output directory \"RESULTS\". " << std::endl;
+    std::string OutputFolderName = "RESULTS";
+    std::filesystem::create_directories(OutputFolderName);
+
+  std::cout << "Solving problem in " << dim << " space dimensions. \n\n" << std::endl;   
+
+    for (unsigned int cycle = 0; cycle <= n_cycles; ++cycle)
       {
         std::cout << "Cycle " << cycle << ':' << std::endl;
 
@@ -587,7 +637,12 @@ namespace Step8
             triangulation.refine_global(4);
           }
         else
-          refine_grid();
+          if(original_problem_8) {
+            refine_grid();                    // smart refinement
+          }
+          else {
+            triangulation.refine_global(1);   // constant refinement
+          }
 
         std::cout << "   Number of active cells:       "
                   << triangulation.n_active_cells() << std::endl;
@@ -611,10 +666,15 @@ namespace Step8
 // step-6 (apart from the changed class names, of course).
 int main()
 {
+  std::cout << " " << std::endl;
+  std::cout << "============================================================" << std::endl;
+  std::cout << "================= THE CODE IS RUNNING ======================" << std::endl;
+  std::cout << "============================================================" << std::endl;
+
   try
     {
       Step8::ElasticProblem<2> elastic_problem_2d;
-      elastic_problem_2d.run();
+      elastic_problem_2d.run(3);
     }
   catch (std::exception &exc)
     {
@@ -643,5 +703,11 @@ int main()
       return 1;
     }
 
+  std::cout << " \n" << std::endl;
+  std::cout << "============================================================" << std::endl;
+  std::cout << "================= CODE ENDED CORRECTLY =====================" << std::endl;
+  std::cout << "============================================================\n" << std::endl;
+ 
   return 0;
 }
+
