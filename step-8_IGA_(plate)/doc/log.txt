@@ -1,0 +1,25 @@
+Cycle 0:
+   Number of active cells:       256
+   Number of degrees of freedom: 578
+Cycle 1:
+   Number of active cells:       484
+   Number of degrees of freedom: 1082
+Cycle 2:
+   Number of active cells:       922
+   Number of degrees of freedom: 2030
+Cycle 3:
+   Number of active cells:       1750
+   Number of degrees of freedom: 3774
+Cycle 4:
+   Number of active cells:       3319
+   Number of degrees of freedom: 7064
+Cycle 5:
+   Number of active cells:       6301
+   Number of degrees of freedom: 13124
+Cycle 6:
+   Number of active cells:       11935
+   Number of degrees of freedom: 24838
+Cycle 7:
+   Number of active cells:       22543
+   Number of degrees of freedom: 46256
+
