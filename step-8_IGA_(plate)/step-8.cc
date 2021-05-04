@@ -20,8 +20,7 @@
 
 // @sect3{Include files}
 
-// As usual, the first few include files are already known, so we will not
-// comment on them further.
+// Include files:
 #include <deal.II/base/quadrature_lib.h>
 #include <deal.II/base/function.h>
 #include <deal.II/base/tensor.h>
@@ -33,10 +32,11 @@
 #include <deal.II/lac/solver_cg.h>
 #include <deal.II/lac/precondition.h>
 #include <deal.II/lac/affine_constraints.h>
+#include <deal.II/lac/sparse_ilu.h>     // IGA
 
 #include <deal.II/grid/tria.h>
 #include <deal.II/grid/grid_generator.h>
-#include <deal.II/grid/grid_tools.h>   // [ ADD ]
+#include <deal.II/grid/grid_tools.h>    // [ ADD ]
 #include <deal.II/grid/grid_refinement.h>
 #include <deal.II/grid/tria_accessor.h>
 #include <deal.II/grid/tria_iterator.h>
@@ -45,40 +45,31 @@
 #include <deal.II/dofs/dof_accessor.h>
 #include <deal.II/dofs/dof_tools.h>
 
-#include <deal.II/fe/fe_values.h>
-
 #include <deal.II/numerics/vector_tools.h>
 #include <deal.II/numerics/matrix_tools.h>
 #include <deal.II/numerics/data_out.h>
 #include <deal.II/numerics/error_estimator.h>
 
-// In this example, we need vector-valued finite elements. The support for
-// these can be found in the following include file:
-#include <deal.II/fe/fe_system.h>
-// We will compose the vector-valued finite elements from regular Q1 elements
-// which can be found here, as usual:
+#include <deal.II/fe/fe_values.h>
+#include <deal.II/fe/fe_system.h>       // vector-valued finite elements
 #include <deal.II/fe/fe_q.h>
-
 #include <deal.II/fe/fe.h>              // IGA
 #include <deal.II/fe/fe_nothing.h>      // IGA
 #include <deal.II/fe/fe_bernstein.h>    // IGA
-#include <deal.II/lac/sparse_ilu.h>     // IGA
 
-// This again is C++:
+
 #include <fstream>
 #include <iostream>
+#include <filesystem>     // IGA
 
-#include <filesystem>    // IGA
 
-// The last step is as in previous programs. In particular, just like in
-// step-7, we pack everything that's specific to this program into a namespace
-// of its own.
+
 using namespace dealii;
 namespace Step8
 {
   //using namespace dealii;
 
-  bool original_problem_8 = true;	// Default: "true" [SHOULD BE REMOVED NEXT]
+  bool original_problem_8 = true;	    // Default: "true" [SHOULD BE REMOVED NEXT]
 
 //====================================================
 /**
@@ -91,12 +82,12 @@ template <int dim>
 class BoundaryValues : public Function<dim>
 {
 public:
-  BoundaryValues () : Function<dim>() {}
+  BoundaryValues () : Function<dim>(2) {}
 
   virtual double value (const Point<dim>   &p,
                         const unsigned int  component = 0) const 
   {
-    return 0*p(0)*component;
+    return 0*p(0)*component;    // <- [ USELESS - Just to avoid warnings of unused params ]
   }
 };
 
@@ -108,26 +99,7 @@ public:
   // define the function which describes the right hand side. This time, the
   // right hand side is vector-valued, as is the solution, so we will describe
   // the changes required for this in some more detail.
-  //
-  // To prevent cases where the return vector has not previously been set to
-  // the right size we test for this case and otherwise throw an exception at
-  // the beginning of the function. Note that enforcing that output arguments
-  // already have the correct size is a convention in deal.II, and enforced
-  // almost everywhere. The reason is that we would otherwise have to check at
-  // the beginning of the function and possibly change the size of the output
-  // vector. This is expensive, and would almost always be unnecessary (the
-  // first call to the function would set the vector to the right size, and
-  // subsequent calls would only have to do redundant checks). In addition,
-  // checking and possibly resizing the vector is an operation that can not be
-  // removed if we can't rely on the assumption that the vector already has
-  // the correct size; this is in contract to the Assert call that is
-  // completely removed if the program is compiled in optimized mode.
-  //
-  // Likewise, if by some accident someone tried to compile and run the
-  // program in only one space dimension (in which the elastic equations do
-  // not make much sense since they reduce to the ordinary Laplace equation),
-  // we terminate the program in the second assertion. The program will work
-  // just fine in 3d, however.
+
   template <int dim>
   void right_hand_side(const std::vector<Point<dim>> &points,
                        std::vector<Tensor<1, dim>> &  values)
@@ -142,27 +114,21 @@ public:
 		// (or spheres, in 3d) around points (0.5,0) and (-0.5,0), and y-force in
 		// an area around the origin; in 3d, the z-component of these centers is
 		// zero as well.
-		//
-		// For this, let us first define two objects that denote the centers of
-		// these areas. Note that upon construction of the Point objects, all
-		// components are set to zero.
+
 		Point<dim> point_1, point_2;
 		point_1(0) = 0.5;
 		point_2(0) = -0.5;
 
 		for (unsigned int point_n = 0; point_n < points.size(); ++point_n)
 		  {
-		    // If <code>points[point_n]</code> is in a circle (sphere) of radius
-		    // 0.2 around one of these points, then set the force in x-direction
-		    // to one, otherwise to zero:
+		    // X-directed forces:
 		    if (((points[point_n] - point_1).norm_square() < 0.2 * 0.2) ||
 		        ((points[point_n] - point_2).norm_square() < 0.2 * 0.2))
 		      values[point_n][0] = 1.0;
 		    else
 		      values[point_n][0] = 0.0;
 
-		    // Likewise, if <code>points[point_n]</code> is in the vicinity of the
-		    // origin, then set the y-force to one, otherwise to zero:
+		    // Y-directed force:
 		    if (points[point_n].norm_square() < 0.2 * 0.2)
 		      values[point_n][1] = 1.0;
 		    else
@@ -210,17 +176,8 @@ public:
 //====================================================
   // @sect3{The <code>ElasticProblem</code> class template}
 
-  // The main class is, except for its name, almost unchanged with respect to
-  // the step-6 example.
-  //
-  // The only change is the use of a different class for the <code>fe</code>
-  // variable: Instead of a concrete finite element class such as FE_Q, we now
-  // use a more generic one, FESystem. In fact, FESystem is not really a
-  // finite element itself in that it does not implement shape functions of
-  // its own. Rather, it is a class that can be used to stack several other
-  // elements together to form one vector-valued finite element. In our case,
-  // we will compose the vector-valued element of <code>FE_Q(1)</code>
-  // objects, as shown below in the constructor of this class.
+  // The main class of the problem.
+
   template <int dim>
   class ElasticProblem
   {
@@ -274,12 +231,7 @@ public:
 
   // Following is the constructor of the main class. As said before, we would
   // like to construct a vector-valued finite element that is composed of
-  // several scalar finite elements (i.e., we want to build the vector-valued
-  // element so that each of its vector components consists of the shape
-  // functions of a scalar element). Of course, the number of scalar finite
-  // elements we would like to stack together equals the number of components
-  // the solution function has, which is <code>dim</code> since we consider
-  // displacement in each space direction. The FESystem class can handle this:
+  // several scalar finite elements. The FESystem class can handle this:
   // we pass it the finite element of which we would like to compose the
   // system of, and how often it shall be repeated:
 
@@ -295,11 +247,11 @@ public:
     degree          (degree),
     n_cycles_low    (n_cycles_low),
     n_cycles_up     (n_cycles_up),
-    fe              (NULL),        //fe(FE_Q<dim>(1), dim)
+    fe              (NULL),                 //fe(FE_Q<dim>(1), dim)
     dof_handler     (triangulation)
   {
     // IGA: This section is entirely new.
-    if (quadrature_name == "legendre")     // [DEFAULT]
+    if (quadrature_name == "legendre")      // [DEFAULT]
   	  {
 	    matrix_quad   = QGauss<dim>(degree+1);
 	    boundary_quad = QGauss<dim-1>(degree+2);
@@ -316,7 +268,7 @@ public:
 
     if      (fe_name == "bernstein")
       fe = new FESystem<dim>(FE_Bernstein<dim>(degree), dim);
-    else if (fe_name == "lagrange")        // [DEFAULT]
+    else if (fe_name == "lagrange")         // [DEFAULT]
       fe = new FESystem<dim>(FE_Q<dim>(degree), dim);
     else if (fe_name == "lobatto")
       fe = new FESystem<dim>(FE_Q<dim>(QGaussLobatto<1>(degree+1)), dim);
@@ -324,10 +276,8 @@ public:
 	  AssertThrow(false, ExcMessage("FE not supported"));
 
   }
-  // In fact, the FESystem class has several more constructors which can
-  // perform more complex operations than just stacking together several
-  // scalar finite elements of the same type into one; we will get to know
-  // these possibilities in later examples.
+
+
 
 /// Main problem class: Destructor
 	template <int dim>
@@ -344,12 +294,9 @@ public:
 // discretised rectangle which is subsequently transformed into the correct
 // of the Cook cantilever. Each relevant boundary face is then given a boundary
 // ID number.
-//
-// We then determine the volume of the reference configuration and print it
-// for comparison.
 
   template <int dim>
-  Point<dim> grid_y_transform (const Point<dim> &pt_in)                             // [ ADD ]
+  Point<dim> grid_y_transform (const Point<dim> &pt_in)    // [ ADD ]
   {
     const double &x = pt_in[0];
     const double &y = pt_in[1];
@@ -371,7 +318,7 @@ public:
 	if(original_problem_8) {
 	    GridGenerator::hyper_cube(triangulation, -1, 1);
 	    //triangulation.refine_global(4);
-        triangulation.refine_global(n_cycles_low+4);    // IGA
+        triangulation.refine_global(n_cycles_low+4);       // IGA
 	}
 	else {
 		// Divide the beam, but only along the x- and y-coordinate directions
@@ -406,20 +353,19 @@ public:
 		    if (cell->face(face)->at_boundary() == true)
 		      {
 		        if (std::abs(cell->face(face)->center()[0] - 0.0) < tol_boundary)
-		          cell->face(face)->set_boundary_id(1); // -X faces
+		          cell->face(face)->set_boundary_id(1);       // -X faces
 		        else if (std::abs(cell->face(face)->center()[0] - 48.0) < tol_boundary)
-		          cell->face(face)->set_boundary_id(11); // +X faces
+		          cell->face(face)->set_boundary_id(11);      // +X faces
 		        else if (std::abs(std::abs(cell->face(face)->center()[0]) - 0.5) < tol_boundary)
-		          cell->face(face)->set_boundary_id(2); // +Z and -Z faces
+		          cell->face(face)->set_boundary_id(2);       // +Z and -Z faces
 		      }
 
 		// Transform the hyper-rectangle into the beam shape
 		GridTools::transform(&grid_y_transform<dim>, triangulation);
 
-
-		//GridTools::scale(1e-3, triangulation);   // parameters.scale
-
-		/*
+        /*
+		GridTools::scale(1e-3, triangulation);             // parameters.scale
+		
 		vol_reference = GridTools::volume(triangulation);
 		vol_current = vol_reference;
 		std::cout << "Grid:\n\t Reference volume: " << vol_reference << std::endl;
@@ -431,20 +377,15 @@ public:
   // @sect4{ElasticProblem::setup_system}
 
   // Setting up the system of equations is identical to the function used in
-  // the step-6 example. The DoFHandler class and all other classes used here
+  // the previous examples. The DoFHandler class and all other classes used here
   // are fully aware that the finite element we want to use is vector-valued,
   // and take care of the vector-valuedness of the finite element
-  // themselves. (In fact, they do not, but this does not need to bother you:
-  // since they only need to know how many degrees of freedom there are per
-  // vertex, line and cell, and they do not ask what they represent,
-  // i.e. whether the finite element under consideration is vector-valued or
-  // whether it is, for example, a scalar Hermite element with several degrees
-  // of freedom on each vertex).
+  // themselves. 
   template <int dim>
   void ElasticProblem<dim>::setup_system()
   {
 
-    dof_handler.distribute_dofs(*fe);        // IGA: "*"
+    dof_handler.distribute_dofs(*fe);                            // IGA: "*"
     solution.reinit(dof_handler.n_dofs());
     system_rhs.reinit(dof_handler.n_dofs());
 
@@ -452,17 +393,11 @@ public:
     constraints.clear();
 
 	if(original_problem_8) {
-      std::cout << "A" << std::endl; //XXX [DEBUG FLAG]
-
       std::map< types::boundary_id, const Function< dim > *>  dirichlet_boundary;
-      BoundaryValues<dim> boundary_funct;                                 // IGA
-      dirichlet_boundary[0] = &boundary_funct;                            // IGA
-
-	  //std::map<types::global_dof_index,double> boundary_values;           // IGA
+      BoundaryValues<dim> boundary_funct;                        // IGA
+      dirichlet_boundary[0] = &boundary_funct;                   // IGA
 
       DoFTools::make_hanging_node_constraints(dof_handler, constraints);
-
-      std::cout << "B" << std::endl; //XXX [DEBUG FLAG]
 
       // NOTE: "interpolate" method works fine with std Lagrange polynomial, BUT FAILS with Bernstein. 
       /*VectorTools::interpolate_boundary_values (dof_handler,       
@@ -474,15 +409,13 @@ public:
       VectorTools::project_boundary_values (dof_handler,         // IGA: from "VectorTools::interpolate_boundary_values(..."
                                             dirichlet_boundary,  // IGA: from "0"
                                             boundary_quad,       // IGA: from "Functions::ZeroFunction<dim>(dim)"
-                                            constraints);        // IGA: from "constraints"  // TRY: "boundary_values"
-
-      std::cout << "C" << std::endl; //XXX [DEBUG FLAG]
+                                            constraints);        // IGA: from "constraints"
 	}
 	else {
 	  // Fixed left hand side of the beam
       const int boundary_id = 1;
 	  const FEValuesExtractors::Vector u_fe(0);
-      VectorTools::interpolate_boundary_values(dof_handler,  // dof_handler_ref
+      VectorTools::interpolate_boundary_values(dof_handler,      // dof_handler_ref
                                                boundary_id,
                                                ZeroFunction<dim>(dim),
                                                constraints,
@@ -500,41 +433,26 @@ public:
     sparsity_pattern.copy_from(dsp);
 
     system_matrix.reinit(sparsity_pattern);
-    //solution.reinit (dof_handler.n_dofs());    // IGA
-    //system_rhs.reinit (dof_handler.n_dofs());  // IGA
-
   }
 
 
   // @sect4{ElasticProblem::assemble_system}
 
   // The big changes in this program are in the creation of matrix and right
-  // hand side, since they are problem-dependent. We will go through that
-  // process \step-by-step, since it is a bit more complicated than in previous
-  // examples.
-  //
-  // The first parts of this function are the same as before, however: setting
-  // up a suitable quadrature formula, initializing an FEValues object for the
-  // (vector-valued) finite element we use as well as the quadrature object,
-  // and declaring a number of auxiliary arrays. In addition, we declare the
-  // ever same two abbreviations: <code>n_q_points</code> and
-  // <code>dofs_per_cell</code>. The number of degrees of freedom per cell we
-  // now obviously ask from the composed finite element rather than from the
-  // underlying scalar Q1 element. Here, it is <code>dim</code> times the
-  // number of degrees of freedom per cell of the Q1 element, though this is
-  // not explicit knowledge we need to care about:
+  // hand side, since they are problem-dependent.
+
   template <int dim>
   void ElasticProblem<dim>::assemble_system()
   {
     std::cout << "   > ASSEMBLING THE SYSTEM (wait) ... " << std::endl;
-    // QGauss<dim> quadrature_formula(fe.degree + 1);    // IGA deleted
+    // QGauss<dim> quadrature_formula(fe.degree + 1);           // IGA deleted
 
     FEValues<dim> fe_values(*fe, matrix_quad,     // IGA: "*", "quadrature_formula" to "matrix_quad"
                             update_values | update_gradients |
                             update_quadrature_points | update_JxW_values);
 
-    const unsigned int dofs_per_cell = fe->dofs_per_cell;   // IGA: "->"
-    const unsigned int n_q_points    = matrix_quad.size();  // IGA from "quadrature_formula.size();"
+    const unsigned int dofs_per_cell = fe->dofs_per_cell;       // IGA: "->"
+    const unsigned int n_q_points    = matrix_quad.size();      // IGA from "quadrature_formula.size();"
 
     FullMatrix<double> cell_matrix(dofs_per_cell, dofs_per_cell);
     Vector<double>     cell_rhs(dofs_per_cell);
@@ -542,20 +460,21 @@ public:
     std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
 
     // Addition in case variable coefficients are needed:
-    std::vector<double> lambda_values(n_q_points);        // [not needed]
-    std::vector<double> mu_values(n_q_points);            // [not needed]
-    Functions::ConstantFunction<dim> lambda(1.), mu(1.);  // [not needed]
+    std::vector<double> lambda_values(n_q_points);              // [not needed]
+    std::vector<double> mu_values(n_q_points);                  // [not needed]
+    Functions::ConstantFunction<dim> lambda(1.), mu(1.);        // [not needed]
 
     // Like the two constant functions above, we will call the function
     // right_hand_side just once per cell to make things simpler.
     std::vector<Tensor<1, dim>> rhs_values(n_q_points);
 
 
-    typename DoFHandler<dim>::active_cell_iterator    // IGA new
-    cell = dof_handler.begin_active(),                // IGA new
-    endc = dof_handler.end();                         // IGA new
+    typename DoFHandler<dim>::active_cell_iterator              // IGA new
+    cell = dof_handler.begin_active(),                          // IGA new
+    endc = dof_handler.end();                                   // IGA new
     // Now we can begin with the loop over all cells:
-    for (; cell!=endc; ++cell)    // IGA (from:  "for (const auto &cell : dof_handler.active_cell_iterators())")
+    for (; cell!=endc; ++cell)                                  // IGA mod
+    // for (const auto &cell : dof_handler.active_cell_iterators())
       {
         fe_values.reinit(cell);
         cell_matrix = 0;
@@ -567,36 +486,20 @@ public:
         right_hand_side(fe_values.get_quadrature_points(), rhs_values);         // [not needed]
 
         // Then assemble the entries of the local stiffness matrix and right
-        // hand side vector. This follows almost one-to-one the pattern
-        // described in the introduction of this example.  One of the few
-        // comments in place is that we can compute the number
-        // <code>comp(i)</code>, i.e. the index of the only nonzero vector
-        // component of shape function <code>i</code> using the
-        // <code>fe.system_to_component_index(i).first</code> function call
-        // below.
-        //
-        // (By accessing the <code>first</code> variable of the return value
-        // of the <code>system_to_component_index</code> function, you might
-        // already have guessed that there is more in it. In fact, the
-        // function returns a <code>std::pair@<unsigned int, unsigned
-        // int@></code>, of which the first element is <code>comp(i)</code>
-        // and the second is the value <code>base(i)</code> also noted in the
-        // introduction, i.e.  the index of this shape function within all the
-        // shape functions that are nonzero in this component,
-        // i.e. <code>base(i)</code> in the diction of the introduction. This
-        // is not a number that we are usually interested in, however.)              // [FROM HERE !!!]
-        //
-        // With this knowledge, we can assemble the local matrix
-        // contributions:
-        for (unsigned int i=0; i<dofs_per_cell; ++i)  // IGA from: "const unsigned int i : fe_values.dof_indices()"  
+        // hand side vector.
+        // We can assemble the local matrix contributions:
+        for (unsigned int i=0; i<dofs_per_cell; ++i)            // IGA mod
+        // for (const unsigned int i : fe_values.dof_indices())
           {
-            const unsigned int component_i = fe->system_to_component_index(i).first;    // IGA: "->"
+            const unsigned int component_i = fe->system_to_component_index(i).first;     // IGA: "->"
 
-            for (unsigned int j=0; j<dofs_per_cell; ++j)  // IGA from: "const unsigned int j : fe_values.dof_indices()"
+            for (unsigned int j=0; j<dofs_per_cell; ++j)        // IGA mod
+            // for (const unsigned int j : fe_values.dof_indices())
               {
-                const unsigned int component_j =fe->system_to_component_index(j).first;    // IGA: "->"
+                const unsigned int component_j =fe->system_to_component_index(j).first;  // IGA: "->"
 
-                for (unsigned int q_point=0; q_point<n_q_points; ++q_point)    // IGA from: "const unsigned int q_point : fe_values.quadrature_point_indices())"
+                for (unsigned int q_point=0; q_point<n_q_points; ++q_point)    // IGA mod
+                // for (const unsigned int q_point : fe_values.quadrature_point_indices()))
                   {
                     cell_matrix(i, j) +=
                       // The first term is $\lambda \partial_i u_i, \partial_j
@@ -640,18 +543,18 @@ public:
               }
           }
 
-        // Assembling the right hand side is also just as discussed in the
-        // introduction:
-        for (unsigned int i=0; i<dofs_per_cell; ++i)    // IGA: from "const unsigned int i : fe_values.dof_indices())"
+        // Assembling the right hand side:
+        for (unsigned int i=0; i<dofs_per_cell; ++i)            // IGA mod
+        // for (const unsigned int i : fe_values.dof_indices())
           {
-            const unsigned int component_i = fe->system_to_component_index(i).first;    // IGA: "->"
+            const unsigned int component_i = fe->system_to_component_index(i).first;     // IGA: "->"
 
-            for (unsigned int q_point=0; q_point<n_q_points; ++q_point)    // IGA from: "const unsigned int q_point : fe_values.quadrature_point_indices())"
+            for (unsigned int q_point=0; q_point<n_q_points; ++q_point)    // IGA mod
+            // for (const unsigned int q_point : fe_values.quadrature_point_indices()))
               cell_rhs(i) += fe_values.shape_value(i, q_point) *
                              rhs_values[q_point][component_i] *
                              fe_values.JxW(q_point);
           }
-
         // The transfer from local degrees of freedom into the global matrix
         // and right hand side vector does not depend on the equation under
         // consideration, and is thus the same as in all previous
@@ -673,7 +576,7 @@ public:
   template <int dim>
   void ElasticProblem<dim>::solve()
   {
-    SolverControl            solver_control(1000, 1e-12);
+    SolverControl            solver_control(100000, 1e-14);   // default: (1000, 1e-12)
     SolverCG<Vector<double>> cg(solver_control);
 
     PreconditionSSOR<SparseMatrix<double>> preconditioner;
@@ -782,10 +685,6 @@ public:
         default:
           Assert(false, ExcNotImplemented());
       }
-    //std::cout << "   Solution: " << solution.size() << " [of 578]" << std::endl;                        //XXX
-    //unsigned int k = 0;                                                                                 //XXX
-    //for (auto i : solution) {                                                                           //XXX
-    //  std::cout << "   > " << std::setfill('0') << std::setw(3) << ++k << " : " << i << std::endl; }    //XXX
     data_out.add_data_vector(solution, solution_names);
     
     data_out.build_patches();
@@ -804,42 +703,8 @@ public:
 
   // @sect4{ElasticProblem::run}
 
-  // The <code>run</code> function does the same things as in step-6, for
-  // example. This time, we use the square [-1,1]^d as domain, and we refine
-  // it globally four times before starting the first iteration.
-  //
-  // The reason for refining is a bit accidental: we use the QGauss
-  // quadrature formula with two points in each direction for integration of the
-  // right hand side; that means that there are four quadrature points on each
-  // cell (in 2D). If we only refine the initial grid once globally, then there
-  // will be only four quadrature points in each direction on the
-  // domain. However, the right hand side function was chosen to be rather
-  // localized and in that case, by pure chance, it happens that all quadrature
-  // points lie at points where the right hand side function is zero (in
-  // mathematical terms, the quadrature points happen to be at points outside
-  // the <i>support</i> of the right hand side function). The right hand side
-  // vector computed with quadrature will then contain only zeroes (even though
-  // it would of course be nonzero if we had computed the right hand side vector
-  // exactly using the integral) and the solution of the system of
-  // equations is the zero vector, i.e., a finite element function that is zero
-  // everywhere. In a sense, we
-  // should not be surprised that this is happening since we have chosen
-  // an initial grid that is totally unsuitable for the problem at hand.
-  //
-  // The unfortunate thing is that if the discrete solution is constant, then
-  // the error indicators computed by the KellyErrorEstimator class are zero
-  // for each cell as well, and the call to
-  // Triangulation::refine_and_coarsen_fixed_number() will not flag any cells
-  // for refinement (why should it if the indicated error is zero for each
-  // cell?). The grid in the next iteration will therefore consist of four
-  // cells only as well, and the same problem occurs again.
-  //
-  // The conclusion needs to be: while of course we will not choose the
-  // initial grid to be well-suited for the accurate solution of the problem,
-  // we must at least choose it such that it has the chance to capture the
-  // important features of the solution. In this case, it needs to be able to
-  // see the right hand side. Thus, we refine globally four times. (Any larger
-  // number of global refinement steps would of course also work.)
+  // The <code>run</code> function: 
+
   template <int dim>
   void ElasticProblem<dim>::run()
   {
@@ -876,11 +741,11 @@ public:
             }
           }
 
-      std::cout << "   Number of active cells: "  //
-                << triangulation.n_active_cells() //
-                << std::endl                      //
-                << "   Total number of cells: "   //
-                << triangulation.n_cells()        //
+      std::cout << "   Number of active cells: "
+                << triangulation.n_active_cells()
+                << std::endl
+                << "   Total number of cells: "
+                << triangulation.n_cells()
                 << std::endl;
 
         setup_system();
@@ -897,8 +762,7 @@ public:
 // @sect3{The <code>main</code> function}
 
 // After closing the <code>Step8</code> namespace in the last line above, the
-// following is the main function of the program and is again exactly like in
-// step-6 (apart from the changed class names, of course).
+// following is the main function of the program.
 int main(int argc, char **argv)
 {
   std::cout << " " << std::endl;
