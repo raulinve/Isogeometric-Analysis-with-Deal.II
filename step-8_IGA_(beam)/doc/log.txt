@@ -1,0 +1,44 @@
+============================================================
+================= THE CODE IS RUNNING ======================
+============================================================
+ 
+                    polyn     quad  deg refinements
+SELECTED OPTIONS : lagrange legendre 1 0 2
+
+Checking/creating the output directory "RESULTS". 
+Solving problem in 2 space dimensions. 
+
+
+Cycle 0:
+   Number of active cells: 256
+   Total number of cells: 256
+   Number of degrees of freedom: 578
+   > ASSEMBLING THE SYSTEM (wait) ... 
+   Memory consumption 72568 bytes
+   > SOLVING THE SYSTEM (wait) ... 
+   88 CG iterations needed to obtain convergence.
+   Saving/overwriting the .vtk result files.
+Cycle 1:
+   Number of active cells: 1024
+   Total number of cells: 1280
+   Number of degrees of freedom: 2178
+   > ASSEMBLING THE SYSTEM (wait) ... 
+   Memory consumption 292472 bytes
+   > SOLVING THE SYSTEM (wait) ... 
+   167 CG iterations needed to obtain convergence.
+   Saving/overwriting the .vtk result files.
+Cycle 2:
+   Number of active cells: 4096
+   Total number of cells: 5376
+   Number of degrees of freedom: 8450
+   > ASSEMBLING THE SYSTEM (wait) ... 
+   Memory consumption 1174648 bytes
+   > SOLVING THE SYSTEM (wait) ... 
+   329 CG iterations needed to obtain convergence.
+   Saving/overwriting the .vtk result files.
+ 
+
+============================================================
+================= CODE ENDED CORRECTLY =====================
+============================================================
+
