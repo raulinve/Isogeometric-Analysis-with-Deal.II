@@ -23,8 +23,9 @@ SET(TARGET_SRC
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.12)
 
+# NOTE: Try to remove "$ENV{mkDealiiPrefix}" from next line if you DO NOT use mkModules and have problems. 
 FIND_PACKAGE(deal.II 9.2.0 QUIET
-  HINTS ${deal.II_DIR} ${DEAL_II_DIR} ../ ../../ $ENV{DEAL_II_DIR}
+  HINTS ${deal.II_DIR} ${DEAL_II_DIR} ../ ../../ $ENV{DEAL_II_DIR} $ENV{mkDealiiPrefix}
   )
 IF(NOT ${deal.II_FOUND})
   MESSAGE(FATAL_ERROR "\n"
