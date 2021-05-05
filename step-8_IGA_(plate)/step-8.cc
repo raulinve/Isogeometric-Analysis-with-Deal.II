@@ -69,7 +69,7 @@ namespace Step8
 {
   //using namespace dealii;
 
-  bool original_problem_8 = true;	    // Default: "true" [SHOULD BE REMOVED NEXT]
+  bool original_problem_8 = false;	    // Default: "true" [SHOULD BE REMOVED NEXT]
 
 //====================================================
 /**
@@ -393,10 +393,6 @@ public:
     constraints.clear();
 
 	if(original_problem_8) {
-      std::map< types::boundary_id, const Function< dim > *>  dirichlet_boundary;
-      BoundaryValues<dim> boundary_funct;                        // IGA
-      dirichlet_boundary[0] = &boundary_funct;                   // IGA
-
       DoFTools::make_hanging_node_constraints(dof_handler, constraints);
 
       // NOTE: "interpolate" method works fine with std Lagrange polynomial, BUT FAILS with Bernstein. 
@@ -406,20 +402,34 @@ public:
                                                 constraints);*/
 
       // NOTE: This is why it is needed to replece it with the following "project" method.
+      std::map< types::boundary_id, const Function< dim > *>  dirichlet_boundary;        // IGA
+      BoundaryValues<dim> boundary_funct;                                                // IGA
+      dirichlet_boundary[0] = &boundary_funct;                                           // IGA
       VectorTools::project_boundary_values (dof_handler,         // IGA: from "VectorTools::interpolate_boundary_values(..."
                                             dirichlet_boundary,  // IGA: from "0"
                                             boundary_quad,       // IGA: from "Functions::ZeroFunction<dim>(dim)"
                                             constraints);        // IGA: from "constraints"
 	}
 	else {
-	  // Fixed left hand side of the beam
-      const int boundary_id = 1;
-	  const FEValuesExtractors::Vector u_fe(0);
-      VectorTools::interpolate_boundary_values(dof_handler,      // dof_handler_ref
+      const int boundary_id = 1;                                 // Fixed left hand side of the beam
+
+      // NOTE: "interpolate" method works fine with std Lagrange polynomial, BUT FAILS with Bernstein. 
+      /*const FEValuesExtractors::Vector u_fe(0);
+      VectorTools::interpolate_boundary_values(dof_handler,
                                                boundary_id,
                                                ZeroFunction<dim>(dim),
-                                               constraints,
-                                               fe->component_mask(u_fe));    // IGA: from "fe.component_mask(u_fe));"
+                                               constraints);
+                                               fe->component_mask(u_fe));  */
+
+      // NOTE: This is why it is needed to replece it with the following "project" method.
+      std::map< types::boundary_id, const Function< dim > *>  dirichlet_boundary;        // IGA
+      BoundaryValues<dim> boundary_funct;                                                // IGA
+      dirichlet_boundary[boundary_id] = &boundary_funct;                                 // IGA
+
+      VectorTools::project_boundary_values (dof_handler, 
+                                            dirichlet_boundary,  // ZeroFunction<dim>(dim),
+                                            boundary_quad,
+                                            constraints);
 	}
     constraints.close();
 	// ---------------------------------
