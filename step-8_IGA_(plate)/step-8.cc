@@ -136,38 +136,7 @@ public:
 	}
 	else
 	{
-		// Points of application:
-		Point<dim> point_1, point_2;
-		point_1(0) =  46;   point_1(1) =  50;
-		//point_2(0) = -0.5;   point_2(1) = -0.5;
-	
-		double radius = 2;    // Radius of the force footprint
-		double force  = -0.1;     // Absolute modulus of the forces
-
-		for (unsigned int point_n = 0; point_n < points.size(); ++point_n)
-		  { 
-		    if (((points[point_n] - point_1).norm_square() < radius * radius))
-		      values[point_n][1] = force;
-		    else
-		      values[point_n][1] = 0.0;
-            /*
-		    // If <code>points[point_n]</code> is in a circle (sphere) of radius
-		    // 0.2 around one of these points, then set the force in x-direction
-		    // to one, otherwise to zero:
-		    if (((points[point_n] - point_1).norm_square() < radius * radius) ||
-		        ((points[point_n] - point_2).norm_square() < radius * radius))
-		      values[point_n][0] = force;
-		    else
-		      values[point_n][0] = 0.0;
-
-		    // Likewise, if <code>points[point_n]</code> is in the vicinity of the
-		    // origin, then set the y-force to one, otherwise to zero:
-		    if (points[point_n].norm_square() < radius * radius)
-		      values[point_n][1] = force;
-		    else
-		      values[point_n][1] = 0.0;
-            */
-		  }
+        std::cout << "\n\n FATAL ERROR: CODE NOT IMPLEMENTED! \n\n" << std::endl;
 	}
   }
 
@@ -314,61 +283,15 @@ public:
   template <int dim>
   void ElasticProblem<dim>::make_grid()
   {
-	if(original_problem_8) {
+	if(original_problem_8) 
+    {
 	    GridGenerator::hyper_cube(triangulation, -1, 1);
 	    //triangulation.refine_global(4);
         triangulation.refine_global(n_cycles_low+4);       // IGA
 	}
-	else {
-		// Divide the beam, but only along the x- and y-coordinate directions
-		unsigned int elements_per_edge = 16;
-		std::vector< unsigned int > repetitions(dim, elements_per_edge);
-		// Only allow one element through the thickness
-		// (modelling a plane strain condition)
-		if (dim == 3)
-		  repetitions[dim-1] = 1;
-
-		const Point<dim> bottom_left = (dim == 3 ? Point<dim>( 0.0,  0.0, -0.5) : Point<dim>( 0.0,  0.0));
-		const Point<dim> top_right   = (dim == 3 ? Point<dim>(48.0, 44.0,  0.5) : Point<dim>(48.0, 44.0));
-
-		GridGenerator::subdivided_hyper_rectangle(triangulation,
-		                                          repetitions,
-		                                          bottom_left,
-		                                          top_right);
-
-		// Since we wish to apply a Neumann BC to the right-hand surface, we
-		// must find the cell faces in this part of the domain and mark them with
-		// a distinct boundary ID number.  The faces we are looking for are on the
-		// +x surface and will get boundary ID 11.
-		// Dirichlet boundaries exist on the left-hand face of the beam (this fixed
-		// boundary will get ID 1) and on the +Z and -Z faces (which correspond to
-		// ID 2 and we will use to impose the plane strain condition)
-		const double tol_boundary = 1e-6;
-		typename Triangulation<dim>::active_cell_iterator cell =
-		  triangulation.begin_active(), endc = triangulation.end();
-		for (; cell != endc; ++cell)
-		  for (unsigned int face = 0;
-		       face < GeometryInfo<dim>::faces_per_cell; ++face)
-		    if (cell->face(face)->at_boundary() == true)
-		      {
-		        if (std::abs(cell->face(face)->center()[0] - 0.0) < tol_boundary)
-		          cell->face(face)->set_boundary_id(1);       // -X faces
-		        else if (std::abs(cell->face(face)->center()[0] - 48.0) < tol_boundary)
-		          cell->face(face)->set_boundary_id(11);      // +X faces
-		        else if (std::abs(std::abs(cell->face(face)->center()[0]) - 0.5) < tol_boundary)
-		          cell->face(face)->set_boundary_id(2);       // +Z and -Z faces
-		      }
-
-		// Transform the hyper-rectangle into the beam shape
-		GridTools::transform(&grid_y_transform<dim>, triangulation);
-
-        /*
-		GridTools::scale(1e-3, triangulation);             // parameters.scale
-		
-		vol_reference = GridTools::volume(triangulation);
-		vol_current = vol_reference;
-		std::cout << "Grid:\n\t Reference volume: " << vol_reference << std::endl;
-		*/
+	else 
+    {
+		std::cout << "\n\n FATAL ERROR: CODE NOT IMPLEMENTED! \n\n" << std::endl;
 	} 
   }
 
@@ -391,7 +314,8 @@ public:
 	// IMPOSE CONSTRAINTS: -------------
     constraints.clear();
 
-	if(original_problem_8) {
+	if(original_problem_8) 
+    {
       DoFTools::make_hanging_node_constraints(dof_handler, constraints);
 
       // NOTE: "interpolate" method works fine with std Lagrange polynomial, BUT FAILS with Bernstein. 
@@ -409,26 +333,9 @@ public:
                                             boundary_quad,       // IGA: from "Functions::ZeroFunction<dim>(dim)"
                                             constraints);        // IGA: from "constraints"
 	}
-	else {
-      const int boundary_id = 1;                                 // Fixed left hand side of the beam
-
-      // NOTE: "interpolate" method works fine with std Lagrange polynomial, BUT FAILS with Bernstein. 
-      /*const FEValuesExtractors::Vector u_fe(0);
-      VectorTools::interpolate_boundary_values(dof_handler,
-                                               boundary_id,
-                                               ZeroFunction<dim>(dim),
-                                               constraints);
-                                               fe->component_mask(u_fe));  */
-
-      // NOTE: This is why it is needed to replece it with the following "project" method.
-      std::map< types::boundary_id, const Function< dim > *>  dirichlet_boundary;        // IGA
-      BoundaryValues<dim> boundary_funct;                                                // IGA
-      dirichlet_boundary[boundary_id] = &boundary_funct;                                 // IGA
-
-      VectorTools::project_boundary_values (dof_handler, 
-                                            dirichlet_boundary,  // ZeroFunction<dim>(dim),
-                                            boundary_quad,
-                                            constraints);
+	else 
+    {
+        std::cout << "\n\n FATAL ERROR: CODE NOT IMPLEMENTED! \n\n" << std::endl;
 	}
     constraints.close();
 	// ---------------------------------
@@ -741,13 +648,8 @@ public:
           }
         else 
           {
-            if(original_problem_8) {
-              //refine_grid();                    // smart refinement
-              triangulation.refine_global(1);   // IGA: constant refinement
-            }
-            else {
-              triangulation.refine_global(1);   // IGA: constant refinement
-            }
+             //refine_grid();                    // smart refinement
+             triangulation.refine_global(1);   // IGA: constant refinement
           }
 
       std::cout << "   Number of active cells: "

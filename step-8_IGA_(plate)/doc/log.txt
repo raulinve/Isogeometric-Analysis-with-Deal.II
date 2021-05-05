@@ -1,25 +1,44 @@
+============================================================
+================= THE CODE IS RUNNING ======================
+============================================================
+ 
+                    polyn     quad  deg refinements
+SELECTED OPTIONS : lagrange legendre 1 0 2
+
+Checking/creating the output directory "RESULTS". 
+Solving problem in 2 space dimensions. 
+
+
 Cycle 0:
-   Number of active cells:       256
+   Number of active cells: 256
+   Total number of cells: 341
    Number of degrees of freedom: 578
+   > ASSEMBLING THE SYSTEM (wait) ... 
+   Memory consumption 60360 bytes
+   > SOLVING THE SYSTEM (wait) ... 
+   31 CG iterations needed to obtain convergence.
+   Saving/overwriting the .vtk result files.
 Cycle 1:
-   Number of active cells:       484
-   Number of degrees of freedom: 1082
+   Number of active cells: 1024
+   Total number of cells: 1365
+   Number of degrees of freedom: 2178
+   > ASSEMBLING THE SYSTEM (wait) ... 
+   Memory consumption 267208 bytes
+   > SOLVING THE SYSTEM (wait) ... 
+   57 CG iterations needed to obtain convergence.
+   Saving/overwriting the .vtk result files.
 Cycle 2:
-   Number of active cells:       922
-   Number of degrees of freedom: 2030
-Cycle 3:
-   Number of active cells:       1750
-   Number of degrees of freedom: 3774
-Cycle 4:
-   Number of active cells:       3319
-   Number of degrees of freedom: 7064
-Cycle 5:
-   Number of active cells:       6301
-   Number of degrees of freedom: 13124
-Cycle 6:
-   Number of active cells:       11935
-   Number of degrees of freedom: 24838
-Cycle 7:
-   Number of active cells:       22543
-   Number of degrees of freedom: 46256
+   Number of active cells: 4096
+   Total number of cells: 5461
+   Number of degrees of freedom: 8450
+   > ASSEMBLING THE SYSTEM (wait) ... 
+   Memory consumption 1123272 bytes
+   > SOLVING THE SYSTEM (wait) ... 
+   108 CG iterations needed to obtain convergence.
+   Saving/overwriting the .vtk result files.
+ 
+
+============================================================
+================= CODE ENDED CORRECTLY =====================
+============================================================
 
