@@ -2,7 +2,7 @@
 * @file         poisson.cc
 * @brief        poisson code
 * @detail       Isogeometric Analysis for the solution of a poissoon equation using the deal.II library.
-* @author       Marco Tezzele, Nicola Cavallini, Luca Heltai, Raul Invernizzi.
+* @author       Raul Invernizzi, Marco Tezzele, Nicola Cavallini, Luca Heltai.
 */
 // @include      string.h
 
@@ -92,6 +92,7 @@
 /*! ---------------------------------------------------------------------
 * Copyright (C) 1999 - 2015 by the deal.II authors
 * Copyright (C) 2015 by Marco Tezzele, Nicola Cavallini, Luca Heltai
+* Copyright (C) 2021 by Raul Invernizzi
 *
 * This file has been modified from the example program step-4 of the
 * deal.II library.
@@ -105,7 +106,7 @@
 *
 * ---------------------------------------------------------------------
 *
-* Authors: Marco Tezzele, Nicola Cavallini, Luca Heltai 2014-2015
+* Final Author: Raul Invernizzi 2021
 */
 
 
@@ -285,12 +286,12 @@ template <int dim>
 class Laplace
 {
 public:
-  Laplace (const std::string fe_name,
+  Laplace (const std::string fe_name,    // IGA: Addeed parameters
            const std::string quadrature_name,
            const unsigned int degree,
            const unsigned int n_cycles_low,
            const unsigned int n_cycles_up);
-  ~Laplace();
+  ~Laplace();    // IGA
 
   void run ();
 
@@ -352,7 +353,7 @@ Laplace<dim>::Laplace (const std::string  fe_name,
   fe              (NULL),
   dof_handler     (triangulation)
 {
-  if (quadrature_name == "legendre")     // [DEFAULT]
+  if (quadrature_name == "legendre")       // [DEFAULT]
     {
       matrix_quad   = QGauss<dim>(degree+1);
       boundary_quad = QGauss<dim-1>(degree+2);
@@ -369,7 +370,7 @@ Laplace<dim>::Laplace (const std::string  fe_name,
 
   if      (fe_name == "bernstein")
     fe = new FE_Bernstein<dim>(degree);
-  else if (fe_name == "lagrange")     // [DEFAULT]
+  else if (fe_name == "lagrange")          // [DEFAULT]
     fe = new FE_Q<dim>(degree);
   else if (fe_name == "lobatto")
     fe = new FE_Q<dim>(QGaussLobatto<1>(degree+1));
@@ -379,7 +380,7 @@ Laplace<dim>::Laplace (const std::string  fe_name,
 
 /// Main problem class: Destructor
 template <int dim>
-Laplace<dim>::~Laplace ()    // IGA ONLY
+Laplace<dim>::~Laplace ()                  // IGA ONLY
 {
   dof_handler.clear();
   if (fe)
@@ -400,7 +401,7 @@ void Laplace<dim>::make_grid ()
 template <int dim>
 void Laplace<dim>::setup_system ()
 {
-  dof_handler.distribute_dofs (*fe);    // IGA: "*"
+  dof_handler.distribute_dofs (*fe);       // IGA: "*"
 
   std::cout << "   Number of degrees of freedom: "
             << dof_handler.n_dofs()
@@ -423,48 +424,55 @@ void Laplace<dim>::assemble_system ()
   std::cout << "   > ASSEMBLING THE SYSTEM (wait) ... " << std::endl;
   const RightHandSide<dim> right_hand_side;
 
-  FEValues<dim> fe_values (*fe, matrix_quad,
+  FEValues<dim> fe_values (*fe, matrix_quad,                // IGA: "*", "quadrature_formula" to "matrix_quad"
                            update_values   | update_gradients |
                            update_quadrature_points | update_JxW_values);
 
   const unsigned int   dofs_per_cell = fe->dofs_per_cell;   // IGA: "->"
-  const unsigned int   n_q_points    = matrix_quad.size();  // IGA
+  const unsigned int   n_q_points    = matrix_quad.size();  // IGA new
 
   FullMatrix<double>   cell_matrix (dofs_per_cell, dofs_per_cell);
   Vector<double>       cell_rhs (dofs_per_cell);
 
   std::vector<types::global_dof_index> local_dof_indices (dofs_per_cell);
 
-  typename DoFHandler<dim>::active_cell_iterator
-  cell = dof_handler.begin_active(),
-  endc = dof_handler.end();
+  typename DoFHandler<dim>::active_cell_iterator            // IGA new
+  cell = dof_handler.begin_active(),                        // IGA new
+  endc = dof_handler.end();                                 // IGA new
 
   // Note: “active_cell_iterator” data type change in 2D or 3D.
-  for (; cell!=endc; ++cell)
+  for (; cell!=endc; ++cell)                                // IGA mod
+  // for (const auto &cell : dof_handler.active_cell_iterators())
     {
       fe_values.reinit (cell);
       cell_matrix = 0;
       cell_rhs    = 0;
 
-      // Now we have to assemble the local matrix and right hand side.  
-      for (unsigned int q_point=0; q_point<n_q_points; ++q_point)
-        for (unsigned int i=0; i<dofs_per_cell; ++i)
+      // Assemble the local matrix and right hand side.  
+      for (unsigned int q_point=0; q_point<n_q_points; ++q_point)                            // IGA "q_index" to "q_point"
+        for (unsigned int i=0; i<dofs_per_cell; ++i)                                         // IGA mod
+        // for (const unsigned int i : fe_values.dof_indices())
           {
-            for (unsigned int j=0; j<dofs_per_cell; ++j)
-              cell_matrix(i,j) += (fe_values.shape_grad (i, q_point) *
-                                   fe_values.shape_grad (j, q_point) *
-                                   fe_values.JxW (q_point));
+            for (unsigned int j=0; j<dofs_per_cell; ++j)                                     // IGA mod
+            // for (const unsigned int j : fe_values.dof_indices())
+              cell_matrix(i,j) += (fe_values.shape_grad (i, q_point) *                       // IGA "q_index" to "q_point"
+                                   fe_values.shape_grad (j, q_point) *                       // IGA "q_index" to "q_point"
+                                   fe_values.JxW (q_point));                                 // IGA "q_index" to "q_point"
 
-            cell_rhs(i) += (fe_values.shape_value (i, q_point) *
-                            right_hand_side.value (fe_values.quadrature_point (q_point)) *
-                            fe_values.JxW (q_point));
+            //const auto x_q = fe_values.quadrature_point(q_index);                          // IGA: Deleted!
+            cell_rhs(i) += (fe_values.shape_value (i, q_point) *                             // IGA "q_index" to "q_point"
+                         // right_hand_side.value(x_q) *                                     // IGA: Deleted! (see next line)
+                            right_hand_side.value (fe_values.quadrature_point (q_point)) *   // IGA "q_index" to "q_point"
+                            fe_values.JxW (q_point));                                        // IGA "q_index" to "q_point"
           }
 
       // With the local systems assembled, transfer into the global matrix
       cell->get_dof_indices (local_dof_indices);
-      for (unsigned int i=0; i<dofs_per_cell; ++i)
+      for (unsigned int i=0; i<dofs_per_cell; ++i)                                           // IGA mod
+      // for (const unsigned int i : fe_values.dof_indices())
         {
-          for (unsigned int j=0; j<dofs_per_cell; ++j)
+          for (unsigned int j=0; j<dofs_per_cell; ++j)                                       // IGA mod
+          // for (const unsigned int j : fe_values.dof_indices())
             system_matrix.add (local_dof_indices[i],
                                local_dof_indices[j],
                                cell_matrix(i,j));
@@ -477,14 +485,14 @@ void Laplace<dim>::assemble_system ()
   std::map<types::global_dof_index,double> boundary_values;
 
   //typename FunctionMap<dim>::type  dirichlet_boundary;
-  using type=std::map<types::boundary_id, const Function<dim>*>;
-  type dirichlet_boundary;
-  BoundaryValues<dim> boundary_funct;
-  dirichlet_boundary[0] = &boundary_funct;
+  using type = std::map<types::boundary_id, const Function<dim>*>;    // IGA
+  type dirichlet_boundary;                                            // IGA
+  BoundaryValues<dim> boundary_funct;                                 // IGA
+  dirichlet_boundary[0] = &boundary_funct;                            // IGA
 
-  VectorTools::project_boundary_values (dof_handler,
-                                        dirichlet_boundary,
-                                        boundary_quad,
+  VectorTools::project_boundary_values (dof_handler,                  // IGA: from "VectorTools::interpolate_boundary_values(..."
+                                        dirichlet_boundary,           // IGA: from "0"
+                                        boundary_quad,                // IGA: from "BoundaryValues<dim>()"
                                         boundary_values);
 
   MatrixTools::apply_boundary_values (boundary_values,
@@ -498,7 +506,7 @@ void Laplace<dim>::assemble_system ()
 template <int dim>
 void Laplace<dim>::solve ()
 {
-  SolverControl           solver_control (100000, 1e-14);   // default: (1000, 1e-12)
+  SolverControl           solver_control (100000, 1e-14);             // default: (1000, 1e-12)
   SolverCG<>              solver (solver_control);
 
   std::cout << "   Memory consumption " << system_matrix.memory_consumption()
@@ -544,7 +552,7 @@ void Laplace<dim>::output_results (const unsigned int cycle) const
   filename += ".vtk";
 
   //std::ofstream output (filename.c_str());
-  std::string relpath = "RESULTS/" + filename;
+  std::string relpath = "RESULTS/" + filename;              // ADD
   std::ofstream output (relpath);
   data_out.write_vtk (output);
 }
@@ -569,7 +577,7 @@ void Laplace<dim>::process_solution(const unsigned int cycle)
   							    difference_per_cell,
   							    VectorTools::L2_norm);;
 
-  // Evaluate H1-norm error:
+  // Evaluate H1-norm error:                                          // IGA only
   VectorTools::integrate_difference (dof_handler,
                                      solution,
                                      Solution<dim>(),
@@ -593,7 +601,7 @@ void Laplace<dim>::process_solution(const unsigned int cycle)
 }
 
 /// Main problem class: This method sets up the convergence table and print it on screen, on a .txt file and on a .tex file (if needed).
-template <int dim>
+template <int dim>                                                    // IGA only method
 void Laplace<dim>::print_table(const unsigned int cycle)
 {
   // Setup the table:

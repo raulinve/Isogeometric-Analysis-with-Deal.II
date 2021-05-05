@@ -1,21 +1,21 @@
-/* ---------------------------------------------------------------------
- *
- * Copyright (C) 2000 - 2020 by the deal.II authors
- *
- * This file is part of the deal.II library.
- *
- * The deal.II library is free software; you can use it, redistribute
- * it, and/or modify it under the terms of the GNU Lesser General
- * Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * The full text of the license can be found in the file LICENSE.md at
- * the top level directory of deal.II.
- *
- * ---------------------------------------------------------------------
-
- *
- * Author: Wolfgang Bangerth, University of Heidelberg, 2000
- */
+/*! ---------------------------------------------------------------------
+* Copyright (C) 1999 - 2020 by the deal.II authors
+* Copyright (C) 2021 by Raul Invernizzi
+*
+* This file has been modified from the example program step-8 of the
+* deal.II library.
+*
+* The deal.II library is free software; you can use it, redistribute
+* it, and/or modify it under the terms of the GNU Lesser General
+* Public License as published by the Free Software Foundation; either
+* version 2.1 of the License, or (at your option) any later version.
+* The full text of the license can be found in the file LICENSE at
+* the top level of the deal.II distribution.
+*
+* ---------------------------------------------------------------------
+*
+* Final Author: Raul Invernizzi 2021
+*/
 
 
 // @sect3{Include files}
@@ -57,10 +57,9 @@
 #include <deal.II/fe/fe_nothing.h>      // IGA
 #include <deal.II/fe/fe_bernstein.h>    // IGA
 
-
 #include <fstream>
 #include <iostream>
-#include <filesystem>     // IGA
+#include <filesystem>                   // IGA
 
 
 
@@ -69,7 +68,7 @@ namespace Step8
 {
   //using namespace dealii;
 
-  bool original_problem_8 = false;	    // Default: "true" [SHOULD BE REMOVED NEXT]
+  bool original_problem_8 = true;	    // Default: "true" [SHOULD BE REMOVED NEXT]
 
 //====================================================
 /**
@@ -787,10 +786,10 @@ int main(int argc, char **argv)
   char quad_name[]           = "legendre";  // “legendre”
   unsigned int degree        = 1;           // 1
   unsigned int n_cycles_down = 0;           // 0
-  unsigned int n_cycles_up   = 0;           // 2
+  unsigned int n_cycles_up   = 2;           // 2
   //--------------------------------------------------------
-  // ./step-8 lagrange legendre 1 0 0
-  // ./step-8 bernstein legendre 1 0 0
+  // ./step-8 lagrange legendre 1 0 2
+  // ./step-8 bernstein legendre 1 0 2
   // Full vector field:  x_displacement * iHat + y_displacement * jHat
 
   char *tmp[3];

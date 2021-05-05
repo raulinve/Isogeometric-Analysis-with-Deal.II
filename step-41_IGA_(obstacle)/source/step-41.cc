@@ -2,7 +2,7 @@
 * @file         step-41.cc
 * @brief        step-41 tutorial solved using isogeometric analysis.
 * @detail       Isogeometric Analysis for the solution of an obstacle problem taken from the step-41 tutorial of the deal.II library.
-* @author       Marco Tezzele, Nicola Cavallini, Luca Heltai, Raul Invernizzi.
+* @author       Raul Invernizzi, Marco Tezzele, Nicola Cavallini, Luca Heltai.
 */
 // @include      grid_generator.h iga_handler.h
 
@@ -91,26 +91,25 @@
 */
 
 
-/* ---------------------------------------------------------------------
- * $Id: step-41.cc 30526 2013-08-29 20:06:27Z felix.gruber $
- *
- * Copyright (C) 2011 - 2013 by the deal.II authors
- *
- * This file is part of the deal.II library.
- *
- * The deal.II library is free software; you can use it, redistribute
- * it, and/or modify it under the terms of the GNU Lesser General
- * Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * The full text of the license can be found in the file LICENSE at
- * the top level of the deal.II distribution.
- *
- * ---------------------------------------------------------------------
- *
- * Authors: Joerg Frohne, Texas A&M University and
- *                        University of Siegen, 2011, 2012
- *          Wolfgang Bangerth, Texas A&M University, 2012
- */
+/*! ---------------------------------------------------------------------
+* Copyright (C) 1999 - 2015 by the deal.II authors
+* Copyright (C) 2015 by Marco Tezzele, Nicola Cavallini, Luca Heltai
+* Copyright (C) 2021 by Raul Invernizzi
+*
+* This file has been modified from the example program step-41 of the
+* deal.II library.
+*
+* The deal.II library is free software; you can use it, redistribute
+* it, and/or modify it under the terms of the GNU Lesser General
+* Public License as published by the Free Software Foundation; either
+* version 2.1 of the License, or (at your option) any later version.
+* The full text of the license can be found in the file LICENSE at
+* the top level of the deal.II distribution.
+*
+* ---------------------------------------------------------------------
+*
+* Final Author: Raul Invernizzi 2021
+*/
 
 #include <deal.II/base/quadrature_lib.h>
 #include <deal.II/base/function.h>
@@ -332,7 +331,7 @@ namespace Step41
           return -0.8;
      } else {
         Assert (component == 0, ExcNotImplemented());
-        int val = p(0) * 0;    // <- [ USELESS ROW - Just to void warnings of unused p()! ]
+        int val = p(0) * 0;    // <- [ USELESS - Just to avoid warnings of unused params ]
         return val*0;
      }
   }
@@ -365,19 +364,19 @@ namespace Step41
     void update_solution_and_constraints ();
     void solve ();
     void output_results (const unsigned int iteration);
-    void compute_error (unsigned int cycle);    // IGA
+    void compute_error (unsigned int cycle);              // IGA
 
 
-    IgaHandler<dim,dim>  &iga_handler;          // IGA HEADER
+    IgaHandler<dim,dim>  &iga_handler;                    // IGA HEADER
 
-    unsigned int         degree;                // IGA
-    unsigned int         cg_iter;               // IGA  [ ?? used only in solve ]
+    unsigned int         degree;                          // IGA
+    unsigned int         cg_iter;                         // IGA  [ ?? used only in solve ]
 
     Triangulation<dim>   &triangulation;
-    FE_Bernstein<dim>    &fe;                   // IGA MODIFICATION
+    FE_Bernstein<dim>    &fe;                             // IGA MODIFICATION
     DoFHandler<dim>      &dof_handler;
 
-    MappingFEField<dim>  *mappingfe;            // IGA
+    MappingFEField<dim>  *mappingfe;                      // IGA
     IndexSet             active_set;
 
     AffineConstraints<double>   bspline_constraints;      // IGA NAME
