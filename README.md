@@ -17,11 +17,11 @@ This repository contains C++ code used to introduce the **Isogeometric Analysis*
 **Organization of files and folders:**  
 - 📄 [*README.md*](./README.md) : \***this file**\*.  
 - 📁 [*examples*](./examples) : **main folder** containing the working examples:  
-    - 📁 [*01-Poisson*](./01-Poisson) : contains a IGA modification of *step-4* of the deal.II library.  
-    - 📁 [*02-Poisson_extended*](./02-Poisson_extended) : contains a IGA modification of *step-5* of the deal.II library.  
-    - 📁 [*03-Elastic_plate*](./03-Elastic_plate) : contains a IGA modification of *step-8* of the deal.II library.  
-    - 📁 [*04-Elastic_beam*](./04-Elastic_beam) : contains an IGA example of an elastic beam subjected to forces (similar to the *step-8*).  
-    - 📁 [*05-Elastic_membrane*](./05-Elastic_membrane) : contains a IGA modification of *step-41* of the deal.II library.  
+    - 📁 [*01-Poisson*](./examples/01-Poisson) : contains a IGA modification of *step-4* of the deal.II library.  
+    - 📁 [*02-Poisson_extended*](./examples/02-Poisson_extended) : contains a IGA modification of *step-5* of the deal.II library.  
+    - 📁 [*03-Elastic_plate*](./examples/03-Elastic_plate) : contains a IGA modification of *step-8* of the deal.II library.  
+    - 📁 [*04-Elastic_beam*](./examples/04-Elastic_beam) : contains an IGA example of an elastic beam subjected to forces (similar to the *step-8*).  
+    - 📁 [*05-Elastic_membrane*](./examples/05-Elastic_membrane) : contains a IGA modification of *step-41* of the deal.II library.  
 - 📁 [*references*](./references) : contains only a reference copy of the deal.II step examples used for this project.  
 - 📁 [*scripts*](./scripts) : contains scripts used for automatic code indentation.  
 - 📄 [*LICENSE*](./LICENSE) : contains the license of use provided with this code.  
@@ -49,7 +49,7 @@ This repository contains C++ code used to introduce the **Isogeometric Analysis*
 Last update: **MAY-2021**  
 
 From newest to oldest:  
-* Note: Added a new **beam example** based on the deal.II step-8 but with different geometry and forces.  
+* Note: Added a new **beam example** (with a structure resembling the deal.II step-8).  
 * Note: Added a new example on an elastic problem, based on the deal.II **step-8**.  
 * Note: Added a new example based on the deal.II **step-5**.  
 * Note: Added **documentation** (Doxygen, Readme files, Images).
@@ -121,7 +121,7 @@ The code of the **Poisson example** consist of a single file:
 
 Note: This code is strongly based on the deal.II library example "[step-4](https://www.dealii.org/current/doxygen/deal.II/step_4.html)".  
 
-<img src="./01-Poisson/doc/IMG_step-4_IGA_t5.png" alt="FIGURE: Poisson example result" width="480" height="480">  
+<img src="./examples/01-Poisson/doc/IMG_step-4_IGA_t5.png" alt="FIGURE: Poisson example result" width="480" height="480">  
 
 **Img. 1**: Result plot of the *poisson* code.  
 
@@ -179,7 +179,7 @@ The code of the **Elastic membrane example**, previously called \"**obstacle**\"
 
 Note: This code is based on the deal.II library example "[step-41](https://www.dealii.org/current/doxygen/deal.II/step_41.html)".  
 
-<img src="./05-Elastic_membrane/doc/IMG_step-41_IGA_t6.png" alt="FIGURE: Obstacle example result" width="480" height="480">  
+<img src="./examples/05-Elastic_membrane/doc/IMG_step-41_IGA_t6.png" alt="FIGURE: Obstacle example result" width="480" height="480">  
 
 **Img. 2**: Result plot of the *obstacle* code.  
 
