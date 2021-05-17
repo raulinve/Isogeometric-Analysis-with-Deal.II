@@ -4,8 +4,8 @@ https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II
 
 :octocat:  :electron: 
 
-![extra](https://img.shields.io/badge/status-under%20development-ff69b4)
-![extra](https://img.shields.io/badge/maintained-actively-success)
+[![extra](https://img.shields.io/badge/status-under%20development-ff69b4)](https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II)
+[![extra](https://img.shields.io/badge/maintained-actively-success)](https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II)
 
 
 Isogeometric Analysis classes for the [deal.II library](https://www.dealii.org/).  
@@ -15,13 +15,17 @@ This repository contains C++ code used to introduce the **Isogeometric Analysis*
 <br/>  
 
 **Organization of files and folders:**  
-- 📁 [*step-04 IGA (poisson)*](./step-04_IGA_(poisson)) : contains a IGA modification of *step-4* of the deal.II library.  
-- 📁 [*step-05 IGA (ext. poisson)*](./step-05_IGA_(ext_poisson)) : contains a IGA modification of *step-5* of the deal.II library.  
-- 📁 [*step-41 IGA (obstacle)*](./step-41_IGA_(obstacle)) : contains a IGA modification of *step-41* of the deal.II library.  
+- 📄 [*README.md*](./README.md) : \***this file**\*.  
+- 📁 [*examples*](./examples) : **main folder** containing the working examples:  
+    - 📁 [*01-Poisson*](./01-Poisson) : contains a IGA modification of *step-4* of the deal.II library.  
+    - 📁 [*02-Poisson_extended*](./02-Poisson_extended) : contains a IGA modification of *step-5* of the deal.II library.  
+    - 📁 [*03-Elastic_plate*](./03-Elastic_plate) : contains a IGA modification of *step-8* of the deal.II library.  
+    - 📁 [*04-Elastic_beam*](./04-Elastic_beam) : contains an IGA example of an elastic beam subjected to forces (similar to the *step-8*).  
+    - 📁 [*05-Elastic_membrane*](./05-Elastic_membrane) : contains a IGA modification of *step-41* of the deal.II library.  
 - 📁 [*references*](./references) : contains only a reference copy of the deal.II step examples used for this project.  
 - 📁 [*scripts*](./scripts) : contains scripts used for automatic code indentation.  
 - 📄 [*LICENSE*](./LICENSE) : contains the license of use provided with this code.  
-- 📄 [*README.md*](./README.md) : \***this file**\*.  
+
 
 <br/>  
 
@@ -31,7 +35,7 @@ This repository contains C++ code used to introduce the **Isogeometric Analysis*
 - [ℹ️ Usage](#usage)  
     - [🔤 Easy compilation and execution](#easy-compilation)  
     - [:triangular_flag_on_post: Poisson example](#poisson)  
-    - [:triangular_flag_on_post: Obstacle example](#obstacle)  
+    - [:triangular_flag_on_post: Elastic membrane example](#obstacle)  
 - [🛠️ Installation](#installation)  
 - [↘️ Code output](#output)  
 - [✍️ Contributors and motivation](#contributions)  
@@ -42,10 +46,12 @@ This repository contains C++ code used to introduce the **Isogeometric Analysis*
 ---
 <a name="major-updates"></a>
 ### 🆕 Major updates:
-Last update: **APR-2021**  
+Last update: **MAY-2021**  
 
 From newest to oldest:  
-* Note: Added a new example based on the deal.II **step-5**.
+* Note: Added a new **beam example** based on the deal.II step-8 but with different geometry and forces.  
+* Note: Added a new example on an elastic problem, based on the deal.II **step-8**.  
+* Note: Added a new example based on the deal.II **step-5**.  
 * Note: Added **documentation** (Doxygen, Readme files, Images).
 * Obstacle example: :heavy_check_mark: Improved (*Reorganization of the code, improved user interaction*).
 * **Obstacle example**: :heavy_check_mark: Fixed  (*The code now compiles without errors or warnings with deal.II 9.2.0*).
@@ -108,14 +114,14 @@ To **compile and run** each example open the terminal in the folder containing t
 <a name="poisson"></a>
 ### :triangular_flag_on_post: Poisson example:
 
-**Note:** Follow these instructions also for the **step-5 IGA (ext. poisson)** example.  
+**Note:** **Follow these instructions also for all the other examples** (excluding the \"*Elastic membrane*\" example). In these cases please substitute in the following the \"*poisson*\" keyword with the name of the main source file (for example use \"*step-8*\" instead).  
 
 The code of the **Poisson example** consist of a single file:
 * "poisson.cc"  
 
 Note: This code is strongly based on the deal.II library example "[step-4](https://www.dealii.org/current/doxygen/deal.II/step_4.html)".  
 
-<img src="./step-04_IGA_(poisson)/doc/IMG_step-4_IGA_t5.png" alt="FIGURE: Poisson example result" width="480" height="480">  
+<img src="./01-Poisson/doc/IMG_step-4_IGA_t5.png" alt="FIGURE: Poisson example result" width="480" height="480">  
 
 **Img. 1**: Result plot of the *poisson* code.  
 
@@ -165,15 +171,15 @@ Example: ` ./poisson bernstein legendre 1 0 5 `
 <br/>  
 
 <a name="obstacle"></a>
-### :triangular_flag_on_post: Obstacle example:
+### :triangular_flag_on_post: Elastic membrane example:
 
-The code of the **Obstacle example** consist of a series of files incuded in two folders:
+The code of the **Elastic membrane example**, previously called \"**obstacle**\", consist of a series of files incuded in two folders:
 * "source" directory
 * "include" directory
 
 Note: This code is based on the deal.II library example "[step-41](https://www.dealii.org/current/doxygen/deal.II/step_41.html)".  
 
-<img src="./step-41_IGA_(obstacle)/doc/IMG_step-41_IGA_t6.png" alt="FIGURE: Obstacle example result" width="480" height="480">  
+<img src="./05-Elastic_membrane/doc/IMG_step-41_IGA_t6.png" alt="FIGURE: Obstacle example result" width="480" height="480">  
 
 **Img. 2**: Result plot of the *obstacle* code.  
 
@@ -314,6 +320,8 @@ In order to open *.vtk* or *.vtu* files you can use a graphical software like "*
 3. Make the plot 3D: "Filters" > "Search" > "Warp By Scalar";  
 4. Note: Always click on the "Apply" button to view any changes;  
 
+<br/>  
+
 #### ⚙️ Installation and usage of VisIt on Unix systems:  
 1. Go to the project website: https://wci.llnl.gov/simulation/computer-codes/visit/executables;
 2. Download the archive for your system (es: *Linux - x86_64 64 bit Ubuntu 20*) and download also the "*VisIt install script*";
@@ -339,8 +347,10 @@ In order to open *.vtk* or *.vtu* files you can use a graphical software like "*
 <a name="contributions"></a>
 ### ✍️ Contributors and motivation:  
 
-The development of this project is started as homework for the Mathematical Engineering master courses of "*Advanced Programming for Scientific Computing*" (APSC / PACS) held by Professor L.Formaggia and of "*Numerical Analysis for Partial Differential Equations*" (NAPDE) held by Professor A.M.Quarteroni of the [Polytechnic of Milan](https://www.polimi.it/en/).  
-The project was followed step by step by Professor L.Dedè and Post-Doc researcher C.P.Africa.  
+The author of the codes contained in this repository is **Raul Invernizzi**.  
+
+The development of this project is started as homework for the Mathematical Engineering master courses of "*Advanced Programming for Scientific Computing*" (APSC / PACS) held by Professor *L.Formaggia* and of "*Numerical Analysis for Partial Differential Equations*" (NAPDE) held by Professor *A.M.Quarteroni* of the [Polytechnic of Milan](https://www.polimi.it/en/).  
+The project was followed by Professor *L.Dedè* and Post-Doc researcher *C.P.Africa*.  
 
 The original base code was developed by the authors of the article:  
 "*Algorithms, data structures and applications for Isogeometric Analysis with the deal.II library*"  
