@@ -56,6 +56,8 @@
 #include <deal.II/fe/fe.h>              // IGA
 #include <deal.II/fe/fe_nothing.h>      // IGA
 #include <deal.II/fe/fe_bernstein.h>    // IGA
+#include <deal.II/fe/mapping_q1.h>      // ADD NEW
+#include <deal.II/fe/mapping.h>         // ADD NEW
 
 #include <fstream>
 #include <iostream>
@@ -105,14 +107,14 @@ public:
            ExcDimensionMismatch(values.size(), points.size()));
     Assert(dim >= 2, ExcNotImplemented());
 
-
 	// Points of application:
-	Point<dim> point_1, point_2;
+	Point<dim> point_1;
 	point_1(0) =  46;   point_1(1) =  50;
-	//point_2(0) = -0.5;   point_2(1) = -0.5;
+	//point_1(0) =  48;   point_1(1) =  44;
+	//point_1(0) = 0;   point_1(1) = 0;
 
 	double radius = 2;    // Radius of the force footprint
-	double force  = -0.1;     // Absolute modulus of the forces
+	double force  = 0;     // Modulus of the forces [-0.1]
 
 	for (unsigned int point_n = 0; point_n < points.size(); ++point_n)
 	  { 
@@ -120,23 +122,7 @@ public:
 	      values[point_n][1] = force;
 	    else
 	      values[point_n][1] = 0.0;
-        /*
-	    // If <code>points[point_n]</code> is in a circle (sphere) of radius
-	    // 0.2 around one of these points, then set the force in x-direction
-	    // to one, otherwise to zero:
-	    if (((points[point_n] - point_1).norm_square() < radius * radius) ||
-	        ((points[point_n] - point_2).norm_square() < radius * radius))
-	      values[point_n][0] = force;
-	    else
-	      values[point_n][0] = 0.0;
 
-	    // Likewise, if <code>points[point_n]</code> is in the vicinity of the
-	    // origin, then set the y-force to one, otherwise to zero:
-	    if (points[point_n].norm_square() < radius * radius)
-	      values[point_n][1] = force;
-	    else
-	      values[point_n][1] = 0.0;
-        */
 	  }
   }
 
@@ -190,7 +176,6 @@ public:
     Quadrature<dim>      error_quad;         // IGA
     Quadrature<dim-1>    boundary_quad;      // IGA
   };
-
 
 
   // @sect3{The <code>ElasticProblem</code> class implementation}
@@ -412,9 +397,9 @@ public:
     std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
 
     // Addition in case variable coefficients are needed:
-    std::vector<double> lambda_values(n_q_points);              // [not needed]
-    std::vector<double> mu_values(n_q_points);                  // [not needed]
-    Functions::ConstantFunction<dim> lambda(1.), mu(1.);        // [not needed]
+    std::vector<double> lambda_values(n_q_points);
+    std::vector<double> mu_values(n_q_points); 
+    Functions::ConstantFunction<dim> lambda(1.), mu(1.);
 
     // Like the two constant functions above, we will call the function
     // right_hand_side just once per cell to make things simpler.
@@ -433,9 +418,9 @@ public:
         cell_rhs    = 0;
 
         // Next we get the values of the coefficients at the quadrature points. 
-        lambda.value_list(fe_values.get_quadrature_points(), lambda_values);    // [not needed]
-        mu.value_list(fe_values.get_quadrature_points(), mu_values);            // [not needed]
-        right_hand_side(fe_values.get_quadrature_points(), rhs_values);         // [not needed]
+        lambda.value_list(fe_values.get_quadrature_points(), lambda_values); 
+        mu.value_list(fe_values.get_quadrature_points(), mu_values);
+        right_hand_side(fe_values.get_quadrature_points(), rhs_values);   // XXX
 
         // Then assemble the entries of the local stiffness matrix and right
         // hand side vector.
@@ -699,6 +684,84 @@ public:
                   << dof_handler.n_dofs()
                   << std::endl;
         assemble_system();
+
+
+    std::cout << "   Applying custom rhs. [XXX]" << std::endl;
+	// Define a distributed force on the right side of the beam:
+	// The beam start at x=48, y=44 up to y=44+16.
+    std::vector<Point<dim>> application_pts;
+    for (double y = 44; y<=44+16; y++) {
+        application_pts.push_back(Point<dim>({48, y}));
+    }
+    double force_mod_y = 1;
+    double force_app_y = force_mod_y/application_pts.size();
+
+	double tol = 1/1000000;
+    MappingQ1< dim > st;
+
+	// FORCES in X-direction:
+	std::vector<Point<dim>> support_points_x(dof_handler.n_dofs());
+    std::vector< bool > x_c{true, false};
+    ComponentMask cmask_x(x_c);
+    std::cout << "   DEBUG A" << std::endl;
+    std::cout << "  Force : " << force_app_y << " ( = " << force_mod_y << "/" << application_pts.size() << " )" << std::endl;
+    std::cout << "  Force applied at nodes:" << std::endl;
+    for(auto i : application_pts) {std::cout << "  " << i << std::endl;}
+    std::cout << "   DEBUG B" << std::endl;
+	DoFTools::map_dofs_to_support_points(st,
+		                       			 dof_handler,
+		                       			 support_points_x,
+		                       			 cmask_x);
+    std::cout << "   DEBUG C" << std::endl;
+	for (unsigned int i = 0; i < support_points_x.size(); ++i)
+	{
+        //for (auto pt : application_pts) {
+        //    if (support_points_x[i].distance(pt) < tol) { system_rhs[i] = 0; }
+        //}
+        system_rhs[i] = 0;
+	}
+
+	// FORCES in Y-direction:
+	std::vector<Point<dim>> support_points_y(dof_handler.n_dofs());
+    std::vector< bool > y_c{false, true};
+    ComponentMask cmask_y(y_c);
+	DoFTools::map_dofs_to_support_points(st,
+		                      			 dof_handler,
+		                      			 support_points_y,
+		                      			 cmask_y);
+	for (unsigned int i = 0; i < support_points_y.size(); ++i)
+	{
+        for (auto pt : application_pts) {
+            if (support_points_y[i].distance(pt) < tol) { system_rhs[i] = force_app_y; }
+        }
+	}
+
+
+	//attach_data_vector(rhs, "rhs");
+
+        //std::cout << "rhs size: " << system_rhs.size() << std::endl;
+		/*Vector<double> tmp;
+		Vector<double> forcing_terms;
+
+		RightHandSide<dim> rhs_function;
+		VectorTools::create_right_hand_side(dof_handler,
+		                                    matrix_quad,
+		                                    rhs_function,
+		                                    tmp);
+		forcing_terms = tmp;
+		system_rhs += forcing_terms;*/
+
+        //system_rhs[40] = 1;    // orizzontale
+        //system_rhs[100] = 1;    // verticale
+        //for (auto i : system_rhs) {std::cout << i << std::endl;}
+
+		
+		/*StaticMappingQ1< 2, 2 > st;
+		std::vector< Point< 2 >> support_points;
+	    DoFTools::map_dofs_to_support_points 	(st,
+			                                     dof_handler,
+			                                     support_points  );*/
+
         solve();
         output_results(cycle);
       }
@@ -723,7 +786,7 @@ int main(int argc, char **argv)
   char quad_name[]           = "legendre";  // “legendre”
   unsigned int degree        = 1;           // 1
   unsigned int n_cycles_down = 0;           // 0
-  unsigned int n_cycles_up   = 2;           // 2
+  unsigned int n_cycles_up   = 0;           // 2
   //--------------------------------------------------------
   // ./step-8 lagrange legendre 1 0 2
   // ./step-8 bernstein legendre 1 0 2
