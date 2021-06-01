@@ -108,9 +108,10 @@ public:
     Assert(dim >= 2, ExcNotImplemented());
 
 	// Points of application:
+    //double global_scale = 1.e-3;
 	Point<dim> point_1;
 	point_1(0) =  46;   point_1(1) =  50;
-	//point_1(0) =  48;   point_1(1) =  44;
+	//point_1(0) = 48;  point_1(1) = 44;
 	//point_1(0) = 0;   point_1(1) = 0;
 
 	double radius = 2;    // Radius of the force footprint
@@ -146,7 +147,7 @@ public:
     void run();
 
   private:
-    void make_grid();
+    void make_grid(const unsigned int ref_cycle);
     void setup_system();
     void assemble_system();
     void solve();
@@ -175,6 +176,8 @@ public:
     Quadrature<dim>      matrix_quad;        // IGA
     Quadrature<dim>      error_quad;         // IGA
     Quadrature<dim-1>    boundary_quad;      // IGA
+
+    double global_scale = 1.e-3;
   };
 
 
@@ -266,11 +269,11 @@ public:
   }
 
   template <int dim>
-  void ElasticProblem<dim>::make_grid()
+  void ElasticProblem<dim>::make_grid(const unsigned int ref_cycle)
   {
 
 	// Divide the beam, but only along the x- and y-coordinate directions
-	unsigned int elements_per_edge = 16;
+	unsigned int elements_per_edge = pow(2,ref_cycle);
 	std::vector< unsigned int > repetitions(dim, elements_per_edge);
 	// Only allow one element through the thickness
 	// (modelling a plane strain condition)
@@ -399,7 +402,24 @@ public:
     // Addition in case variable coefficients are needed:
     std::vector<double> lambda_values(n_q_points);
     std::vector<double> mu_values(n_q_points); 
-    Functions::ConstantFunction<dim> lambda(1.), mu(1.);
+    //[N/mm], (1 MPa = 1 N/mm²)
+    //Functions::ConstantFunction<dim> lambda(633750.);   // 1st Lame Const (=2*G*nu/(1-2*nu)) [1.]  (nu=0.3 -> 633750.)
+    //Functions::ConstantFunction<dim> mu(0.4225e6);      // Shear modulus (=G) [1.]
+    
+    // [ E= 240565 MPa, ν= 0.4999 ]  ->  lambda= E*nu/((1+nu)*(1-2*nu))= 400888204.214   mu(G)= E/(2*(1+nu))= 80193.6795786
+    // lambda=240565*0.4999/((1+0.4999)*(1-2*0.4999))    -    mu(G)=240565/(2*(1+0.4999))
+    //Functions::ConstantFunction<dim> lambda(400888204.214);   // 1st Lame Const
+    //Functions::ConstantFunction<dim> mu(80193.6795786);      // Shear modulus (=G)
+
+    // [ E= 1 MPa, ν= 1/3 ]    ->    lambda= E*nu/((1+nu)*(1-2*nu))   mu(G)= E/(2*(1+nu))
+    // lambda=1*1/3/((1+1/3)*(1-2*1/3))    -    mu(G)=1/(2*(1+1/3))
+    //Functions::ConstantFunction<dim> lambda(0.75);   // 1st Lame Const
+    //Functions::ConstantFunction<dim> mu(0.375);      // Shear modulus (=G)
+
+    // [ E= 70 MPa, ν= 1/3 ]    ->    lambda= E*nu/((1+nu)*(1-2*nu))   mu(G)= E/(2*(1+nu))
+    // lambda=70*1/3/((1+1/3)*(1-2*1/3))    -    mu(G)=70/(2*(1+1/3))
+    Functions::ConstantFunction<dim> lambda(52.5);   // 1st Lame Const
+    Functions::ConstantFunction<dim> mu(26.25);      // Shear modulus (=G)
 
     // Like the two constant functions above, we will call the function
     // right_hand_side just once per cell to make things simpler.
@@ -662,107 +682,121 @@ public:
     // Perform the cycles:
   for (unsigned int cycle = n_cycles_low; cycle < n_cycles_up+1; ++cycle)  // IGA cycles
       {
-        std::cout << "Cycle " << cycle << ':' << std::endl;
+        std::cout << "\n\nCycle " << cycle << " ( " << n_cycles_low << " to " << n_cycles_up << " ):" << std::endl;
         if (cycle == n_cycles_low)
           {
-            make_grid();                      // IGA ADD (+custom geometry)
+            make_grid(n_cycles_low);          // IGA ADD (+custom geometry)
           }
         else 
           {
             triangulation.refine_global(1);   // IGA: constant refinement
           }
 
-      std::cout << "   Number of active cells: "
-                << triangulation.n_active_cells()
-                << std::endl
-                << "   Total number of cells: "
-                << triangulation.n_cells()
-                << std::endl;
+		std::cout << "   Grid of elements:      "
+				  << sqrt(triangulation.n_active_cells()) << "x" << sqrt(triangulation.n_active_cells())
+				  << std::endl
+				  //<< "   Number of active cells:  "
+				  //<< triangulation.n_active_cells()
+				  //<< std::endl
+				  << "   Total number of cells: "
+				  << triangulation.n_cells()
+				  << std::endl;
 
-        setup_system();
-        std::cout << "   Number of degrees of freedom: "
-                  << dof_handler.n_dofs()
-                  << std::endl;
-        assemble_system();
-
-
-    std::cout << "   Applying custom rhs. [XXX]" << std::endl;
-	// Define a distributed force on the right side of the beam:
-	// The beam start at x=48, y=44 up to y=44+16.
-    std::vector<Point<dim>> application_pts;
-    for (double y = 44; y<=44+16; y++) {
-        application_pts.push_back(Point<dim>({48, y}));
-    }
-    double force_mod_y = 1;
-    double force_app_y = force_mod_y/application_pts.size();
-
-	double tol = 1/1000000;
-    MappingQ1< dim > st;
-
-	// FORCES in X-direction:
-	std::vector<Point<dim>> support_points_x(dof_handler.n_dofs());
-    std::vector< bool > x_c{true, false};
-    ComponentMask cmask_x(x_c);
-    std::cout << "   DEBUG A" << std::endl;
-    std::cout << "  Force : " << force_app_y << " ( = " << force_mod_y << "/" << application_pts.size() << " )" << std::endl;
-    std::cout << "  Force applied at nodes:" << std::endl;
-    for(auto i : application_pts) {std::cout << "  " << i << std::endl;}
-    std::cout << "   DEBUG B" << std::endl;
-	DoFTools::map_dofs_to_support_points(st,
-		                       			 dof_handler,
-		                       			 support_points_x,
-		                       			 cmask_x);
-    std::cout << "   DEBUG C" << std::endl;
-	for (unsigned int i = 0; i < support_points_x.size(); ++i)
-	{
-        //for (auto pt : application_pts) {
-        //    if (support_points_x[i].distance(pt) < tol) { system_rhs[i] = 0; }
-        //}
-        system_rhs[i] = 0;
-	}
-
-	// FORCES in Y-direction:
-	std::vector<Point<dim>> support_points_y(dof_handler.n_dofs());
-    std::vector< bool > y_c{false, true};
-    ComponentMask cmask_y(y_c);
-	DoFTools::map_dofs_to_support_points(st,
-		                      			 dof_handler,
-		                      			 support_points_y,
-		                      			 cmask_y);
-	for (unsigned int i = 0; i < support_points_y.size(); ++i)
-	{
-        for (auto pt : application_pts) {
-            if (support_points_y[i].distance(pt) < tol) { system_rhs[i] = force_app_y; }
-        }
-	}
+		setup_system();
+		std::cout << "   Total number of dofs:  "
+				  << dof_handler.n_dofs()
+				  << std::endl;
+		assemble_system();
 
 
-	//attach_data_vector(rhs, "rhs");
+		// ---------------------------------
+		// Define a distributed force on the right side of the beam:
+		std::cout << "   - Applying rhs forces" << std::endl;
 
-        //std::cout << "rhs size: " << system_rhs.size() << std::endl;
-		/*Vector<double> tmp;
-		Vector<double> forcing_terms;
+		// 01. Application points:
+		// The beam tip is at x=48, y=44 up to y=44+16=60.
+		std::vector<Point<dim>> application_pts;
+		double refin_incr = 1./pow(2.,cycle);
+		for (double y = 44; y<=44+16; y+=refin_incr*16) {
+		    application_pts.push_back(Point<dim>({48, y}));
+            if(y!=44 || y!=44+16) { 
+		    	application_pts.push_back(Point<dim>({48, y}));
+            }
+		}
+		double tol = 1./1000000;
+		MappingQ1< dim > st;
 
-		RightHandSide<dim> rhs_function;
-		VectorTools::create_right_hand_side(dof_handler,
-		                                    matrix_quad,
-		                                    rhs_function,
-		                                    tmp);
-		forcing_terms = tmp;
-		system_rhs += forcing_terms;*/
+		// 02. Define force intensity:
+		double force_mod_y = 6.25;//00;  //global_scale;  //[N/mm], (1 MPa = 1 N/mm²)
+		double force_app_y = force_mod_y/2.*(refin_incr*16.);  //application_pts.size()*
 
-        //system_rhs[40] = 1;    // orizzontale
-        //system_rhs[100] = 1;    // verticale
-        //for (auto i : system_rhs) {std::cout << i << std::endl;}
+		// Rekap:
+        std::cout << "     Cell dimension:  " << refin_incr*16 << std::endl;
+		std::cout << "     Force magnitude: " << force_app_y << " ( = " << force_mod_y << "/" << application_pts.size() << " )" << std::endl;
+		//std::cout << "     Force application nodes (x y):" << std::endl;  
+		//std::cout << "      ";
+        //int cnt = 0;
+		//for(auto i : application_pts) {std::cout << "(" << i << ")  ";  ++cnt;
+        //                               if(cnt==5){std::cout << std::endl; std::cout << "      "; cnt=0;} }  std::cout << std::endl;
 
-		
-		/*StaticMappingQ1< 2, 2 > st;
-		std::vector< Point< 2 >> support_points;
-	    DoFTools::map_dofs_to_support_points 	(st,
-			                                     dof_handler,
-			                                     support_points  );*/
+		// FORCES in X-direction:
+		std::map<types::global_dof_index, Point<dim>> support_points_x;
+		std::vector< bool > x_c{true, false};
+		ComponentMask cmask_x(x_c);
+		DoFTools::map_dofs_to_support_points(st,
+				                   			 dof_handler,
+				                   			 support_points_x,
+				                   			 cmask_x);
+        //std::cout << "     C" << std::endl;
+		for (const auto p : support_points_x)
+		{
+		    //for (auto pt : application_pts) {
+		    //   if (p.second.distance(pt) < tol) { system_rhs[p.first] = 0; }
+		    //}
+		    system_rhs[p.first] = 0;
+		}
+
+		// FORCES in Y-direction:
+		std::map<types::global_dof_index, Point<dim>> support_points_y;
+		std::vector< bool > y_c{false, true};
+		ComponentMask cmask_y(y_c);
+		DoFTools::map_dofs_to_support_points(st,
+				                  			 dof_handler,
+				                  			 support_points_y,
+				                  			 cmask_y);
+		for (const auto p : support_points_y)
+		{
+		    for (auto pt : application_pts) {
+		        //if (support_points_y[i].distance(pt) < tol) { system_rhs[i] = force_app_y; }
+		        if (p.second.distance(pt) < tol) { system_rhs[p.first] = force_app_y; }
+		    }
+		}
+		//attach_data_vector(rhs, "rhs");
+		// ---------------------------------
 
         solve();
+
+		// ---------------------------------
+        // Check tip displacement:
+        std::cout << "   - Check tip displacement" << std::endl;
+        std::cout << "     Tip vertical displacement:" << std::endl;
+		// The beam tip is at x=48, y=44 up to y=44+16=60.
+		std::map<types::global_dof_index, Point<dim>> sup_pts;
+		//std::vector< bool > y_c{false, true};
+		//ComponentMask cmask_y(y_c);
+		DoFTools::map_dofs_to_support_points(st,
+				                  			 dof_handler,
+				                  			 sup_pts,
+				                  			 cmask_y);
+		for (const auto p : sup_pts)
+		{
+            if (p.second.distance(Point<dim>({48, 44})) < tol) { std::cout << "     (low tip): " << solution[p.first]; }
+		    if (p.second.distance(Point<dim>({48, 52})) < tol) { std::cout << "  (mid tip): " << solution[p.first]; }
+		    if (p.second.distance(Point<dim>({48, 60})) < tol) { std::cout << "  (top tip): " << solution[p.first] << std::endl; }
+		}
+		// ---------------------------------
+
+
         output_results(cycle);
       }
   }
@@ -784,12 +818,12 @@ int main(int argc, char **argv)
   //--------------------------------------------------------
   char fe_name[]             = "lagrange"; // “lagrange”
   char quad_name[]           = "legendre";  // “legendre”
-  unsigned int degree        = 1;           // 1
-  unsigned int n_cycles_down = 0;           // 0
-  unsigned int n_cycles_up   = 0;           // 2
+  unsigned int degree        = 2;           // 1
+  unsigned int n_cycles_down = 0;           // 0   (Pieces: 0>1, 1>2, 2>4, 3>8, 4>16, 5>32, 6>64)
+  unsigned int n_cycles_up   = 5;           // 2
   //--------------------------------------------------------
-  // ./step-8 lagrange legendre 1 0 2
-  // ./step-8 bernstein legendre 1 0 2
+  // ./step-8 lagrange legendre 1 0 5
+  // ./step-8 bernstein legendre 1 0 5
   // Full vector field:  x_displacement * iHat + y_displacement * jHat
 
   char *tmp[3];
