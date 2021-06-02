@@ -177,6 +177,10 @@ public:
     Quadrature<dim>      error_quad;         // IGA
     Quadrature<dim-1>    boundary_quad;      // IGA
 
+    double E_mod    = 70.0;          // Elastic modulus (1 MPa = 1 N/mm²)
+    double poisson  = 1.0/3.0;      // Poisson coefficient
+    // plane stress formulation
+
     double global_scale = 1.e-3;
   };
 
@@ -402,24 +406,10 @@ public:
     // Addition in case variable coefficients are needed:
     std::vector<double> lambda_values(n_q_points);
     std::vector<double> mu_values(n_q_points); 
+
     //[N/mm], (1 MPa = 1 N/mm²)
-    //Functions::ConstantFunction<dim> lambda(633750.);   // 1st Lame Const (=2*G*nu/(1-2*nu)) [1.]  (nu=0.3 -> 633750.)
-    //Functions::ConstantFunction<dim> mu(0.4225e6);      // Shear modulus (=G) [1.]
-    
-    // [ E= 240565 MPa, ν= 0.4999 ]  ->  lambda= E*nu/((1+nu)*(1-2*nu))= 400888204.214   mu(G)= E/(2*(1+nu))= 80193.6795786
-    // lambda=240565*0.4999/((1+0.4999)*(1-2*0.4999))    -    mu(G)=240565/(2*(1+0.4999))
-    //Functions::ConstantFunction<dim> lambda(400888204.214);   // 1st Lame Const
-    //Functions::ConstantFunction<dim> mu(80193.6795786);      // Shear modulus (=G)
-
-    // [ E= 1 MPa, ν= 1/3 ]    ->    lambda= E*nu/((1+nu)*(1-2*nu))   mu(G)= E/(2*(1+nu))
-    // lambda=1*1/3/((1+1/3)*(1-2*1/3))    -    mu(G)=1/(2*(1+1/3))
-    //Functions::ConstantFunction<dim> lambda(0.75);   // 1st Lame Const
-    //Functions::ConstantFunction<dim> mu(0.375);      // Shear modulus (=G)
-
-    // [ E= 70 MPa, ν= 1/3 ]    ->    lambda= E*nu/((1+nu)*(1-2*nu))   mu(G)= E/(2*(1+nu))
-    // lambda=70*1/3/((1+1/3)*(1-2*1/3))    -    mu(G)=70/(2*(1+1/3))
-    Functions::ConstantFunction<dim> lambda(52.5);   // 1st Lame Const
-    Functions::ConstantFunction<dim> mu(26.25);      // Shear modulus (=G)
+    Functions::ConstantFunction<dim> lambda(E_mod*poisson/((1.+poisson)*(1.0-2.0*poisson)));   // 1st Lame Const (52.5)
+    Functions::ConstantFunction<dim> mu(E_mod/(2.0*(1.0+poisson)));      // Shear modulus (=G) (26.25)
 
     // Like the two constant functions above, we will call the function
     // right_hand_side just once per cell to make things simpler.
@@ -717,13 +707,13 @@ public:
 		// The beam tip is at x=48, y=44 up to y=44+16=60.
 		std::vector<Point<dim>> application_pts;
 		double refin_incr = 1./pow(2.,cycle);
-		for (double y = 44; y<=44+16; y+=refin_incr*16) {
-		    application_pts.push_back(Point<dim>({48, y}));
-            if(y!=44 || y!=44+16) { 
-		    	application_pts.push_back(Point<dim>({48, y}));
+		for (double y = 44.0; y<=44.0+16.0; y+=refin_incr*16.0) {
+		    application_pts.push_back(Point<dim>({48.0, y}));
+            if(y!=44.0 || y!=44.0+16.0) { 
+		    	application_pts.push_back(Point<dim>({48.0, y}));
             }
 		}
-		double tol = 1./1000000;
+		double tol = 1.0/1000000;
 		MappingQ1< dim > st;
 
 		// 02. Define force intensity:
@@ -743,11 +733,12 @@ public:
 		std::map<types::global_dof_index, Point<dim>> support_points_x;
 		std::vector< bool > x_c{true, false};
 		ComponentMask cmask_x(x_c);
+        std::cout << "     B" << std::endl;
 		DoFTools::map_dofs_to_support_points(st,
 				                   			 dof_handler,
 				                   			 support_points_x,
 				                   			 cmask_x);
-        //std::cout << "     C" << std::endl;
+        std::cout << "     C" << std::endl;
 		for (const auto p : support_points_x)
 		{
 		    //for (auto pt : application_pts) {
