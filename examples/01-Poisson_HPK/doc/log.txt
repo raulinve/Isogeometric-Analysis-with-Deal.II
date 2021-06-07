@@ -1,0 +1,137 @@
+============================================================
+================= THE CODE IS RUNNING ======================
+============================================================
+
+  SELECTED OPTIONS : 
+   Dimensions            : 2
+   Number of cycles      : 5
+   Polynomial degree     : 0
+   h_ref | p_ref | k_ref : 1 | 0 | 0
+   Continuity            : C1
+
+
+ > STARTING THE CYCLES: ========================
+
+
+
+ CYCLE # 1 of 5  ======================
+ - Setup h-refinement
+ - Setup C1 continuity
+ - Assemble IgaHandler ...  
+ - Initialization of the problem.
+ - Problem RUN (1)
+ - Checking/creating the output directory "RESULTS". 
+   Number of active cells: 4
+   Total number of cells: 4
+ - Setup the system
+   Number of degrees of freedom: 49
+   (Number of degrees of freedom IGA: 36)
+ > ASSEMBLING THE SYSTEM (wait) ... 
+ > SOLVING THE SYSTEM (wait) ... 
+   2 CG iterations needed to obtain convergence.
+ - Saving/overwriting the .vtk result files.
+ - Computing solution errors.
+ - CYCLE # 1 successfully ended!
+
+
+
+ CYCLE # 2 of 5  ======================
+ - Setup h-refinement
+ - Setup C1 continuity
+ - Assemble IgaHandler ...  
+ - Initialization of the problem.
+ - Problem RUN (2)
+ - Checking/creating the output directory "RESULTS". 
+   Number of active cells: 16
+   Total number of cells: 16
+ - Setup the system
+   Number of degrees of freedom: 169
+   (Number of degrees of freedom IGA: 100)
+ > ASSEMBLING THE SYSTEM (wait) ... 
+ > SOLVING THE SYSTEM (wait) ... 
+   2 CG iterations needed to obtain convergence.
+ - Saving/overwriting the .vtk result files.
+ - Computing solution errors.
+ - CYCLE # 2 successfully ended!
+
+
+
+ CYCLE # 3 of 5  ======================
+ - Setup h-refinement
+ - Setup C1 continuity
+ - Assemble IgaHandler ...  
+ - Initialization of the problem.
+ - Problem RUN (3)
+ - Checking/creating the output directory "RESULTS". 
+   Number of active cells: 64
+   Total number of cells: 64
+ - Setup the system
+   Number of degrees of freedom: 625
+   (Number of degrees of freedom IGA: 324)
+ > ASSEMBLING THE SYSTEM (wait) ... 
+ > SOLVING THE SYSTEM (wait) ... 
+   5 CG iterations needed to obtain convergence.
+ - Saving/overwriting the .vtk result files.
+ - Computing solution errors.
+ - CYCLE # 3 successfully ended!
+
+
+
+ CYCLE # 4 of 5  ======================
+ - Setup h-refinement
+ - Setup C1 continuity
+ - Assemble IgaHandler ...  
+ - Initialization of the problem.
+ - Problem RUN (4)
+ - Checking/creating the output directory "RESULTS". 
+   Number of active cells: 256
+   Total number of cells: 256
+ - Setup the system
+   Number of degrees of freedom: 2401
+   (Number of degrees of freedom IGA: 1156)
+ > ASSEMBLING THE SYSTEM (wait) ... 
+ > SOLVING THE SYSTEM (wait) ... 
+   6 CG iterations needed to obtain convergence.
+ - Saving/overwriting the .vtk result files.
+ - Computing solution errors.
+ - CYCLE # 4 successfully ended!
+
+
+
+ CYCLE # 5 of 5  ======================
+ - Setup h-refinement
+ - Setup C1 continuity
+ - Assemble IgaHandler ...  
+ - Initialization of the problem.
+ - Problem RUN (5)
+ - Checking/creating the output directory "RESULTS". 
+   Number of active cells: 1024
+   Total number of cells: 1024
+ - Setup the system
+   Number of degrees of freedom: 9409
+   (Number of degrees of freedom IGA: 4356)
+ > ASSEMBLING THE SYSTEM (wait) ... 
+ > SOLVING THE SYSTEM (wait) ... 
+   9 CG iterations needed to obtain convergence.
+ - Saving/overwriting the .vtk result files.
+ - Computing solution errors.
+ - CYCLE # 5 successfully ended!
+
+
+ - Preparing the output converging table.
+
+ALL CYCLES CONVERGENCE SUMMARY : 
+---------------------------------------------------------------------- 
+cycle cells dofs bsplines CG memory_sys    L2        H1      Linfty   
+    1     4   49       36  2       6440 1.057e+00 1.146e+01 8.923e-01 
+    2    16  169      100  2      21800 1.580e-01 2.923e+00 1.392e-01 
+    3    64  625      324  5      80168 1.244e-02 4.417e-01 1.589e-02 
+    4   256 2401     1156  6     307496 1.309e-03 7.543e-02 2.199e-03 
+    5  1024 9409     4356  9    1204520 1.020e-04 1.072e-02 1.803e-04 
+---------------------------------------------------------------------- 
+ 
+
+============================================================
+================= CODE ENDED CORRECTLY =====================
+============================================================
+
