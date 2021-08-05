@@ -597,12 +597,12 @@ IgaHandler<dim,spacedim>::project_boundary_values(
 
   // Real boundary values
   std::map<types::global_dof_index,double> boundary_values;
-
+std::cout << "\n [B1] " << std::endl;
   VectorTools::project_boundary_values (dh,
                                         boundary_function,
                                         q,
                                         boundary_values);
-
+std::cout << "\n [B2] " << std::endl;
   Vector<double> boundary_values_vector(dh.n_dofs());
 
   std::map<types::global_dof_index,double>::iterator it = boundary_values.begin();
