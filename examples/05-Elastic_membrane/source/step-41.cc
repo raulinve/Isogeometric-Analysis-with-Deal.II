@@ -995,11 +995,11 @@ int main (int argc, char *argv[])
 
   // DEFAULT VALUES:
   //--------------------------------------------------------
-    unsigned int n_cycle       = 5;       // 5  (6)
+    unsigned int n_cycle       = 1;       // 5  (6)
     unsigned int degree        = 0;       // 0
-    bool         h_refinement  = true;    // true
+    bool         h_refinement  = false;    // true
     bool         p_refinement  = false;   // false
-    bool         k_refinement  = false;   // false
+    bool         k_refinement  = true;   // false
     std::string  continuity    = "C1";    // "C1"
   //--------------------------------------------------------
 

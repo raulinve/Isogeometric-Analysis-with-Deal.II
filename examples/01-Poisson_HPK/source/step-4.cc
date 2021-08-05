@@ -232,13 +232,13 @@ template <int dim>
 Laplace<dim>::Laplace(IgaHandler<dim,dim>  & iga_handler,
                       ConvergenceTable     & convergence_table)
     : 
-    iga_handler(iga_handler),
-    degree(iga_handler.degree),
-    triangulation(iga_handler.tria),
-    fe (iga_handler.fe),
-    dof_handler (iga_handler.dh),
-    mappingfe(iga_handler.map_fe),
-    convergence_table(convergence_table)
+    iga_handler       (iga_handler),
+    degree            (iga_handler.degree),
+    triangulation     (iga_handler.tria),
+    fe                (iga_handler.fe),
+    dof_handler       (iga_handler.dh),
+    mappingfe         (iga_handler.map_fe),
+    convergence_table (convergence_table)
 {
     std::cout << " - Initialization of the problem." << std::endl;
 }
@@ -281,26 +281,26 @@ void Laplace<dim>::setup_system()
 {
     std::cout << " - Setup the system" << std::endl;
 
-  dof_handler.distribute_dofs(fe);
+    dof_handler.distribute_dofs(fe);
 
     //active_set.set_size (iga_handler.n_bspline);
     //active_set_vector.reinit(iga_handler.n_bspline);
 
-  std::cout << "   Number of degrees of freedom: " 
-            << dof_handler.n_dofs()
-            << std::endl
+    std::cout << "   Number of degrees of freedom: " 
+              << dof_handler.n_dofs()
+              << std::endl
               << "   (Number of degrees of freedom IGA: "
               << iga_handler.n_bspline << ")"
               << std::endl;
 
-  //DynamicSparsityPattern dsp(dof_handler.n_dofs());
+  //DynamicSparsityPattern  dsp(dof_handler.n_dofs());
   //DoFTools::make_sparsity_pattern(dof_handler, dsp);
   //sparsity_pattern.copy_from(dsp);
   //system_matrix.reinit(sparsity_pattern);
   //solution.reinit(dof_handler.n_dofs());
   //system_rhs.reinit(dof_handler.n_dofs());
 
-    DynamicSparsityPattern bspline_sp(iga_handler.n_bspline);
+    DynamicSparsityPattern  bspline_sp(iga_handler.n_bspline);
     iga_handler.make_sparsity_pattern (bspline_sp);
     sparsity_bspline.copy_from(bspline_sp);
     bspline_system_matrix.reinit(sparsity_bspline);
@@ -349,18 +349,13 @@ void Laplace<dim>::assemble_system()
   FEValues<dim> fe_values(*mappingfe, fe,
                           quadrature_formula,
                           update_values | update_gradients |
-                            update_quadrature_points | update_JxW_values);
+                          update_quadrature_points | update_JxW_values);
 
-  // We then again define the same abbreviation as in the previous program.
-  // The value of this variable of course depends on the dimension which we
-  // are presently using, but the FiniteElement class does all the necessary
-  // work for you and you don't have to care about the dimension dependent
-  // parts:
-  const unsigned int dofs_per_cell = fe.dofs_per_cell;
-    const unsigned int        n_q_points    = quadrature_formula.size();
+  const unsigned int   dofs_per_cell = fe.dofs_per_cell;
+  const unsigned int   n_q_points    = quadrature_formula.size();
 
-  FullMatrix<double> cell_matrix(dofs_per_cell, dofs_per_cell);
-  Vector<double>     cell_rhs(dofs_per_cell);
+  FullMatrix<double>   cell_matrix(dofs_per_cell, dofs_per_cell);
+  Vector<double>       cell_rhs(dofs_per_cell);
 
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
 
@@ -382,18 +377,7 @@ void Laplace<dim>::assemble_system()
       cell_matrix = 0;
       cell_rhs    = 0;
 
-      // Now we have to assemble the local matrix and right hand side. This is
-      // done exactly like in the previous example, but now we revert the
-      // order of the loops (which we can safely do since they are independent
-      // of each other) and merge the loops for the local matrix and the local
-      // vector as far as possible to make things a bit faster.
-      //
-      // Assembling the right hand side presents the only significant
-      // difference to how we did things in step-3: Instead of using a
-      // constant right hand side with value 1, we use the object representing
-      // the right hand side and evaluate it at the quadrature points:
-      //for (const unsigned int q_index : fe_values.quadrature_point_indices())
-        //for (const unsigned int i : fe_values.dof_indices())
+      // Now we have to assemble the local matrix and right hand side.
         for (unsigned int q_point=0; q_point<n_q_points; ++q_point)
           for (unsigned int i=0; i<dofs_per_cell; ++i)
           {
@@ -507,17 +491,20 @@ void Laplace<dim>::solve()
 {
   std::cout << " > SOLVING THE SYSTEM (wait) ... " << std::endl;
 
-  SolverControl            solver_control(100000, 1e-14);             // default: (1000, 1e-12)
-  SolverCG<Vector<double>> solver(solver_control);
-  //solver.solve(system_matrix, solution, system_rhs, PreconditionIdentity());
-  solver.solve(bspline_system_matrix, bspline_solution, bspline_system_rhs, PreconditionIdentity());
+  SolverControl             solver_control(100000, 1e-14);             // default: (1000, 1e-12)
+  SolverCG<Vector<double>>  solver(solver_control);
 
-    cg_iter = solver_control.last_step();    // [ ?? ]
+  solver.solve(bspline_system_matrix, 
+               bspline_solution, 
+               bspline_system_rhs, 
+               PreconditionIdentity());
 
   // We have made one addition, though: since we suppress output from the
   // linear solvers, we have to print the number of iterations by hand.
   std::cout << "   " << solver_control.last_step()
             << " CG iterations needed to obtain convergence." << std::endl;
+
+  cg_iter = solver_control.last_step();    // [ ?? ]
 }
 
 

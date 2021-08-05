@@ -177,9 +177,9 @@ public:
     Quadrature<dim>      error_quad;         // IGA
     Quadrature<dim-1>    boundary_quad;      // IGA
 
-    double E_mod    = 70.0;          // Elastic modulus (1 MPa = 1 N/mm²)
-    double poisson  = 1.0/3.0;      // Poisson coefficient
-    // plane stress formulation
+    // Plane Stress Formulation:
+    double E_mod        = 70.0;     // Elastic modulus (1 MPa = 1 N/mm²)
+    double poisson      = 1.0/3.0;  // Poisson coefficient
 
     double global_scale = 1.e-3;
   };
@@ -395,17 +395,17 @@ public:
                             update_values | update_gradients |
                             update_quadrature_points | update_JxW_values);
 
-    const unsigned int dofs_per_cell = fe->dofs_per_cell;       // IGA: "->"
-    const unsigned int n_q_points    = matrix_quad.size();      // IGA from "quadrature_formula.size();"
+    const unsigned int   dofs_per_cell = fe->dofs_per_cell;       // IGA: "->"
+    const unsigned int   n_q_points    = matrix_quad.size();      // IGA from "quadrature_formula.size();"
 
-    FullMatrix<double> cell_matrix(dofs_per_cell, dofs_per_cell);
-    Vector<double>     cell_rhs(dofs_per_cell);
+    FullMatrix<double>   cell_matrix (dofs_per_cell, dofs_per_cell);
+    Vector<double>       cell_rhs    (dofs_per_cell);
 
     std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
 
     // Addition in case variable coefficients are needed:
-    std::vector<double> lambda_values(n_q_points);
-    std::vector<double> mu_values(n_q_points); 
+    std::vector<double> lambda_values (n_q_points);
+    std::vector<double> mu_values     (n_q_points); 
 
     //[N/mm], (1 MPa = 1 N/mm²)
     Functions::ConstantFunction<dim> lambda(E_mod*poisson/((1.+poisson)*(1.0-2.0*poisson)));   // 1st Lame Const (52.5)
@@ -413,7 +413,7 @@ public:
 
     // Like the two constant functions above, we will call the function
     // right_hand_side just once per cell to make things simpler.
-    std::vector<Tensor<1, dim>> rhs_values(n_q_points);
+    std::vector<Tensor<1, dim>>  rhs_values(n_q_points);
 
 
     typename DoFHandler<dim>::active_cell_iterator              // IGA new
@@ -427,10 +427,10 @@ public:
         cell_matrix = 0;
         cell_rhs    = 0;
 
-        // Next we get the values of the coefficients at the quadrature points. 
-        lambda.value_list(fe_values.get_quadrature_points(), lambda_values); 
-        mu.value_list(fe_values.get_quadrature_points(), mu_values);
-        right_hand_side(fe_values.get_quadrature_points(), rhs_values);   // XXX
+        // Get the values of the coefficients at the quadrature points.
+        lambda. value_list(fe_values.get_quadrature_points(), lambda_values); 
+        mu.     value_list(fe_values.get_quadrature_points(), mu_values);
+        right_hand_side   (fe_values.get_quadrature_points(), rhs_values);   // XXX
 
         // Then assemble the entries of the local stiffness matrix and right
         // hand side vector.
@@ -506,9 +506,12 @@ public:
         // and right hand side vector does not depend on the equation under
         // consideration, and is thus the same as in all previous
         // examples.
-        cell->get_dof_indices(local_dof_indices);
-        constraints.distribute_local_to_global(
-          cell_matrix, cell_rhs, local_dof_indices, system_matrix, system_rhs);
+        cell -> get_dof_indices (local_dof_indices);
+        constraints.distribute_local_to_global(cell_matrix,
+                                               cell_rhs, 
+                                               local_dof_indices, 
+                                               system_matrix, 
+                                               system_rhs);
       }
   }
 
@@ -523,8 +526,10 @@ public:
   template <int dim>
   void ElasticProblem<dim>::solve()
   {
-    SolverControl            solver_control(100000, 1e-14);   // default: (1000, 1e-12)
-    SolverCG<Vector<double>> cg(solver_control);
+  std::cout << "   > SOLVING THE SYSTEM (wait) ... " << std::endl;
+
+    SolverControl             solver_control(100000, 1e-14);   // default: (1000, 1e-12)
+    SolverCG<Vector<double>>  cg(solver_control);
 
     PreconditionSSOR<SparseMatrix<double>> preconditioner;
     preconditioner.initialize(system_matrix, 1.2);
@@ -532,8 +537,10 @@ public:
     std::cout << "   Memory consumption " << system_matrix.memory_consumption()
               << " bytes" << std::endl;
 
-    std::cout << "   > SOLVING THE SYSTEM (wait) ... " << std::endl;
-    cg.solve(system_matrix, solution, system_rhs, preconditioner);
+    cg.solve(system_matrix, 
+             solution, 
+             system_rhs, 
+             preconditioner);
 
     constraints.distribute(solution);
 
@@ -559,6 +566,7 @@ public:
   template <int dim>
   void ElasticProblem<dim>::refine_grid()
   {
+    /*
     std::cout << "   Refining grid." << std::endl;
     Vector<float> estimated_error_per_cell(triangulation.n_active_cells());
 
@@ -574,6 +582,7 @@ public:
                                                     0.03);
 
     triangulation.execute_coarsening_and_refinement();
+    */
   }
 
 
@@ -639,7 +648,6 @@ public:
 	std::string filename = "solution-" + std::to_string(dim) + "d-";
 	filename += ('0' + cycle);
 	filename += ".vtk";
-
     std::string relpath = "RESULTS/" + filename;    // ADD
     std::ofstream output (relpath);
     data_out.write_vtk(output);
@@ -733,12 +741,12 @@ public:
 		std::map<types::global_dof_index, Point<dim>> support_points_x;
 		std::vector< bool > x_c{true, false};
 		ComponentMask cmask_x(x_c);
-        std::cout << "     B" << std::endl;
+        std::cout << "\n     B" << std::endl;
 		DoFTools::map_dofs_to_support_points(st,
 				                   			 dof_handler,
 				                   			 support_points_x,
 				                   			 cmask_x);
-        std::cout << "     C" << std::endl;
+        std::cout << "\n     C" << std::endl;
 		for (const auto p : support_points_x)
 		{
 		    //for (auto pt : application_pts) {
@@ -813,8 +821,8 @@ int main(int argc, char **argv)
   unsigned int n_cycles_down = 0;           // 0   (Pieces: 0>1, 1>2, 2>4, 3>8, 4>16, 5>32, 6>64)
   unsigned int n_cycles_up   = 5;           // 2
   //--------------------------------------------------------
-  // ./step-8 lagrange legendre 1 0 5
-  // ./step-8 bernstein legendre 1 0 5
+  // ./beam lagrange legendre 1 0 5
+  // ./beam bernstein legendre 1 0 5
   // Full vector field:  x_displacement * iHat + y_displacement * jHat
 
   char *tmp[3];
