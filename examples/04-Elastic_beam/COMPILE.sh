@@ -21,6 +21,7 @@ cd build
 #--------------------------------------------- [COMMENT/DE-COMMENT SECTION]
 #cmake .. -DDEAL_II_DIR=/usr/include/deal.II/                                 # apt-intalled location [COMMENT/DE-COMMENT]
 cmake -DCMAKE_BUILD_TYPE=Release .. -DDEAL_II_DIR=/u/sw/pkgs/toolchains/gcc-glibc/9/pkgs/dealii/9.2.0/   # PoliMi mkModules [COMMENT/DE-COMMENT]
+#cmake  .. -DDEAL_II_DIR=/u/sw/pkgs/toolchains/gcc-glibc/9/pkgs/dealii/9.2.0/   # PoliMi mkModules [COMMENT/DE-COMMENT]
 #cmake ..                                                                     # Standard [DO NOT USE]
 #cmake .. -DDEAL_II_DIR=/opt/dealii/8.3.0                                     # Other versions [DO NOT USE]
 #---------------------------------------------
