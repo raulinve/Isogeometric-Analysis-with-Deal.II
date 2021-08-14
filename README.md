@@ -18,9 +18,11 @@ This repository contains C++ code used to introduce the **Isogeometric Analysis*
 - 📄 [*README.md*](./README.md) : \***this file**\*.  
 - 📁 [*examples*](./examples) : **main folder** containing the working examples:  
     - 📁 [*01-Poisson*](./examples/01-Poisson) : contains a IGA modification of *step-4* of the deal.II library.  
+    - 📁 [*01-Poisson_HPK*](./examples/01-Poisson_HPK) : contains a modification of the provious code, using `iga_handler` class.  
     - 📁 [*02-Poisson_extended*](./examples/02-Poisson_extended) : contains a IGA modification of *step-5* of the deal.II library.  
     - 📁 [*03-Elastic_plate*](./examples/03-Elastic_plate) : contains a IGA modification of *step-8* of the deal.II library.  
     - 📁 [*04-Elastic_beam*](./examples/04-Elastic_beam) : contains an IGA example of an elastic beam subjected to forces (similar to the *step-8*).  
+    - 📁 [*04-Elastic_beam_HPK*](./examples/04-Elastic_beam_HPK) : contains a modification of the provious code, using `iga_handler` class \[🛠️...\].  
     - 📁 [*05-Elastic_membrane*](./examples/05-Elastic_membrane) : contains a IGA modification of *step-41* of the deal.II library.  
 - 📁 [*references*](./references) : contains only a reference copy of the deal.II step examples used for this project.  
 - 📁 [*scripts*](./scripts) : contains scripts used for automatic code indentation.  

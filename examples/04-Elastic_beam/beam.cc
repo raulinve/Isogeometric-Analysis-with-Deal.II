@@ -972,15 +972,15 @@ int main(int argc, char **argv)
 
   // DEFAULT VALUES:
   //--------------------------------------------------------
-  char fe_name[]             = "lagrange"; // “lagrange”
+  char fe_name[]             = "bernstein"; // “lagrange”
   char quad_name[]           = "legendre";  // “legendre”
   unsigned int degree        = 2;           // 1
   unsigned int n_cycles_down = 0;           // 0   (Pieces: 0>1, 1>2, 2>4, 3>8, 4>16, 5>32, 6>64)
   unsigned int n_cycles_up   = 4;           // 2
   //--------------------------------------------------------
   // EXAMPLES:
-  // ./beam lagrange legendre 1 0 4
-  // ./beam bernstein legendre 1 0 4
+  // ./beam lagrange legendre 2 0 4
+  // ./beam bernstein legendre 2 0 4
   // Full vector field:  x_displacement * iHat + y_displacement * jHat
 
 

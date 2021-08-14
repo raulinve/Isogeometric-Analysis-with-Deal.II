@@ -1,6 +1,6 @@
 # ℹ️ Step-41 IGA code (obstacle)
 
-https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/tree/master/step-41_IGA_(obstacle)  
+https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/tree/master/examples/05-Elastic_membrane  
 
 <br/>  
 

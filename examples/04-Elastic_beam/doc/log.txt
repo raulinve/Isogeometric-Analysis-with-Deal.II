@@ -3,38 +3,126 @@
 ============================================================
  
                     polyn     quad  deg refinements
-SELECTED OPTIONS : lagrange legendre 1 0 2
+SELECTED OPTIONS : lagrange legendre 2 0 4
 
 Checking/creating the output directory "RESULTS". 
 Solving problem in 2 space dimensions. 
 
 
-Cycle 0:
-   Number of active cells: 256
-   Total number of cells: 256
-   Number of degrees of freedom: 578
+
+
+Cycle 0 ( 0 to 4 ):
+   Grid of elements:      1x1
+   Total number of cells: 1
+   Total number of dofs:  18
    > ASSEMBLING THE SYSTEM (wait) ... 
-   Memory consumption 72568 bytes
+     TOTAL FORCE APPLIED           : 1 N
+     Force magnitude (global)      : 0.0625 N/mm
+     Number of cells on right side : 1 
+     Cell dimension                : 16 mm
+     Force magnitude (local nodal) : 0.25 N
    > SOLVING THE SYSTEM (wait) ... 
-   88 CG iterations needed to obtain convergence.
+   Memory consumption 1368 bytes
+   12 CG iterations needed to obtain convergence.
+
+   Print the RHS and the SOLUTION at the tip:
+          	: ID	: RHS	: SOL
+   tip_top	: 11	: 0.25	: 8.38752
+   tip_mid	: 7	: 0.5	: 8.66892
+   tip_low	: 3	: 0.25	: 8.19735
+
    Saving/overwriting the .vtk result files.
-Cycle 1:
-   Number of active cells: 1024
-   Total number of cells: 1280
-   Number of degrees of freedom: 2178
+
+
+Cycle 1 ( 0 to 4 ):
+   Grid of elements:      2x2
+   Total number of cells: 5
+   Total number of dofs:  50
    > ASSEMBLING THE SYSTEM (wait) ... 
-   Memory consumption 292472 bytes
+     TOTAL FORCE APPLIED           : 1 N
+     Force magnitude (global)      : 0.0625 N/mm
+     Number of cells on right side : 2 
+     Cell dimension                : 8 mm
+     Force magnitude (local nodal) : 0.125 N
    > SOLVING THE SYSTEM (wait) ... 
-   167 CG iterations needed to obtain convergence.
+   Memory consumption 6776 bytes
+   32 CG iterations needed to obtain convergence.
+
+   Print the RHS and the SOLUTION at the tip:
+          	: ID	: RHS	: SOL
+   tip_top	: 45	: 0.125	: 10.5343
+   tip_mid	: 23	: 0.25	: 10.1307
+   tip_low	: 19	: 0.125	: 10.0292
+
    Saving/overwriting the .vtk result files.
-Cycle 2:
-   Number of active cells: 4096
-   Total number of cells: 5376
-   Number of degrees of freedom: 8450
+
+
+Cycle 2 ( 0 to 4 ):
+   Grid of elements:      4x4
+   Total number of cells: 21
+   Total number of dofs:  162
    > ASSEMBLING THE SYSTEM (wait) ... 
-   Memory consumption 1174648 bytes
+     TOTAL FORCE APPLIED           : 1 N
+     Force magnitude (global)      : 0.0625 N/mm
+     Number of cells on right side : 4 
+     Cell dimension                : 4 mm
+     Force magnitude (local nodal) : 0.0625 N
    > SOLVING THE SYSTEM (wait) ... 
-   329 CG iterations needed to obtain convergence.
+   Memory consumption 29880 bytes
+   77 CG iterations needed to obtain convergence.
+
+   Print the RHS and the SOLUTION at the tip:
+          	: ID	: RHS	: SOL
+   tip_top	: 157	: 0.0625	: 10.9869
+   tip_mid	: 85	: 0.125	: 10.5435
+   tip_low	: 63	: 0.0625	: 10.3028
+
+   Saving/overwriting the .vtk result files.
+
+
+Cycle 3 ( 0 to 4 ):
+   Grid of elements:      8x8
+   Total number of cells: 85
+   Total number of dofs:  578
+   > ASSEMBLING THE SYSTEM (wait) ... 
+     TOTAL FORCE APPLIED           : 1 N
+     Force magnitude (global)      : 0.0625 N/mm
+     Number of cells on right side : 8 
+     Cell dimension                : 2 mm
+     Force magnitude (local nodal) : 0.03125 N
+   > SOLVING THE SYSTEM (wait) ... 
+   Memory consumption 125240 bytes
+   168 CG iterations needed to obtain convergence.
+
+   Print the RHS and the SOLUTION at the tip:
+          	: ID	: RHS	: SOL
+   tip_top	: 573	: 0.03125	: 11.1552
+   tip_mid	: 301	: 0.0625	: 10.6637
+   tip_low	: 215	: 0.03125	: 10.373
+
+   Saving/overwriting the .vtk result files.
+
+
+Cycle 4 ( 0 to 4 ):
+   Grid of elements:      16x16
+   Total number of cells: 341
+   Total number of dofs:  2178
+   > ASSEMBLING THE SYSTEM (wait) ... 
+     TOTAL FORCE APPLIED           : 1 N
+     Force magnitude (global)      : 0.0625 N/mm
+     Number of cells on right side : 16 
+     Cell dimension                : 1 mm
+     Force magnitude (local nodal) : 0.015625 N
+   > SOLVING THE SYSTEM (wait) ... 
+   Memory consumption 512568 bytes
+   347 CG iterations needed to obtain convergence.
+
+   Print the RHS and the SOLUTION at the tip:
+          	: ID	: RHS	: SOL
+   tip_top	: 2173	: 0.015625	: 11.2361
+   tip_mid	: 1117	: 0.03125	: 10.7142
+   tip_low	: 775	: 0.015625	: 10.405
+
    Saving/overwriting the .vtk result files.
  
 

@@ -1,6 +1,6 @@
 # ℹ️ Step-5 IGA code (extended poisson)
 
-https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/tree/master/step-05_IGA_(ext_poisson)  
+https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II/tree/master/examples/02-Poisson_extended
 
 <br/>  
 
