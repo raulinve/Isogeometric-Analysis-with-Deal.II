@@ -241,14 +241,16 @@ namespace Beam
 			}
 	};
 
-  double force_intensity(const unsigned int cycle) {
-				double global_force_on_right_side = 0.1;  //6.25;    //[N/mm], (1 MPa = 1 N/mm²)
+  double force_intensity(const unsigned int cycle,
+                         const unsigned int degree) {
+        double total_resultant_force      = 1.;      //[N]
         double right_side_size            = 16.;     //[mm]
 
+				double global_force_on_right_side = total_resultant_force/right_side_size;  //[N/mm]
         double right_side_num_of_cells    = pow(2.,cycle);
   			double right_side_cell_size       = right_side_size / right_side_num_of_cells;
 
-				double local_force_on_right_side = global_force_on_right_side*(right_side_cell_size)/2.;
+				double local_force_on_right_side = global_force_on_right_side*(right_side_cell_size)/2./degree;
 
 				// Rekap:
         std::cout << "     TOTAL FORCE APPLIED           : " << global_force_on_right_side*right_side_size << " N" << std::endl;
@@ -331,8 +333,8 @@ namespace Beam
     Quadrature<dim-1>    boundary_quad;      // IGA
 
     // Plane Stress Formulation:
-    double E_mod        = 70.0;     // Elastic modulus (1 MPa = 1 N/mm²)
-    double poisson      = 1.0/3.0;  // Poisson coefficient
+    double E_mod        = 2.; //30.0;     // Elastic modulus (1 MPa = 1 N/mm²)
+    double poisson      = 1.0/3.0;  // Poisson coefficient (~ 0.0 - 0.5)
 
     double global_scale = 1.e-3;
   };
@@ -890,7 +892,7 @@ namespace Beam
         //}
 
         // Compute the real force per node and apply to the rhs:
-				double force_int = force_intensity(cycle);
+				double force_int = force_intensity(cycle, degree);
 			  for (unsigned int i=0; i<system_rhs.size(); ++i) { system_rhs[i] *= force_int; }
 
 
