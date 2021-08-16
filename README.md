@@ -48,9 +48,18 @@ This repository contains C++ code used to introduce the **Isogeometric Analysis*
 ---
 <a name="major-updates"></a>
 ### 🆕 Major updates:
-Last update: **MAY-2021**  
+Last update: **AUG-2021**  
+
+#### Project history visualization:  
+
+[<img src="https://img.youtube.com/vi/EJ23odrdBDk/0.jpg" alt="_SEE THE VIDEO_" width="384" height="255">](https://www.youtube.com/watch?v=EJ23odrdBDk)  
+Open the video \[[LINK](https://www.youtube.com/watch?v=EJ23odrdBDk)\] to **visually see how the project is changed** from the beginning to the actual state!  
+
 
 From newest to oldest:  
+* Note: Adding distributed forces functionality in the beam code.
+* Note: Expanding the beam code with h-p-k refinements possibility. \[on progress]
+* Note: Expanding the poisson code with h-p-k refinements possibility.
 * Note: Added a new **beam example** (with a structure resembling the deal.II step-8).  
 * Note: Added a new example on an elastic problem, based on the deal.II **step-8**.  
 * Note: Added a new example based on the deal.II **step-5**.  
