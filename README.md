@@ -10,7 +10,10 @@ https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II
 
 Isogeometric Analysis classes for the [deal.II library](https://www.dealii.org/).  
 
-This repository contains C++ code used to introduce the **Isogeometric Analysis** (IGA) framework into the standard **deal.II** C++ Finite Element (FE) library.  
+This repository contains C++ code and examples used to introduce the **Isogeometric Analysis** (IGA) framework into the standard **deal.II** C++ Finite Element (FE) library.  
+
+Download the full project report \[[📥](https://drive.google.com/drive/folders/1tqF6Vt-ndLcSYb4ElotqxUrJOwSOpT8f?usp=sharing)\]:  
+[![DownloadImg](https://user-images.githubusercontent.com/61359843/130031849-1d0b2f5e-0a47-41c5-a888-5d6dd6e49002.png)](https://drive.google.com/drive/folders/1tqF6Vt-ndLcSYb4ElotqxUrJOwSOpT8f?usp=sharing)  
 
 <br/>  
 
@@ -57,18 +60,18 @@ Open the video \[[LINK](https://www.youtube.com/watch?v=EJ23odrdBDk)\] to **visu
 
 
 From newest to oldest:  
-* Note: Adding distributed forces functionality in the beam code.
-* Note: Expanding the beam code with h-p-k refinements possibility. \[on progress]
-* Note: Expanding the poisson code with h-p-k refinements possibility.
-* Note: Added a new **beam example** (with a structure resembling the deal.II step-8).  
-* Note: Added a new example on an elastic problem, based on the deal.II **step-8**.  
-* Note: Added a new example based on the deal.II **step-5**.  
-* Note: Added **documentation** (Doxygen, Readme files, Images).
+* Note: ➕ Adding distributed forces functionality in the beam code.
+* Note: ➕ Expanding the beam code with h-p-k refinements possibility. \[on progress]
+* Note: ➕ Expanding the poisson code with h-p-k refinements possibility.
+* Note: 📁 Added a new **beam example** (with a structure resembling the deal.II step-8).  
+* Note: 📁 Added a new example on an elastic problem, based on the deal.II **step-8**.  
+* Note: 📁 Added a new example based on the deal.II **step-5**.  
+* Note: 📝 Added **documentation** (Doxygen, Readme files, Images).
 * Obstacle example: :heavy_check_mark: Improved (*Reorganization of the code, improved user interaction*).
 * **Obstacle example**: :heavy_check_mark: Fixed  (*The code now compiles without errors or warnings with deal.II 9.2.0*).
 * Poisson example : :heavy_check_mark: Improved (*Reorganization of the code, improved user interaction*).
 * **Poisson example** : :heavy_check_mark: Fixed  (*The code now compiles without errors or warnings with deal.II 9.2.0*).
-* Note: A previous version of this repository has been completely deleted and substituted with this new one.  
+* Note: ♻️ A previous version of this repository has been completely deleted and substituted with this new one.  
 
 
 <br/>  
