@@ -2,7 +2,7 @@
 
 https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II  
 
-:octocat:  :electron: 
+:octocat:  :electron:  RI
 
 [![extra](https://img.shields.io/badge/status-under%20development-ff69b4)](https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II)
 [![extra](https://img.shields.io/badge/maintained-actively-success)](https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II)
@@ -17,49 +17,53 @@ Download the full project report \[[📥](https://drive.google.com/drive/folders
 
 <br/>  
 
-**Organization of files and folders:**  
+**Table of contents:**
+- [🗃️ Organization of files and folders](#organization)  
+- [🆕 Major updates](#major-updates)  
+- [ℹ️ How to use](#usage)  
+    - [🔤 Compilation and execution \[EASY START\]](#easy-compilation)  
+    - [:triangular_flag_on_post: Single-file examples (*poisson*, *plate*, *beam*)](#poisson)  
+    - [:triangular_flag_on_post: "iga_handler" examples (*membrane*, *\*_HPK*)](#obstacle)  
+- [🛠️ Installation](#installation)  
+- [📄 Documentation](#documentation)  
+- [↘️ Code output](#output)  
+- [✍️ Contributors and motivation](#contributions)  
+- [©️ License](#license)  
+
+
+<br/>  
+
+<a name="organization"></a>
+### 🗃️ Organization of files and folders:
+
 - 📄 [*README.md*](./README.md) : \***this file**\*.  
 - 📁 [*examples*](./examples) : **main folder** containing the working examples:  
     - 📁 [*01-Poisson*](./examples/01-Poisson) : contains a IGA modification of *step-4* of the deal.II library.  
-    - 📁 [*01-Poisson_HPK*](./examples/01-Poisson_HPK) : contains a modification of the provious code, using `iga_handler` class.  
+    - 📂 [*01-Poisson_HPK*](./examples/01-Poisson_HPK) : \[🛠️\] contains a modification of the previous code, using `iga_handler` class.  
     - 📁 [*02-Poisson_extended*](./examples/02-Poisson_extended) : contains a IGA modification of *step-5* of the deal.II library.  
     - 📁 [*03-Elastic_plate*](./examples/03-Elastic_plate) : contains a IGA modification of *step-8* of the deal.II library.  
     - 📁 [*04-Elastic_beam*](./examples/04-Elastic_beam) : contains an IGA example of an elastic beam subjected to forces (similar to the *step-8*).  
-    - 📁 [*04-Elastic_beam_HPK*](./examples/04-Elastic_beam_HPK) : contains a modification of the provious code, using `iga_handler` class \[🛠️...\].  
+    - 📂 [*04-Elastic_beam_HPK*](./examples/04-Elastic_beam_HPK) : \[🛠️\] contains a modification of the previous code, using `iga_handler` class.  
     - 📁 [*05-Elastic_membrane*](./examples/05-Elastic_membrane) : contains a IGA modification of *step-41* of the deal.II library.  
 - 📁 [*references*](./references) : contains only a reference copy of the deal.II step examples used for this project.  
 - 📁 [*scripts*](./scripts) : contains scripts used for automatic code indentation.  
 - 📄 [*LICENSE*](./LICENSE) : contains the license of use provided with this code.  
 
-
 <br/>  
 
-**Table of contents:**
-- [🆕 Major updates](#major-updates)  
-- [📄 Documentation](#documentation)  
-- [ℹ️ Usage](#usage)  
-    - [🔤 Easy compilation and execution](#easy-compilation)  
-    - [:triangular_flag_on_post: Poisson example](#poisson)  
-    - [:triangular_flag_on_post: Elastic membrane example](#obstacle)  
-- [🛠️ Installation](#installation)  
-- [↘️ Code output](#output)  
-- [✍️ Contributors and motivation](#contributions)  
-- [©️ License](#license)  
-
-<br/>  
 
 ---
 <a name="major-updates"></a>
 ### 🆕 Major updates:
-Last update: **AUG-2021**  
+Last update: 📅 **AUG-2021**  
 
 #### Project history visualization:  
 
-[<img src="https://img.youtube.com/vi/EJ23odrdBDk/0.jpg" alt="_SEE THE VIDEO_" width="384" height="255">](https://www.youtube.com/watch?v=EJ23odrdBDk)  
+[<img src="https://user-images.githubusercontent.com/61359843/130750693-ed604c7a-1073-4906-9296-5453ef121837.png" alt="_SEE THE VIDEO_" width="342" height="192">](https://www.youtube.com/watch?v=EJ23odrdBDk)  
 Open the video \[[LINK](https://www.youtube.com/watch?v=EJ23odrdBDk)\] to **visually see how the project is changed** from the beginning to the actual state!  
 
-
 From newest to oldest:  
+* Note: 📝 Added **download report** button, finalized all the documentation.
 * Note: ➕ Adding distributed forces functionality in the beam code.
 * Note: ➕ Expanding the beam code with h-p-k refinements possibility. \[on progress]
 * Note: ➕ Expanding the poisson code with h-p-k refinements possibility.
@@ -69,40 +73,17 @@ From newest to oldest:
 * Note: 📝 Added **documentation** (Doxygen, Readme files, Images).
 * Obstacle example: :heavy_check_mark: Improved (*Reorganization of the code, improved user interaction*).
 * **Obstacle example**: :heavy_check_mark: Fixed  (*The code now compiles without errors or warnings with deal.II 9.2.0*).
-* Poisson example : :heavy_check_mark: Improved (*Reorganization of the code, improved user interaction*).
-* **Poisson example** : :heavy_check_mark: Fixed  (*The code now compiles without errors or warnings with deal.II 9.2.0*).
+* Poisson example: :heavy_check_mark: Improved (*Reorganization of the code, improved user interaction*).
+* **Poisson example**: :heavy_check_mark: Fixed  (*The code now compiles without errors or warnings with deal.II 9.2.0*).
 * Note: ♻️ A previous version of this repository has been completely deleted and substituted with this new one.  
 
 
 <br/>  
 
----
-<a name="documentation"></a>
-### 📄 Documentation:
-
-Documentation files can be generated using [Doxygen](https://www.doxygen.nl/).  
-
-To install Doxygen on Linux, please type: `sudo apt-get install doxygen`.  
-If you prefere a Graphical User Interface (GUI): `sudo apt-get install doxygen-gui`.  \[← \**suggested*\*\]  
-
-If you have doxygen installed on your system, you can generate the documentation files using these commands:  
-
-1. Open the Doxygen GUI interface by using this terminal command: `doxywizard`  
-2. A window should open, **click on** "**File**" **>** "**Open**" and **select the file named** "*Doxyfile*" (in the "*doc*" folder).  
-3. At this point some fileds in the GUI should have been automatically filled, **go to the** "**Run**" **tab**, and **press on** "**Run doxygen**"  
-4. When the program completes, **click on** "**Show HTML output**" to consult the documentation.  
-5. At this point you can close the Doxygen GUI.  
-
-Note: To open the documentation at any time, just search for the folder "*html*" into the "*doc*" folder and open the file named "**index.html**".  
-
-Note: For any other question, please refer to the Doxygen official website at this link: https://www.doxygen.nl/index.html.  
-
-
-<br/>  
 
 ---
 <a name="usage"></a>
-### ℹ️ Usage:
+### ℹ️ How to use:
 
 Note: :warning: The code is intended to be **executed on a Linux system** only (it has been tested under **Ubuntu 20.04 LTS**).  
 
@@ -110,61 +91,58 @@ Every folder is equipped with two files that simplify the compilation of the cod
 * "*COMPILE.sh*"  (it is a script that contains some simple lines of code used to start the compilation process)  
 * "*CMakeLists.txt*"  (it contains a set of directives and instructions describing the project's source files and targets)  
 
+<br/>  
+
 <a name="easy-compilation"></a>
-**🔤 Easy compilation and execution:**  
-To **compile and run** each example open the terminal in the folder containing the "*COMPILE.sh*" file and execute it using the following command:  
+**🔤 Compilation and execution [EASY START]:**  
+Open the terminal in the folder containing the "*COMPILE.sh*" file and execute it using the command:  
 ```
 ./COMPILE.sh
 ```  
 
-**Note:** Before executing the "*COMPILE.sh*" script, try to make it executable using the following command: $`chmod +x COMPILE.sh`  
+**Note:** Before executing the "*COMPILE.sh*" script, check it is executable (if it is not, change its state using: $`chmod +x COMPILE.sh`). 
 
-**Note:** The default deal.II path used in the script is the one that makes use of the PoliMi mkModules (see the [Installation](#installation) section). If you use a standard version of deal.II or have a custom installation, please modify the PATH contained in the "*COMPILE.sh*" at the tag "DDEAL_II_DIR" before running it.  
+**Note:** The default deal.II path used in the script is the one that makes use of the PoliMi mkModules (see the [Installation](#installation) section). If you use a standard version of deal.II or have a custom installation, please modify the PATH contained in the "*COMPILE.sh*" after the tag "DDEAL_II_DIR" before running it. Note that several folders path are already included as comments in all "*COMPILE.sh*" files.  
+
+<br/>  
+
+🤓 **If you prefer to compile the code manually use the following procedure:**  
+1. Open the terminal in the selected example folder ad use these commands:
+   ```
+   mkdir build  
+   cd build  
+   cmake .. -DDEAL_II_DIR=/path/to/dealii/installation  
+   make  
+   ```
+   **Note:** The default installation folder of the deal.II library should be: `/path/to/dealii/installation`=`/usr/include/deal.II/`.  
+2. If everything went well, you should have an executable (named `poisson` or `exe` ...) in the newly created *build* directory.  
+3. At this point, if you want to **recompile** the code after some changes to the source code, it is not needed to repeat all the operations here listed, but it is only sufficient to open the terminal into the *build* directory and use the command $`make`.  
 
 
 
 <br/>  
 
 <a name="poisson"></a>
-### :triangular_flag_on_post: Poisson example:
+### :triangular_flag_on_post: Single-file examples (*poisson*, *plate*, *beam*):
 
-**Note:** **Follow these instructions also for all the other examples** (excluding the \"*Elastic membrane*\" example). In these cases please substitute in the following the \"*poisson*\" keyword with the name of the main source file (for example use \"*step-8*\" instead).  
-
-The code of the **Poisson example** consist of a single file:
-* "poisson.cc"  
-
-Note: This code is strongly based on the deal.II library example "[step-4](https://www.dealii.org/current/doxygen/deal.II/step_4.html)".  
-
-<img src="./examples/01-Poisson/doc/IMG_step-4_IGA_t5.png" alt="FIGURE: Poisson example result" width="480" height="480">  
+<img src="./examples/01-Poisson/doc/IMG_step-4_IGA_t5.png" alt="FIGURE: Poisson example result" width="300" height="300">  
 
 **Img. 1**: Result plot of the *poisson* code.  
 
-#### 👉 Instructions to **compile** the code:
+The "single-file" examples are characterized by having a single *"FILE_NAME.cc"* file, contained directly into the example folder.  
+Example: * "poisson.cc", \"*step-8.cc*\", ...  
 
+#### 👉 Instructions to **execute** the codes:  
+
+The executable takes \[0] OR \[5] arguments to run, respectively:
 ```
-cd poisson
-mkdir build
-cd build
-cmake .. -DDEAL_II_DIR=/path/to/dealii/installation
-make
+./FILE_NAME
+```  
+Example: ` ./poisson `  
+
+OR
 ```
-NOTE: The default installation folder of deal.II library should be: `/usr/include/deal.II/`
-
-If everything went well, you should have an executable named `poisson` in the new *build* directory.  
-
-Note: At this point, if you want to recompile the code after some changes to the source code, 
-it is sufficient to go to the *build* directory and use the command $`make`.
-
-
-#### 👉 Instructions to **execute** the code:
-
-The executable takes 0 or 5 arguments to run, respectively:
-```
-./poisson
-```
-or
-```
-./poisson  FE_TYPE  QUADRATURE  DEG  CYCLE_START  CYCLE_STOP
+./FILE_NAME  FE_TYPE  QUADRATURE  DEG  CYCLE_START  CYCLE_STOP
 ```
 The accepted arguments are:
 
@@ -182,44 +160,28 @@ The accepted arguments are:
 Example: ` ./poisson bernstein legendre 1 0 5 `
 
 
+
 <br/>  
 
 <a name="obstacle"></a>
-### :triangular_flag_on_post: Elastic membrane example:
+### :triangular_flag_on_post: Iga_handler examples (*membrane*, *\*_HPK*):
 
-The code of the **Elastic membrane example**, previously called \"**obstacle**\", consist of a series of files incuded in two folders:
-* "source" directory
-* "include" directory
-
-Note: This code is based on the deal.II library example "[step-41](https://www.dealii.org/current/doxygen/deal.II/step_41.html)".  
-
-<img src="./examples/05-Elastic_membrane/doc/IMG_step-41_IGA_t6.png" alt="FIGURE: Obstacle example result" width="480" height="480">  
+<img src="./examples/05-Elastic_membrane/doc/IMG_step-41_IGA_t6.png" alt="FIGURE: Obstacle example result" width="300" height="300">  
 
 **Img. 2**: Result plot of the *obstacle* code.  
 
-#### 👉 Instructions to **compile** the code:
-
-```
-cd obstacle
-mkdir build
-cd build
-cmake .. -DDEAL_II_DIR=/path/to/dealii/installation
-make
-```
-NOTE: The default installation folder of deal.II library should be: `/usr/include/deal.II/`
-
-If everything went well, you should have an executable named `exe` in the new *build* directory. 
-
-Note: At this point, if you want to recompile the code after some changes to the source code, 
-it is sufficient to go to the *build* directory and use the command $`make`.
-
+The codes of this type consist of a series of files included in two folders:  
+* "*source*" directory (containing all the *"\*.cc"* source files);  
+* "*include*" directory (containing all the *"\*.h"* header files).  
 
 #### 👉 Instructions to **execute** the code:
 
 The executable takes no arguments. To run, go to the "build" folder, and use the following command:
 ```
-./exe
+./FILE_NAME
 ```
+Example: ` ./exe `  
+
 
 <br/>  
 
@@ -229,7 +191,7 @@ The executable takes no arguments. To run, go to the "build" folder, and use the
 
 Note: The codes have been tested under a clean installation of Xubuntu, version **20.04 LTS**.  
 Note: The codes have been tested using the **deal.II version 9.2.0** (and *9.1.1-9 build2*).  
-Note: The orignal code required **deal.II version 8.3** to work properly, in the code you can find some suggestions in order to make the actual code compilable with that version but remember it is not tested, so please consider upgrading to version 9.2.0.  
+Note: The original code required **deal.II version 8.3** to work properly, in the code you can find some suggestions in order to make the actual code compilable with that version but remember it is not tested, so please consider upgrading to version 9.2.0.  
 
 
 In order to setup the environment, follow the following steps:  
@@ -244,7 +206,7 @@ In order to setup the environment, follow the following steps:
    $ `sudo apt install gcc`       install the last version of gcc  
    $ `sudo apt install clang`     install the last version of clang  
 
-2. Update all packages before start the deal.II installation procedure:  
+2. Update all packages before starting the deal.II installation procedure:  
    $ `sudo apt-get update`  
 
 3. Install the deal.II library:  
@@ -253,14 +215,14 @@ In order to setup the environment, follow the following steps:
   (es: *boost, fftw3, superlu, trilinos, open mpi, muparser, occt, ...* )  
   The required space is about ~ 2 GB for all.  
 
-**Unistall the library:**
-1. Unistall the main library:  
+**Uninstall the library:**
+1. Uninstall the main library:  
    $ `sudo apt-get --purge remove libdeal.ii-dev`
    
 2. Remove automatically installed packages which are no longer required:  
    $ `sudo apt-get autoremove`
 
-3. \[*usually NOT needed*\] If you need to manually remove directories or files, plese use:   
+3. \[*usually NOT needed*\] If you need to manually remove directories or files, please use:   
    $ `sudo rm FILENAME`           manually remove a file  
    $ `sudo rm -r ./FOLDERNAME`    manually remove a folder and all its content  
 
@@ -280,7 +242,7 @@ Note: This installation procedure is suggested for [Politecnico di Milano](https
    `module load gcc-glibc/9 dealii`  
    Note: Reboot the terminal (close and open again the terminal window) in order to activate the updates.   
 
-**Unistall the library:**
+**Uninstall the library:**
 1. Remove the two added lines from the "*~/.bashrc*" file;  
    This should be enough to disable all modules from loading, leaving the system as if no modules were installed.  
    
@@ -307,6 +269,30 @@ Note: This installation procedure is suggested for [Politecnico di Milano](https
 For any other information, please see the following links:  
 [www.dealii.org / Main page](https://www.dealii.org/)  
 [www.dealii.org / Installation instructions](https://www.dealii.org/current/readme.html)  
+
+
+<br/>  
+
+---
+<a name="documentation"></a>
+### 📄 Documentation:
+
+Documentation files can be generated using [Doxygen](https://www.doxygen.nl/).  
+
+To install Doxygen on Linux, please type: `sudo apt-get install doxygen`.  
+If you prefer a Graphical User Interface (GUI): `sudo apt-get install doxygen-gui`.  \[← \**suggested*\*\]  
+
+If you have Doxygen installed on your system, you can generate the documentation files using these commands:  
+
+1. Open the Doxygen GUI interface by using this terminal command: `doxywizard`  
+2. A window should open, **click on** "**File**" **>** "**Open**" and **select the file named** "*Doxyfile*" (in the "*doc*" folder).  
+3. At this point some fields in the GUI should have been automatically filled, **go to the** "**Run**" **tab**, and **press on** "**Run doxygen**"  
+4. When the program completes, **click on** "**Show HTML output**" to consult the documentation.  
+5. At this point you can close the Doxygen GUI.  
+
+Note: To open the documentation at any time, just search for the folder "*html*" into the "*doc*" folder and open the file named "**index.html**".  
+
+Note: For any other question, please refer to the Doxygen official website at this link: https://www.doxygen.nl/index.html.  
 
 
 <br/>  
