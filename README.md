@@ -5,19 +5,15 @@ https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II
 :octocat:  :electron:  RI
 
 [![extra](https://img.shields.io/badge/status-completed-success)](https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II)
-[![extra](https://img.shields.io/badge/maintained-ON%20PAUSE-ff69b4)](https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II)  
+[![extra](https://img.shields.io/badge/maintained-PAUSED-ff69b4)](https://github.com/raulinve/Isogeometric-Analysis-with-Deal.II)  
 
 Isogeometric Analysis classes for the [deal.II library](https://www.dealii.org/).  
 
 This repository contains C++ code and examples used to introduce the **Isogeometric Analysis** (IGA) framework into the standard **deal.II** C++ Finite Element (FE) library.  
 
-**Download the full Project Report** \[[📥](https://drive.google.com/drive/folders/1tqF6Vt-ndLcSYb4ElotqxUrJOwSOpT8f?usp=sharing)\]:  
-\[NOTE: Report set on PRIVATE from Sep-2021]  
-[![DownloadImg](https://user-images.githubusercontent.com/61359843/130031849-1d0b2f5e-0a47-41c5-a888-5d6dd6e49002.png)](https://drive.google.com/drive/folders/1tqF6Vt-ndLcSYb4ElotqxUrJOwSOpT8f?usp=sharing)  
+**NOTE:** \[SEP-2021] THIS PROJECT IS CURRENTLY **DISCONTINUED** AND NO MORE ACTIVELY MAINTAINED BY THE AUTHOR.
 
-
-**NOTE:** THIS PROJECT IS CURRENTLY **DISCONTINUED** AND NO MORE ACTIVELY MAINTAINED BY THE AUTHOR \[SEP-2021].
-
+[**Contact the author HERE by sending a request**](https://drive.google.com/drive/folders/1tqF6Vt-ndLcSYb4ElotqxUrJOwSOpT8f?usp=sharing)
 
 <br/>  
 
