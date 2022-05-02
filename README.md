@@ -350,7 +350,7 @@ In order to open *.vtk* or *.vtu* files you can use a graphical software like "*
 
 The author of the codes contained in this repository is **Raul Invernizzi**.  
 
-The development of this project is started as homework for the Mathematical Engineering master courses of "*Advanced Programming for Scientific Computing*" (APSC / PACS) held by Professor *L.Formaggia* and of "*Numerical Analysis for Partial Differential Equations*" (NAPDE) held by Professor *A.M.Quarteroni* of the [Polytechnic of Milan](https://www.polimi.it/en/).  
+The development of this project is started in the context of the Mathematical Engineering master courses of "*Advanced Programming for Scientific Computing*" (APSC / PACS) held by Professor *L.Formaggia* jointly with the course "*Numerical Analysis for Partial Differential Equations*" (NAPDE) held by Professor *A.M.Quarteroni* of the [Polytechnic of Milan](https://www.polimi.it/en/).  
 The project was followed by Professor *L.Dedè* and Post-Doc researcher *C.P.Africa*.  
 
 The original base code was developed by the authors of the article:  
